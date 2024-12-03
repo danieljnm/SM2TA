@@ -4,7 +4,10 @@ package danieljnm.sm2ta;
 public class Transition {
   private TransitionType type;
 
-  public Transition(final TransitionType type) {
+  private State target;
+
+  public Transition(final TransitionType type, final State target) {
     this.type = type;
+    this.target = target;
   }
 }

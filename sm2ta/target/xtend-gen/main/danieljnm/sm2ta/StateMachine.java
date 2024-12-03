@@ -14,4 +14,9 @@ public class StateMachine {
   public List<State> getStates() {
     return this.states;
   }
+
+  public boolean addState(final String name) {
+    State _state = new State(name);
+    return this.states.add(_state);
+  }
 }
