@@ -1,20 +1,20 @@
 package danieljnm.sm2ta
 
-import java.util.List
+import java.util.HashMap
 
 class StateMachine {
-	List<State> states
-	
-	new() {
-		states = newArrayList
-	}
+	HashMap<String, State> states = newHashMap
 	
 	def getStates() {
 		states
 	}
 	
 	def addState(String name) {
-		states.add(new State(name))
+		states.computeIfAbsent(name) [new State(name)]
 	}
 	
+	def addTransition(String source, String target, String event) {
+		var targetState = addState(target)
+		addState(source).addTransition(event, TransitionType.Direct, targetState)
+	}
 }
