@@ -9,12 +9,11 @@ class StateMachine {
 		states
 	}
 	
-	def addState(String name) {
-		states.computeIfAbsent(name) [new State(name)]
+	def State getInitialState() {
+		states.values.findFirst[it.isInitial]
 	}
 	
-	def addTransition(String source, String target, String event) {
-		var targetState = addState(target)
-		addState(source).addTransition(event, TransitionType.Direct, targetState)
+	def state(String name) {
+		states.computeIfAbsent(name) [new State(this, name)]
 	}
 }

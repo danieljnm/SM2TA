@@ -6,16 +6,6 @@ class Translator {
 	def static void main(String[] args) {
 	}
 	
-	def static void buildStateMachine() {
-		new StateMachine => [
-			addState("Idle")
-			addTransition("Idle", "Planning", "Ready")
-			addTransition("Planning", "Idle", "Lost control")
-			addTransition("Planning", "Next position", "Success")
-			addTransition("Next position", "Idle", "Lost control")
-		]
-	}
-	
 	def static getStateMachine() {
 		stateMachine
 	}
@@ -26,13 +16,5 @@ class Translator {
 
 	def static printMachine() {
 		stateMachine.states.values.forEach[println(it)]
-	}
-	
-	def static addState(String name) {
-		stateMachine.addState(name)
-	}
-	
-	def static addTransition(String source, String target, String event) {
-		stateMachine.addTransition(source, target, event)
 	}
 }

@@ -2,13 +2,19 @@ package danieljnm.sm2ta
 
 class Transition {
 	String event
-	TransitionType type
 	State target
 	
-	new(String event, TransitionType type, State target) {
+	new(String event, State target) {
 		this.event = event
-		this.type = type
 		this.target = target
+	}
+	
+	def getEvent() {
+		event
+	}
+	
+	def getTarget() {
+		target
 	}
 	
 	override toString() {

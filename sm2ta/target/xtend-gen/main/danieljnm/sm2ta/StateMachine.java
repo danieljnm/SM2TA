@@ -3,6 +3,8 @@ package danieljnm.sm2ta;
 import java.util.HashMap;
 import java.util.function.Function;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 @SuppressWarnings("all")
 public class StateMachine {
@@ -12,19 +14,17 @@ public class StateMachine {
     return this.states;
   }
 
-  public State addState(final String name) {
-    final Function<String, State> _function = (String it) -> {
-      return new State(name);
+  public State getInitialState() {
+    final Function1<State, Boolean> _function = (State it) -> {
+      return Boolean.valueOf(it.getIsInitial());
     };
-    return this.states.computeIfAbsent(name, _function);
+    return IterableExtensions.<State>findFirst(this.states.values(), _function);
   }
 
-  public State addTransition(final String source, final String target, final String event) {
-    State _xblockexpression = null;
-    {
-      State targetState = this.addState(target);
-      _xblockexpression = this.addState(source).addTransition(event, TransitionType.Direct, targetState);
-    }
-    return _xblockexpression;
+  public State state(final String name) {
+    final Function<String, State> _function = (String it) -> {
+      return new State(this, name);
+    };
+    return this.states.computeIfAbsent(name, _function);
   }
 }

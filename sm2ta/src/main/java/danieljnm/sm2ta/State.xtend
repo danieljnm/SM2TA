@@ -3,12 +3,22 @@ package danieljnm.sm2ta
 import java.util.List
 
 class State {
+	StateMachine stateMachine
 	String name
 	List<Transition> transitions = newArrayList
 	List<State> nestedStates = newArrayList
+	boolean isInitial
 	
-	new(String name) {
+	// TODO: Might want to keep an order for iteration purposes.
+	// It is always possible to just follow the flow from the Initial state and go from there
+	
+	new(StateMachine stateMachine, String name) {
+		this.stateMachine = stateMachine
 		this.name = name
+	}
+	
+	def State state(String name) {
+		stateMachine.state(name)
 	}
 	
 	def getName() {
@@ -23,8 +33,14 @@ class State {
 		transitions
 	}
 	
-	def addTransition(String event, TransitionType type, State target) {
-		transitions.add(new Transition(event, type, target))
+	def transition(String event) {
+		transitions.add(new Transition(event, stateMachine.initialState))
+		this
+	}
+	
+	def transition(String event, String target) {
+		var targetState = stateMachine.state(target)
+		transitions.add(new Transition(event, targetState))
 		this
 	}
 	
@@ -33,11 +49,20 @@ class State {
 		this
 	}
 	
+	def initial() {
+		isInitial = true
+		this
+	}
+	
+	def getIsInitial() {
+		isInitial
+	}
+	
 	override toString() {
 		'''
 		State: «name»
 		«IF transitions.length > 0»
-		Transitions: «transitions.join(", ")»
+		Transitions: «transitions.join()»
 		«ENDIF»
 		«IF nestedStates.length > 0»
 		Nedsted states: «nestedStates.join(", ")»

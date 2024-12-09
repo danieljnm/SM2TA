@@ -6,14 +6,19 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 public class Transition {
   private String event;
 
-  private TransitionType type;
-
   private State target;
 
-  public Transition(final String event, final TransitionType type, final State target) {
+  public Transition(final String event, final State target) {
     this.event = event;
-    this.type = type;
     this.target = target;
+  }
+
+  public String getEvent() {
+    return this.event;
+  }
+
+  public State getTarget() {
+    return this.target;
   }
 
   @Override
