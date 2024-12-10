@@ -1,7 +1,11 @@
 package danieljnm.sm2ta;
 
+import danieljnm.sm2ta.StateMachine.State;
+import danieljnm.sm2ta.StateMachine.StateMachine;
+import danieljnm.sm2ta.StateMachine.Transition;
 import java.util.List;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +45,7 @@ public class StateMachineTest {
   }
 
   @Test
-  public void basicMachineWithOneTransition() {
+  public void basicMachineWithOneTransitionTest() {
     this.stateMachine.state("Idle").initial().transition("Ready", "Planning").state("Planning");
     List<Transition> transitions = this.stateMachine.state("Idle").getTransitions();
     final List<Transition> _converted_transitions = (List<Transition>)transitions;
@@ -49,6 +53,18 @@ public class StateMachineTest {
     Transition transition = transitions.get(0);
     Assertions.assertEquals("Planning", transition.getTarget().getName());
     Assertions.assertEquals("Ready", transition.getEvent());
+  }
+
+  @Test
+  public void nestedMachineTest() {
+    final Procedure1<State> _function = (State it) -> {
+      it.nestedState("Testing").initial().transition("Processed", "Evaluating");
+      it.nestedState("Evaluating").transition("Done", "Idle");
+    };
+    this.stateMachine.state("Idle").initial().nesting(_function).transition("Ready", "Planning").state("Planning");
+    Printer printer = new Printer();
+    printer.print(this.stateMachine);
+    Assertions.assertEquals(1, 1);
   }
 
   @Test

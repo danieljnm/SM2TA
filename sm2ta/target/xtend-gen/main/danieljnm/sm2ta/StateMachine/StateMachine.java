@@ -1,4 +1,4 @@
-package danieljnm.sm2ta;
+package danieljnm.sm2ta.StateMachine;
 
 import java.util.HashMap;
 import java.util.function.Function;

@@ -1,4 +1,4 @@
-package danieljnm.sm2ta
+package danieljnm.sm2ta.StateMachine
 
 import java.util.HashMap
 
@@ -13,7 +13,7 @@ class StateMachine {
 		states.values.findFirst[it.isInitial]
 	}
 	
-	def state(String name) {
+	def State state(String name) {
 		states.computeIfAbsent(name) [new State(this, name)]
 	}
 }

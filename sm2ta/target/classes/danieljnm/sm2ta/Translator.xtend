@@ -1,5 +1,7 @@
 package danieljnm.sm2ta
 
+import danieljnm.sm2ta.StateMachine.StateMachine
+
 class Translator {
 	static StateMachine stateMachine = new StateMachine()
 	

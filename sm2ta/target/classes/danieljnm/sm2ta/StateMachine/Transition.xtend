@@ -1,4 +1,4 @@
-package danieljnm.sm2ta
+package danieljnm.sm2ta.StateMachine
 
 class Transition {
 	String event

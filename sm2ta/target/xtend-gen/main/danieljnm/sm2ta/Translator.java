@@ -1,5 +1,7 @@
 package danieljnm.sm2ta;
 
+import danieljnm.sm2ta.StateMachine.State;
+import danieljnm.sm2ta.StateMachine.StateMachine;
 import java.util.function.Consumer;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 

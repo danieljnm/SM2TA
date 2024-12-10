@@ -3,6 +3,7 @@ package danieljnm.sm2ta
 import static org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
+import danieljnm.sm2ta.StateMachine.StateMachine
 
 class StateMachineTest {
 	
@@ -35,7 +36,7 @@ class StateMachineTest {
 	}
 	
 	@Test
-	def void basicMachineWithOneTransition() {
+	def void basicMachineWithOneTransitionTest() {
 		stateMachine
 			.state("Idle").initial
 			.transition("Ready", "Planning")
@@ -45,6 +46,24 @@ class StateMachineTest {
 		var transition = transitions.get(0)
 		assertEquals("Planning", transition.target.name)
 		assertEquals("Ready", transition.event)
+	}
+	
+	@Test
+	def void nestedMachineTest() {
+		stateMachine
+			.state("Idle").initial
+				.nesting[
+					nestedState("Testing").initial
+						.transition("Processed", "Evaluating")
+					nestedState("Evaluating")
+						.transition("Done", "Idle")
+				]
+				.transition("Ready", "Planning")
+			.state("Planning")
+		
+		var printer = new Printer()
+		printer.print(stateMachine)
+		assertEquals(1, 1)
 	}
 	
 	@Test

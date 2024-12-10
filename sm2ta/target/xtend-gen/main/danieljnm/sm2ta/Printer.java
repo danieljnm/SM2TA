@@ -1,5 +1,8 @@
 package danieljnm.sm2ta;
 
+import danieljnm.sm2ta.StateMachine.State;
+import danieljnm.sm2ta.StateMachine.StateMachine;
+import danieljnm.sm2ta.StateMachine.Transition;
 import java.util.HashMap;
 import java.util.function.Consumer;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
@@ -20,17 +23,17 @@ public class Printer {
     }
     InputOutput.<State>println(initialState);
     this.visited.put(initialState.getName(), initialState);
-    this.print(initialState);
+    this.print(initialState, 0);
   }
 
-  public void print(final State state) {
+  public void print(final State state, final int depth) {
     final Consumer<Transition> _function = (Transition it) -> {
       boolean _containsKey = this.visited.containsKey(it.getTarget().getName());
       boolean _not = (!_containsKey);
       if (_not) {
         this.visited.put(it.getTarget().getName(), it.getTarget());
         InputOutput.<State>println(it.getTarget());
-        this.print(it.getTarget());
+        this.print(it.getTarget(), depth);
       }
     };
     state.getTransitions().forEach(_function);

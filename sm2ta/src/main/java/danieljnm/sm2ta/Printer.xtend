@@ -1,5 +1,7 @@
 package danieljnm.sm2ta
 
+import danieljnm.sm2ta.StateMachine.State
+import danieljnm.sm2ta.StateMachine.StateMachine
 import java.util.HashMap
 
 class Printer {
@@ -14,15 +16,15 @@ class Printer {
 		
 		println(initialState)
 		visited.put(initialState.name, initialState)
-		initialState.print
+		initialState.print(0)
 	}
 	
-	def void print(State state) {
+	def void print(State state, int depth) {
 		state.transitions.forEach[it |
 			if (!visited.containsKey(it.target.name)) {
 				visited.put(it.target.name, it.target)
 				println(it.target)
-				it.target.print
+				it.target.print(depth)
 			}
 		]
 	}

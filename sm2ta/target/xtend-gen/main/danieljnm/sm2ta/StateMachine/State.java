@@ -1,10 +1,11 @@
-package danieljnm.sm2ta;
+package danieljnm.sm2ta.StateMachine;
 
 import java.util.List;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 @SuppressWarnings("all")
 public class State {
@@ -18,6 +19,13 @@ public class State {
 
   private boolean isInitial;
 
+  private boolean isNested;
+
+  public State(final String name) {
+    this.name = name;
+    this.isNested = true;
+  }
+
   public State(final StateMachine stateMachine, final String name) {
     this.stateMachine = stateMachine;
     this.name = name;
@@ -27,12 +35,35 @@ public class State {
     return this.stateMachine.state(name);
   }
 
+  public State nestedState(final String name) {
+    State _xblockexpression = null;
+    {
+      final State nestedState = new State(name);
+      this.nestedStates.add(nestedState);
+      _xblockexpression = nestedState;
+    }
+    return _xblockexpression;
+  }
+
+  public State nesting(final Procedure1<? super State> configure) {
+    State _xblockexpression = null;
+    {
+      configure.apply(this);
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+
   public String getName() {
     return this.name;
   }
 
   public String setName(final String name) {
     return this.name = name;
+  }
+
+  public List<State> getNestedStates() {
+    return this.nestedStates;
   }
 
   public List<Transition> getTransitions() {
@@ -53,6 +84,9 @@ public class State {
   public State transition(final String event, final String target) {
     State _xblockexpression = null;
     {
+      if (this.isNested) {
+        return this;
+      }
       State targetState = this.stateMachine.state(target);
       Transition _transition = new Transition(event, targetState);
       this.transitions.add(_transition);
@@ -83,6 +117,14 @@ public class State {
     return this.isInitial;
   }
 
+  public boolean getIsNested() {
+    return this.isNested;
+  }
+
+  public boolean setIsNested(final boolean isNested) {
+    return this.isNested = isNested;
+  }
+
   @Override
   public String toString() {
     StringConcatenation _builder = new StringConcatenation();
@@ -96,16 +138,6 @@ public class State {
         _builder.append("Transitions: ");
         String _join = IterableExtensions.join(this.transitions);
         _builder.append(_join);
-        _builder.newLineIfNotEmpty();
-      }
-    }
-    {
-      int _length_1 = ((Object[])Conversions.unwrapArray(this.nestedStates, Object.class)).length;
-      boolean _greaterThan_1 = (_length_1 > 0);
-      if (_greaterThan_1) {
-        _builder.append("Nedsted states: ");
-        String _join_1 = IterableExtensions.join(this.nestedStates, ", ");
-        _builder.append(_join_1);
         _builder.newLineIfNotEmpty();
       }
     }
