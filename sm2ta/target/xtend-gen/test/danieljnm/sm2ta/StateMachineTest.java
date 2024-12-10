@@ -1,9 +1,7 @@
 package danieljnm.sm2ta;
 
 import java.util.List;
-import java.util.function.Consumer;
 import org.eclipse.xtext.xbase.lib.Conversions;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,9 +54,7 @@ public class StateMachineTest {
   @Test
   public void simpleMachineTest() {
     this.stateMachine.state("Idle").initial().transition("Ready", "Position acquisition").state("Position acquisition").transition("Systems ready", "Global planning").transition("Lost control").state("Global planning").transition("Success", "Next position").transition("Lost control").state("Next position").transition("Continue loop", "Capture state").transition("Done", "Mission completed").transition("Lost control").state("Capture state").transition("Success", "Validate state").transition("Lost control").state("Validate state").transition("Success", "Next position").transition("Lost control").state("Mission completed").transition("Success");
-    final Consumer<State> _function = (State it) -> {
-      InputOutput.<State>println(it);
-    };
-    this.stateMachine.getStates().values().forEach(_function);
+    Printer printer = new Printer();
+    printer.print(this.stateMachine);
   }
 }

@@ -9,9 +9,6 @@ class State {
 	List<State> nestedStates = newArrayList
 	boolean isInitial
 	
-	// TODO: Might want to keep an order for iteration purposes.
-	// It is always possible to just follow the flow from the Initial state and go from there
-	
 	new(StateMachine stateMachine, String name) {
 		this.stateMachine = stateMachine
 		this.name = name

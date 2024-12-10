@@ -71,6 +71,7 @@ class StateMachineTest {
 			.state("Mission completed")
 				.transition("Success")
 		
-		stateMachine.states.values.forEach[println(it)]
+		var printer = new Printer()
+		printer.print(stateMachine)
 	}
 }
