@@ -4,13 +4,15 @@ import java.util.List
 
 class State {
 	StateMachine stateMachine
+	State parent
 	String name
 	List<Transition> transitions = newArrayList
 	List<State> nestedStates = newArrayList
 	boolean isInitial
 	boolean isNested
 	
-	new(String name) {
+	new(State parent, String name) {
+		this.parent = parent
 		this.name = name
 		this.isNested = true
 	}
@@ -25,7 +27,12 @@ class State {
 	}
 	
 	def State nestedState(String name) {
-		val nestedState = new State(name)
+		val existingState = nestedStates.findFirst[it.name == name]
+		if (existingState !== null) {
+			return existingState
+		}
+		
+		val nestedState = new State(this, name)
 		nestedStates.add(nestedState)
 		nestedState
 	}
@@ -53,12 +60,22 @@ class State {
 	}
 	
 	def transition(String event) {
+		if (isNested) {
+			transitions.add(new Transition(event, parent))
+			return this
+		}
 		transitions.add(new Transition(event, stateMachine.initialState))
 		this
 	}
 	
 	def transition(String event, String target) {
 		if (isNested) {
+			var targetState = parent.nestedStates.findFirst[it.name === target]
+			if (targetState === null) {
+				targetState = new State(parent, target)
+				parent.nestedStates.add(targetState)
+			}
+			transitions.add(new Transition(event, targetState))
 			return this
 		}
 		
@@ -89,11 +106,11 @@ class State {
 		this.isNested = isNested
 	}
 	
-	override toString() {
+	def toString(int depth) {
 		'''
 		State: «name»
 		«IF transitions.length > 0»
-		Transitions: «transitions.join()»
+		«" ".repeat(depth * 2)»Transitions: «transitions.join()»
 		«ENDIF»
 		'''
 	}

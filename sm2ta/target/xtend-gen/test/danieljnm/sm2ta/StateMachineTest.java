@@ -59,7 +59,7 @@ public class StateMachineTest {
   public void nestedMachineTest() {
     final Procedure1<State> _function = (State it) -> {
       it.nestedState("Testing").initial().transition("Processed", "Evaluating");
-      it.nestedState("Evaluating").transition("Done", "Idle");
+      it.nestedState("Evaluating").transition("Done");
     };
     this.stateMachine.state("Idle").initial().nesting(_function).transition("Ready", "Planning").state("Planning");
     Printer printer = new Printer();

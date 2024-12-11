@@ -56,7 +56,7 @@ class StateMachineTest {
 					nestedState("Testing").initial
 						.transition("Processed", "Evaluating")
 					nestedState("Evaluating")
-						.transition("Done", "Idle")
+						.transition("Done")
 				]
 				.transition("Ready", "Planning")
 			.state("Planning")

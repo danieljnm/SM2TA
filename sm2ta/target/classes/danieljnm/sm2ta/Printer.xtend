@@ -14,18 +14,26 @@ class Printer {
 			return
 		}
 		
-		println(initialState)
-		visited.put(initialState.name, initialState)
 		initialState.print(0)
 	}
 	
 	def void print(State state, int depth) {
+		if (visited.containsKey(state.name)) {
+			return
+		}
+		visited.put(state.name, state)
+		
+		println(" ".repeat(depth * 2) + state.toString(depth))
+		
+		if (!state.nestedStates.empty) {
+			println(" ".repeat(depth * 2) + "Nested states:")
+			state.nestedStates.forEach[it |
+				it.print(depth + 1)
+			]
+		}
+		
 		state.transitions.forEach[it |
-			if (!visited.containsKey(it.target.name)) {
-				visited.put(it.target.name, it.target)
-				println(it.target)
-				it.target.print(depth)
-			}
+			it.target.print(depth)
 		]
 	}
 }

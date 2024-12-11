@@ -1,15 +1,19 @@
 package danieljnm.sm2ta.StateMachine;
 
 import java.util.List;
+import java.util.Objects;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 @SuppressWarnings("all")
 public class State {
   private StateMachine stateMachine;
+
+  private State parent;
 
   private String name;
 
@@ -21,7 +25,8 @@ public class State {
 
   private boolean isNested;
 
-  public State(final String name) {
+  public State(final State parent, final String name) {
+    this.parent = parent;
     this.name = name;
     this.isNested = true;
   }
@@ -38,7 +43,14 @@ public class State {
   public State nestedState(final String name) {
     State _xblockexpression = null;
     {
-      final State nestedState = new State(name);
+      final Function1<State, Boolean> _function = (State it) -> {
+        return Boolean.valueOf(Objects.equals(it.name, name));
+      };
+      final State existingState = IterableExtensions.<State>findFirst(this.nestedStates, _function);
+      if ((existingState != null)) {
+        return existingState;
+      }
+      final State nestedState = new State(this, name);
       this.nestedStates.add(nestedState);
       _xblockexpression = nestedState;
     }
@@ -73,9 +85,14 @@ public class State {
   public State transition(final String event) {
     State _xblockexpression = null;
     {
+      if (this.isNested) {
+        Transition _transition = new Transition(event, this.parent);
+        this.transitions.add(_transition);
+        return this;
+      }
       State _initialState = this.stateMachine.getInitialState();
-      Transition _transition = new Transition(event, _initialState);
-      this.transitions.add(_transition);
+      Transition _transition_1 = new Transition(event, _initialState);
+      this.transitions.add(_transition_1);
       _xblockexpression = this;
     }
     return _xblockexpression;
@@ -85,11 +102,22 @@ public class State {
     State _xblockexpression = null;
     {
       if (this.isNested) {
+        final Function1<State, Boolean> _function = (State it) -> {
+          return Boolean.valueOf((it.name == target));
+        };
+        State targetState = IterableExtensions.<State>findFirst(this.parent.nestedStates, _function);
+        if ((targetState == null)) {
+          State _state = new State(this.parent, target);
+          targetState = _state;
+          this.parent.nestedStates.add(targetState);
+        }
+        Transition _transition = new Transition(event, targetState);
+        this.transitions.add(_transition);
         return this;
       }
-      State targetState = this.stateMachine.state(target);
-      Transition _transition = new Transition(event, targetState);
-      this.transitions.add(_transition);
+      State targetState_1 = this.stateMachine.state(target);
+      Transition _transition_1 = new Transition(event, targetState_1);
+      this.transitions.add(_transition_1);
       _xblockexpression = this;
     }
     return _xblockexpression;
@@ -125,8 +153,7 @@ public class State {
     return this.isNested = isNested;
   }
 
-  @Override
-  public String toString() {
+  public CharSequence toString(final int depth) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("State: ");
     _builder.append(this.name);
@@ -135,12 +162,14 @@ public class State {
       int _length = ((Object[])Conversions.unwrapArray(this.transitions, Object.class)).length;
       boolean _greaterThan = (_length > 0);
       if (_greaterThan) {
+        String _repeat = " ".repeat((depth * 2));
+        _builder.append(_repeat);
         _builder.append("Transitions: ");
         String _join = IterableExtensions.join(this.transitions);
         _builder.append(_join);
         _builder.newLineIfNotEmpty();
       }
     }
-    return _builder.toString();
+    return _builder;
   }
 }
