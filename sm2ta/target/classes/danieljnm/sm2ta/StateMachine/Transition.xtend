@@ -29,10 +29,7 @@ class Transition {
 	override toString() {
 		'''
 		«IF target !== null»
-		«event» -> «target.name»
-		«ENDIF»
-		«IF guard !== null»
-		Guard: «guard»
+		«event» -> «target.name» «IF guard !== null»(«guard»)«ENDIF»
 		«ENDIF»
 		'''
 	}

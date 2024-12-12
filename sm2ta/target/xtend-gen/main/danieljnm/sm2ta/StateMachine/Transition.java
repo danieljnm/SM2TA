@@ -40,13 +40,14 @@ public class Transition {
         _builder.append(" -> ");
         String _name = this.target.getName();
         _builder.append(_name);
-        _builder.newLineIfNotEmpty();
-      }
-    }
-    {
-      if ((this.guard != null)) {
-        _builder.append("Guard: ");
-        _builder.append(this.guard);
+        _builder.append(" ");
+        {
+          if ((this.guard != null)) {
+            _builder.append("(");
+            _builder.append(this.guard);
+            _builder.append(")");
+          }
+        }
         _builder.newLineIfNotEmpty();
       }
     }
