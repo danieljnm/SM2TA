@@ -23,7 +23,7 @@ class Printer {
 		}
 		visited.put(state.name, state)
 		
-		println(" ".repeat(depth * 2) + state.toString(depth))
+		println(state.toString.prettify(depth))
 		
 		if (!state.nestedStates.empty) {
 			println(" ".repeat(depth * 2) + "Nested states:")
@@ -35,5 +35,11 @@ class Printer {
 		state.transitions.forEach[it |
 			it.target.print(depth)
 		]
+	}
+	
+	def prettify(String output, int depth) {
+		output.split('\n')
+			.map[' '.repeat(depth * 2) + it]
+			.join('\n') + '\n'
 	}
 }

@@ -8,6 +8,8 @@ public class Transition {
 
   private State target;
 
+  private String guard;
+
   public Transition(final String event, final State target) {
     this.event = event;
     this.target = target;
@@ -21,6 +23,14 @@ public class Transition {
     return this.target;
   }
 
+  public String setGuard(final String guard) {
+    return this.guard = guard;
+  }
+
+  public String getGuard() {
+    return this.guard;
+  }
+
   @Override
   public String toString() {
     StringConcatenation _builder = new StringConcatenation();
@@ -30,6 +40,13 @@ public class Transition {
         _builder.append(" -> ");
         String _name = this.target.getName();
         _builder.append(_name);
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    {
+      if ((this.guard != null)) {
+        _builder.append("Guard: ");
+        _builder.append(this.guard);
         _builder.newLineIfNotEmpty();
       }
     }

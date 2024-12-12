@@ -89,6 +89,15 @@ class State {
 		this
 	}
 	
+	def guard(String guard) {
+		if (transitions.empty) {
+			return this
+		}
+		
+		transitions.lastOrNull.guard = guard
+		this
+	}
+	
 	def initial() {
 		isInitial = true
 		this
@@ -106,11 +115,11 @@ class State {
 		this.isNested = isNested
 	}
 	
-	def toString(int depth) {
+	override toString() {
 		'''
 		State: «name»
 		«IF transitions.length > 0»
-		«" ".repeat(depth * 2)»Transitions: «transitions.join()»
+		Transitions: «transitions.join()»
 		«ENDIF»
 		'''
 	}

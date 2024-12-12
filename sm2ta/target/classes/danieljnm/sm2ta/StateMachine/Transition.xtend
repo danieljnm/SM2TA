@@ -3,6 +3,7 @@ package danieljnm.sm2ta.StateMachine
 class Transition {
 	String event
 	State target
+	String guard
 	
 	new(String event, State target) {
 		this.event = event
@@ -17,10 +18,21 @@ class Transition {
 		target
 	}
 	
+	def setGuard(String guard) {
+		this.guard = guard
+	}
+	
+	def getGuard() {
+		guard
+	}
+	
 	override toString() {
 		'''
 		«IF target !== null»
 		«event» -> «target.name»
+		«ENDIF»
+		«IF guard !== null»
+		Guard: «guard»
 		«ENDIF»
 		'''
 	}

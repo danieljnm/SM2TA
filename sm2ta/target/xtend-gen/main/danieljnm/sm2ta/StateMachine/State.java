@@ -132,6 +132,20 @@ public class State {
     return _xblockexpression;
   }
 
+  public State guard(final String guard) {
+    State _xblockexpression = null;
+    {
+      boolean _isEmpty = this.transitions.isEmpty();
+      if (_isEmpty) {
+        return this;
+      }
+      Transition _lastOrNull = IterableExtensions.<Transition>lastOrNull(this.transitions);
+      _lastOrNull.setGuard(guard);
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+
   public State initial() {
     State _xblockexpression = null;
     {
@@ -153,7 +167,8 @@ public class State {
     return this.isNested = isNested;
   }
 
-  public CharSequence toString(final int depth) {
+  @Override
+  public String toString() {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("State: ");
     _builder.append(this.name);
@@ -162,14 +177,12 @@ public class State {
       int _length = ((Object[])Conversions.unwrapArray(this.transitions, Object.class)).length;
       boolean _greaterThan = (_length > 0);
       if (_greaterThan) {
-        String _repeat = " ".repeat((depth * 2));
-        _builder.append(_repeat);
         _builder.append("Transitions: ");
         String _join = IterableExtensions.join(this.transitions);
         _builder.append(_join);
         _builder.newLineIfNotEmpty();
       }
     }
-    return _builder;
+    return _builder.toString();
   }
 }
