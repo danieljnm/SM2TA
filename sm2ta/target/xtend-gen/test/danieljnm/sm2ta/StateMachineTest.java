@@ -23,23 +23,21 @@ public class StateMachineTest {
   }
 
   @Test
-  public void emptyMachineTest() {
+  public void emptyMachine() {
     int _length = ((Object[])Conversions.unwrapArray(this.stateMachine.getStates().values(), Object.class)).length;
     boolean _equals = (_length == 0);
     Assertions.assertEquals(Boolean.valueOf(true), Boolean.valueOf(_equals));
   }
 
   @Test
-  public void oneStateTest() {
+  public void oneState() {
     this.stateMachine.state("Idle");
     Assertions.assertEquals(1, ((Object[])Conversions.unwrapArray(this.stateMachine.getStates().values(), Object.class)).length);
-    State _get = this.stateMachine.getStates().get("Idle");
-    boolean _tripleNotEquals = (_get != null);
-    Assertions.assertEquals(Boolean.valueOf(true), Boolean.valueOf(_tripleNotEquals));
+    Assertions.assertEquals("Idle", (((State[])Conversions.unwrapArray(this.stateMachine.getStates().values(), State.class))[0]).getName());
   }
 
   @Test
-  public void initialStateTest() {
+  public void initialState() {
     this.stateMachine.state("Idle").initial();
     State initialState = this.stateMachine.getInitialState();
     Assertions.assertNotNull(initialState);
@@ -47,9 +45,9 @@ public class StateMachineTest {
   }
 
   @Test
-  public void basicMachineWithOneTransitionTest() {
+  public void transition() {
     this.stateMachine.state("Idle").initial().transition("Ready", "Planning").state("Planning");
-    List<Transition> transitions = this.stateMachine.state("Idle").getTransitions();
+    List<Transition> transitions = this.stateMachine.getInitialState().getTransitions();
     final List<Transition> _converted_transitions = (List<Transition>)transitions;
     Assertions.assertEquals(1, ((Object[])Conversions.unwrapArray(_converted_transitions, Object.class)).length);
     Transition transition = transitions.get(0);
@@ -58,38 +56,30 @@ public class StateMachineTest {
   }
 
   @Test
-  public void stateHasGuardTest() {
+  public void stateHasGuard() {
     final String guard = "x > 1";
     this.stateMachine.state("Idle").initial().transition("Ready", "Planning").guard(guard);
-    final Function1<Transition, Boolean> _function = (Transition it) -> {
-      String _event = it.getEvent();
-      return Boolean.valueOf((_event == "Ready"));
-    };
-    Transition transition = IterableExtensions.<Transition>findFirst(this.stateMachine.getInitialState().getTransitions(), _function);
+    Transition transition = this.stateMachine.getInitialState().getTransitions().get(0);
     Assertions.assertNotNull(transition);
     Assertions.assertEquals(guard, transition.getGuard());
   }
 
   @Test
-  public void stateHasActionTest() {
+  public void stateHasAction() {
     final String action = "x = 0";
     this.stateMachine.state("Idle").initial().transition("Ready", "Planning").action(action);
-    final Function1<Transition, Boolean> _function = (Transition it) -> {
-      String _event = it.getEvent();
-      return Boolean.valueOf((_event == "Ready"));
-    };
-    Transition transition = IterableExtensions.<Transition>findFirst(this.stateMachine.getInitialState().getTransitions(), _function);
+    Transition transition = this.stateMachine.getInitialState().getTransitions().get(0);
     Assertions.assertNotNull(transition);
     Assertions.assertEquals(action, transition.getAction());
   }
 
   @Test
-  public void nestedMachineTest() {
+  public void nestedMachineStates() {
     final Procedure1<State> _function = (State it) -> {
       it.nestedState("Testing").initial().transition("Processed", "Evaluating").guard("x > 1").action("x = 0");
       it.nestedState("Evaluating").transition("Done");
     };
-    this.stateMachine.state("Idle").initial().nesting(_function).transition("Ready", "Planning").state("Planning").transition("Done").action("x = 0");
+    this.stateMachine.state("Idle").initial().nesting(_function);
     List<State> nestedStates = this.stateMachine.getInitialState().getNestedStates();
     final List<State> _converted_nestedStates = (List<State>)nestedStates;
     Assertions.assertEquals(2, ((Object[])Conversions.unwrapArray(_converted_nestedStates, Object.class)).length);
@@ -100,6 +90,20 @@ public class StateMachineTest {
     Assertions.assertNotNull(initialState);
     Assertions.assertEquals("Testing", initialState.getName());
     Assertions.assertFalse(initialState.getTransitions().isEmpty());
+  }
+
+  @Test
+  public void nestedMachineTransitions() {
+    final Procedure1<State> _function = (State it) -> {
+      it.nestedState("Testing").initial().transition("Processed", "Evaluating").guard("x > 1").action("x = 0");
+      it.nestedState("Evaluating").transition("Done");
+    };
+    this.stateMachine.state("Idle").initial().nesting(_function).transition("Ready", "Planning").state("Planning").transition("Done");
+    List<State> nestedStates = this.stateMachine.getInitialState().getNestedStates();
+    final Function1<State, Boolean> _function_1 = (State it) -> {
+      return Boolean.valueOf(it.getIsInitial());
+    };
+    State initialState = IterableExtensions.<State>findFirst(nestedStates, _function_1);
     Transition transition = initialState.getTransitions().get(0);
     Assertions.assertEquals("Evaluating", transition.getTarget().getName());
     Assertions.assertEquals("Processed", transition.getEvent());

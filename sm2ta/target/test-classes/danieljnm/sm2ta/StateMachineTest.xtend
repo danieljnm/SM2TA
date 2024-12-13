@@ -15,20 +15,19 @@ class StateMachineTest {
 	}
 	
 	@Test
-	def void emptyMachineTest() {
+	def void emptyMachine() {
 		assertEquals(true, stateMachine.states.values.length == 0)
 	}
 	
 	@Test
-	def void oneStateTest() {
+	def void oneState() {
 		stateMachine.state("Idle")
 		assertEquals(1, stateMachine.states.values.length)
-		assertEquals(true, stateMachine.states.get("Idle") !== null)
-		
+		assertEquals("Idle", stateMachine.states.values.get(0).name)
 	}
 	
 	@Test
-	def void initialStateTest() {
+	def void initialState() {
 		stateMachine.state("Idle").initial
 		var initialState = stateMachine.initialState
 		assertNotNull(initialState)
@@ -36,12 +35,12 @@ class StateMachineTest {
 	}
 	
 	@Test
-	def void basicMachineWithOneTransitionTest() {
+	def void transition() {
 		stateMachine
 			.state("Idle").initial
-			.transition("Ready", "Planning")
+				.transition("Ready", "Planning")
 			.state("Planning")
-		var transitions = stateMachine.state("Idle").transitions
+		var transitions = stateMachine.initialState.transitions
 		assertEquals(1, transitions.length)
 		var transition = transitions.get(0)
 		assertEquals("Planning", transition.target.name)
@@ -49,28 +48,48 @@ class StateMachineTest {
 	}
 	
 	@Test
-	def void stateHasGuardTest() {
+	def void stateHasGuard() {
 		val guard = "x > 1"
 		stateMachine
 			.state("Idle").initial
 				.transition("Ready", "Planning").guard(guard)
-		var transition = stateMachine.initialState.transitions.findFirst[it.event === "Ready"]
+		var transition = stateMachine.initialState.transitions.get(0)
 		assertNotNull(transition)
 		assertEquals(guard, transition.guard)
 	}
 	
-	@Test def void stateHasActionTest() {
+	@Test def void stateHasAction() {
 		val action = "x = 0"
 		stateMachine
 			.state("Idle").initial
 				.transition("Ready", "Planning").action(action)
-		var transition = stateMachine.initialState.transitions.findFirst[it.event === "Ready"]
+		var transition = stateMachine.initialState.transitions.get(0)
 		assertNotNull(transition)
 		assertEquals(action, transition.action)
 	}
 	
 	@Test
-	def void nestedMachineTest() {
+	def void nestedMachineStates() {
+		stateMachine
+			.state("Idle").initial
+				.nesting[
+					nestedState("Testing").initial
+						.transition("Processed", "Evaluating").guard("x > 1").action("x = 0")
+					nestedState("Evaluating")
+						.transition("Done")
+				]
+		
+		var nestedStates = stateMachine.initialState.nestedStates
+		assertEquals(2, nestedStates.length)
+		
+		var initialState = nestedStates.findFirst[it.isInitial]
+		assertNotNull(initialState)		
+		assertEquals("Testing", initialState.name)
+		assertFalse(initialState.transitions.empty)
+	}
+	
+	@Test
+	def void nestedMachineTransitions() {
 		stateMachine
 			.state("Idle").initial
 				.nesting[
@@ -81,16 +100,10 @@ class StateMachineTest {
 				]
 				.transition("Ready", "Planning")
 			.state("Planning")
-				.transition("Done").action("x = 0")
+				.transition("Done")
 		
 		var nestedStates = stateMachine.initialState.nestedStates
-		assertEquals(2, nestedStates.length)
-		
 		var initialState = nestedStates.findFirst[it.isInitial]
-		assertNotNull(initialState)		
-		assertEquals("Testing", initialState.name)
-		assertFalse(initialState.transitions.empty)
-		
 		var transition = initialState.transitions.get(0)
 		assertEquals("Evaluating", transition.target.name)
 		assertEquals("Processed", transition.event)
