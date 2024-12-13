@@ -49,6 +49,27 @@ class StateMachineTest {
 	}
 	
 	@Test
+	def void stateHasGuardTest() {
+		val guard = "x > 1"
+		stateMachine
+			.state("Idle").initial
+				.transition("Ready", "Planning").guard(guard)
+		var transition = stateMachine.initialState.transitions.findFirst[it.event === "Ready"]
+		assertNotNull(transition)
+		assertEquals(guard, transition.guard)
+	}
+	
+	@Test def void stateHasActionTest() {
+		val action = "x = 0"
+		stateMachine
+			.state("Idle").initial
+				.transition("Ready", "Planning").action(action)
+		var transition = stateMachine.initialState.transitions.findFirst[it.event === "Ready"]
+		assertNotNull(transition)
+		assertEquals(action, transition.action)
+	}
+	
+	@Test
 	def void nestedMachineTest() {
 		stateMachine
 			.state("Idle").initial
@@ -56,13 +77,16 @@ class StateMachineTest {
 					nestedState("Testing").initial
 						.transition("Processed", "Evaluating")
 					nestedState("Evaluating")
-						.transition("Done").guard("x > 1")
+						.transition("Done").guard("x > 1").action("x = 0")
 				]
 				.transition("Ready", "Planning")
 			.state("Planning")
+				.transition("Done").action("x = 0")
 		
 		var printer = new Printer()
 		printer.print(stateMachine)
+		var nestedStates = stateMachine.initialState.nestedStates
+		
 		assertEquals(1, 1)
 	}
 	

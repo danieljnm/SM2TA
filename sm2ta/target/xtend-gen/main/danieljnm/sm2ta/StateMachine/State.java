@@ -57,10 +57,10 @@ public class State {
     return _xblockexpression;
   }
 
-  public State nesting(final Procedure1<? super State> configure) {
+  public State nesting(final Procedure1<? super State> context) {
     State _xblockexpression = null;
     {
-      configure.apply(this);
+      context.apply(this);
       _xblockexpression = this;
     }
     return _xblockexpression;
@@ -142,6 +142,19 @@ public class State {
       Transition _lastOrNull = IterableExtensions.<Transition>lastOrNull(this.transitions);
       _lastOrNull.setGuard(guard);
       _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+
+  public Object action(final String action) {
+    String _xblockexpression = null;
+    {
+      boolean _isEmpty = this.transitions.isEmpty();
+      if (_isEmpty) {
+        return this;
+      }
+      Transition _lastOrNull = IterableExtensions.<Transition>lastOrNull(this.transitions);
+      _xblockexpression = _lastOrNull.setAction(action);
     }
     return _xblockexpression;
   }

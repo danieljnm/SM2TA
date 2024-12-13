@@ -10,6 +10,8 @@ public class Transition {
 
   private String guard;
 
+  private String action;
+
   public Transition(final String event, final State target) {
     this.event = event;
     this.target = target;
@@ -31,6 +33,14 @@ public class Transition {
     return this.guard;
   }
 
+  public String setAction(final String action) {
+    return this.action = action;
+  }
+
+  public String getAction() {
+    return this.action;
+  }
+
   @Override
   public String toString() {
     StringConcatenation _builder = new StringConcatenation();
@@ -40,11 +50,17 @@ public class Transition {
         _builder.append(" -> ");
         String _name = this.target.getName();
         _builder.append(_name);
-        _builder.append(" ");
         {
           if ((this.guard != null)) {
-            _builder.append("(");
+            _builder.append(" (Guard: ");
             _builder.append(this.guard);
+            _builder.append(")");
+          }
+        }
+        {
+          if ((this.action != null)) {
+            _builder.append(" (Action: ");
+            _builder.append(this.action);
             _builder.append(")");
           }
         }

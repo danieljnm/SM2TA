@@ -5,6 +5,8 @@ import danieljnm.sm2ta.StateMachine.StateMachine;
 import danieljnm.sm2ta.StateMachine.Transition;
 import java.util.List;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,14 +58,41 @@ public class StateMachineTest {
   }
 
   @Test
+  public void stateHasGuardTest() {
+    final String guard = "x > 1";
+    this.stateMachine.state("Idle").initial().transition("Ready", "Planning").guard(guard);
+    final Function1<Transition, Boolean> _function = (Transition it) -> {
+      String _event = it.getEvent();
+      return Boolean.valueOf((_event == "Ready"));
+    };
+    Transition transition = IterableExtensions.<Transition>findFirst(this.stateMachine.getInitialState().getTransitions(), _function);
+    Assertions.assertNotNull(transition);
+    Assertions.assertEquals(guard, transition.getGuard());
+  }
+
+  @Test
+  public void stateHasActionTest() {
+    final String action = "x = 0";
+    this.stateMachine.state("Idle").initial().transition("Ready", "Planning").action(action);
+    final Function1<Transition, Boolean> _function = (Transition it) -> {
+      String _event = it.getEvent();
+      return Boolean.valueOf((_event == "Ready"));
+    };
+    Transition transition = IterableExtensions.<Transition>findFirst(this.stateMachine.getInitialState().getTransitions(), _function);
+    Assertions.assertNotNull(transition);
+    Assertions.assertEquals(action, transition.getAction());
+  }
+
+  @Test
   public void nestedMachineTest() {
     final Procedure1<State> _function = (State it) -> {
       it.nestedState("Testing").initial().transition("Processed", "Evaluating");
-      it.nestedState("Evaluating").transition("Done").guard("x > 1");
+      it.nestedState("Evaluating").transition("Done").guard("x > 1").action("x = 0");
     };
-    this.stateMachine.state("Idle").initial().nesting(_function).transition("Ready", "Planning").state("Planning");
+    this.stateMachine.state("Idle").initial().nesting(_function).transition("Ready", "Planning").state("Planning").transition("Done").action("x = 0");
     Printer printer = new Printer();
     printer.print(this.stateMachine);
+    List<State> nestedStates = this.stateMachine.getInitialState().getNestedStates();
     Assertions.assertEquals(1, 1);
   }
 

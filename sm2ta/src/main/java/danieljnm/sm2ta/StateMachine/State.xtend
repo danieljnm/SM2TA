@@ -7,7 +7,7 @@ class State {
 	State parent
 	String name
 	List<Transition> transitions = newArrayList
-	List<State> nestedStates = newArrayList
+	List<State> nestedStates = newArrayList // TODO: think about passing a statemachine instead
 	boolean isInitial
 	boolean isNested
 	
@@ -37,9 +37,8 @@ class State {
 		nestedState
 	}
 	
-	
-	def State nesting((State) => void configure) {
-		configure.apply(this)
+	def State nesting((State) => void context) {
+		context.apply(this)
 		this
 	}
 	
@@ -96,6 +95,14 @@ class State {
 		
 		transitions.lastOrNull.guard = guard
 		this
+	}
+	
+	def action(String action) {
+		if (transitions.empty) {
+			return this
+		}
+		
+		transitions.lastOrNull.action = action
 	}
 	
 	def initial() {
