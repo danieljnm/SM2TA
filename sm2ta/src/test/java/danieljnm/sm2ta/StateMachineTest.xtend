@@ -75,44 +75,27 @@ class StateMachineTest {
 			.state("Idle").initial
 				.nesting[
 					nestedState("Testing").initial
-						.transition("Processed", "Evaluating")
+						.transition("Processed", "Evaluating").guard("x > 1").action("x = 0")
 					nestedState("Evaluating")
-						.transition("Done").guard("x > 1").action("x = 0")
+						.transition("Done")
 				]
 				.transition("Ready", "Planning")
 			.state("Planning")
 				.transition("Done").action("x = 0")
 		
-		var printer = new Printer()
-		printer.print(stateMachine)
 		var nestedStates = stateMachine.initialState.nestedStates
+		assertEquals(2, nestedStates.length)
 		
-		assertEquals(1, 1)
-	}
-	
-	@Test
-	def void simpleMachineTest() {
-		stateMachine
-			.state("Idle").initial
-				.transition("Ready", "Position acquisition")
-			.state("Position acquisition")
-				.transition("Systems ready", "Global planning")
-				.transition("Lost control")
-			.state("Global planning")
-				.transition("Success", "Next position")
-				.transition("Lost control")
-			.state("Next position")
-				.transition("Continue loop", "Capture state")
-				.transition("Done", "Mission completed")
-				.transition("Lost control")
-			.state("Capture state")
-				.transition("Success", "Validate state")
-				.transition("Lost control")
-			.state("Validate state")
-				.transition("Success", "Next position")
-				.transition("Lost control")
-			.state("Mission completed")
-				.transition("Success")
+		var initialState = nestedStates.findFirst[it.isInitial]
+		assertNotNull(initialState)		
+		assertEquals("Testing", initialState.name)
+		assertFalse(initialState.transitions.empty)
+		
+		var transition = initialState.transitions.get(0)
+		assertEquals("Evaluating", transition.target.name)
+		assertEquals("Processed", transition.event)
+		assertEquals("x > 1", transition.guard)
+		assertEquals("x = 0", transition.action)
 		
 		var printer = new Printer()
 		printer.print(stateMachine)
