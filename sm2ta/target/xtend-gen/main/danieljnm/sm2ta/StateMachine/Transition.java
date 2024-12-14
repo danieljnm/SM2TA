@@ -4,41 +4,19 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
 public class Transition {
-  private String event;
+  public String event;
 
-  private State target;
+  public State target;
 
-  private String guard;
+  public String guard;
 
-  private String action;
+  public String action;
+
+  public String timeout;
 
   public Transition(final String event, final State target) {
     this.event = event;
     this.target = target;
-  }
-
-  public String getEvent() {
-    return this.event;
-  }
-
-  public State getTarget() {
-    return this.target;
-  }
-
-  public String setGuard(final String guard) {
-    return this.guard = guard;
-  }
-
-  public String getGuard() {
-    return this.guard;
-  }
-
-  public String setAction(final String action) {
-    return this.action = action;
-  }
-
-  public String getAction() {
-    return this.action;
   }
 
   @Override
@@ -48,8 +26,7 @@ public class Transition {
       if ((this.target != null)) {
         _builder.append(this.event);
         _builder.append(" -> ");
-        String _name = this.target.getName();
-        _builder.append(_name);
+        _builder.append(this.target.name);
         {
           if ((this.guard != null)) {
             _builder.append(" (Guard: ");
@@ -61,6 +38,13 @@ public class Transition {
           if ((this.action != null)) {
             _builder.append(" (Action: ");
             _builder.append(this.action);
+            _builder.append(")");
+          }
+        }
+        {
+          if ((this.timeout != null)) {
+            _builder.append(" (Timeout: ");
+            _builder.append(this.timeout);
             _builder.append(")");
           }
         }

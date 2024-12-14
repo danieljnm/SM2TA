@@ -4,12 +4,12 @@ import java.util.List
 
 class State {
 	StateMachine stateMachine
-	State parent
-	String name
-	List<Transition> transitions = newArrayList
-	List<State> nestedStates = newArrayList // TODO: think about passing a statemachine instead
-	boolean isInitial
-	boolean isNested
+	public State parent
+	public String name
+	public List<Transition> transitions = newArrayList
+	public List<State> nestedStates = newArrayList
+	public boolean isInitial
+	public boolean isNested
 	
 	new(State parent, String name) {
 		this.parent = parent
@@ -40,22 +40,6 @@ class State {
 	def State nesting((State) => void context) {
 		context.apply(this)
 		this
-	}
-	
-	def getName() {
-		name
-	}
-	
-	def setName(String name) {
-		this.name = name
-	}
-	
-	def getNestedStates() {
-		nestedStates
-	}
-	
-	def getTransitions() {
-		transitions
 	}
 	
 	def transition(String event) {
@@ -105,21 +89,17 @@ class State {
 		transitions.lastOrNull.action = action
 	}
 	
+	def timeout(String timeout) {
+		if (transitions.empty) {
+			return this
+		}
+		
+		transitions.lastOrNull.timeout = timeout
+	}
+	
 	def initial() {
 		isInitial = true
 		this
-	}
-	
-	def getIsInitial() {
-		isInitial
-	}
-	
-	def getIsNested() {
-		isNested
-	}
-	
-	def setIsNested(boolean isNested) {
-		this.isNested = isNested
 	}
 	
 	override toString() {

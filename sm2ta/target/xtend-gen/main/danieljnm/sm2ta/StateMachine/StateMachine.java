@@ -8,15 +8,11 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 @SuppressWarnings("all")
 public class StateMachine {
-  private HashMap<String, State> states = CollectionLiterals.<String, State>newHashMap();
-
-  public HashMap<String, State> getStates() {
-    return this.states;
-  }
+  public HashMap<String, State> states = CollectionLiterals.<String, State>newHashMap();
 
   public State getInitialState() {
     final Function1<State, Boolean> _function = (State it) -> {
-      return Boolean.valueOf(it.getIsInitial());
+      return Boolean.valueOf(it.isInitial);
     };
     return IterableExtensions.<State>findFirst(this.states.values(), _function);
   }

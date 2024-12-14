@@ -23,20 +23,20 @@ public class Printer {
       final Consumer<State> _function = (State it) -> {
         InputOutput.<State>println(it);
       };
-      stateMachine.getStates().values().forEach(_function);
+      stateMachine.states.values().forEach(_function);
       return;
     }
     this.print(initialState, 0);
   }
 
   public void print(final State state, final int depth) {
-    boolean _containsKey = this.visited.containsKey(state.getName());
+    boolean _containsKey = this.visited.containsKey(state.name);
     if (_containsKey) {
       return;
     }
-    this.visited.put(state.getName(), state);
+    this.visited.put(state.name, state);
     InputOutput.<String>println(this.prettify(state.toString(), depth));
-    boolean _isEmpty = state.getNestedStates().isEmpty();
+    boolean _isEmpty = state.nestedStates.isEmpty();
     boolean _not = (!_isEmpty);
     if (_not) {
       String _repeat = " ".repeat((depth * 2));
@@ -45,12 +45,12 @@ public class Printer {
       final Consumer<State> _function = (State it) -> {
         this.print(it, (depth + 1));
       };
-      state.getNestedStates().forEach(_function);
+      state.nestedStates.forEach(_function);
     }
     final Consumer<Transition> _function_1 = (Transition it) -> {
-      this.print(it.getTarget(), depth);
+      this.print(it.target, depth);
     };
-    state.getTransitions().forEach(_function_1);
+    state.transitions.forEach(_function_1);
   }
 
   public String prettify(final String output, final int depth) {

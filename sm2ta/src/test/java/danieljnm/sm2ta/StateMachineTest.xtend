@@ -48,7 +48,7 @@ class StateMachineTest {
 	}
 	
 	@Test
-	def void stateHasGuard() {
+	def void transitionHasGuard() {
 		val guard = "x > 1"
 		stateMachine
 			.state("Idle").initial
@@ -58,7 +58,7 @@ class StateMachineTest {
 		assertEquals(guard, transition.guard)
 	}
 	
-	@Test def void stateHasAction() {
+	@Test def void transitionHasAction() {
 		val action = "x = 0"
 		stateMachine
 			.state("Idle").initial
@@ -66,6 +66,16 @@ class StateMachineTest {
 		var transition = stateMachine.initialState.transitions.get(0)
 		assertNotNull(transition)
 		assertEquals(action, transition.action)
+	}
+	
+	@Test def void transitionHasTimeout() {
+		val timeout = "500"
+		stateMachine
+			.state("Idle").initial
+				.transition("Ready", "Planning").timeout(timeout)
+		var transition = stateMachine.initialState.transitions.get(0)
+		assertNotNull(transition)
+		assertEquals(timeout, transition.timeout)
 	}
 	
 	@Test

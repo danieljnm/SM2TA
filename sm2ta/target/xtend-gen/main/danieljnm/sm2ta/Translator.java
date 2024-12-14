@@ -28,6 +28,6 @@ public class Translator {
     final Consumer<State> _function = (State it) -> {
       InputOutput.<State>println(it);
     };
-    Translator.stateMachine.getStates().values().forEach(_function);
+    Translator.stateMachine.states.values().forEach(_function);
   }
 }

@@ -13,17 +13,17 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 public class State {
   private StateMachine stateMachine;
 
-  private State parent;
+  public State parent;
 
-  private String name;
+  public String name;
 
-  private List<Transition> transitions = CollectionLiterals.<Transition>newArrayList();
+  public List<Transition> transitions = CollectionLiterals.<Transition>newArrayList();
 
-  private List<State> nestedStates = CollectionLiterals.<State>newArrayList();
+  public List<State> nestedStates = CollectionLiterals.<State>newArrayList();
 
-  private boolean isInitial;
+  public boolean isInitial;
 
-  private boolean isNested;
+  public boolean isNested;
 
   public State(final State parent, final String name) {
     this.parent = parent;
@@ -64,22 +64,6 @@ public class State {
       _xblockexpression = this;
     }
     return _xblockexpression;
-  }
-
-  public String getName() {
-    return this.name;
-  }
-
-  public String setName(final String name) {
-    return this.name = name;
-  }
-
-  public List<State> getNestedStates() {
-    return this.nestedStates;
-  }
-
-  public List<Transition> getTransitions() {
-    return this.transitions;
   }
 
   public State transition(final String event) {
@@ -140,7 +124,7 @@ public class State {
         return this;
       }
       Transition _lastOrNull = IterableExtensions.<Transition>lastOrNull(this.transitions);
-      _lastOrNull.setGuard(guard);
+      _lastOrNull.guard = guard;
       _xblockexpression = this;
     }
     return _xblockexpression;
@@ -154,7 +138,20 @@ public class State {
         return this;
       }
       Transition _lastOrNull = IterableExtensions.<Transition>lastOrNull(this.transitions);
-      _xblockexpression = _lastOrNull.setAction(action);
+      _xblockexpression = _lastOrNull.action = action;
+    }
+    return _xblockexpression;
+  }
+
+  public Object timeout(final String timeout) {
+    String _xblockexpression = null;
+    {
+      boolean _isEmpty = this.transitions.isEmpty();
+      if (_isEmpty) {
+        return this;
+      }
+      Transition _lastOrNull = IterableExtensions.<Transition>lastOrNull(this.transitions);
+      _xblockexpression = _lastOrNull.timeout = timeout;
     }
     return _xblockexpression;
   }
@@ -166,18 +163,6 @@ public class State {
       _xblockexpression = this;
     }
     return _xblockexpression;
-  }
-
-  public boolean getIsInitial() {
-    return this.isInitial;
-  }
-
-  public boolean getIsNested() {
-    return this.isNested;
-  }
-
-  public boolean setIsNested(final boolean isNested) {
-    return this.isNested = isNested;
   }
 
   @Override

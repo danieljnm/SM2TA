@@ -3,11 +3,7 @@ package danieljnm.sm2ta.StateMachine
 import java.util.HashMap
 
 class StateMachine {
-	HashMap<String, State> states = newHashMap
-	
-	def getStates() {
-		states
-	}
+	public HashMap<String, State> states = newHashMap
 	
 	def State getInitialState() {
 		states.values.findFirst[it.isInitial]

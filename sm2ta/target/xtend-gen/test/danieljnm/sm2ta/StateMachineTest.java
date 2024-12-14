@@ -24,7 +24,7 @@ public class StateMachineTest {
 
   @Test
   public void emptyMachine() {
-    int _length = ((Object[])Conversions.unwrapArray(this.stateMachine.getStates().values(), Object.class)).length;
+    int _length = ((Object[])Conversions.unwrapArray(this.stateMachine.states.values(), Object.class)).length;
     boolean _equals = (_length == 0);
     Assertions.assertEquals(Boolean.valueOf(true), Boolean.valueOf(_equals));
   }
@@ -32,8 +32,8 @@ public class StateMachineTest {
   @Test
   public void oneState() {
     this.stateMachine.state("Idle");
-    Assertions.assertEquals(1, ((Object[])Conversions.unwrapArray(this.stateMachine.getStates().values(), Object.class)).length);
-    Assertions.assertEquals("Idle", (((State[])Conversions.unwrapArray(this.stateMachine.getStates().values(), State.class))[0]).getName());
+    Assertions.assertEquals(1, ((Object[])Conversions.unwrapArray(this.stateMachine.states.values(), Object.class)).length);
+    Assertions.assertEquals("Idle", (((State[])Conversions.unwrapArray(this.stateMachine.states.values(), State.class))[0]).name);
   }
 
   @Test
@@ -41,36 +41,45 @@ public class StateMachineTest {
     this.stateMachine.state("Idle").initial();
     State initialState = this.stateMachine.getInitialState();
     Assertions.assertNotNull(initialState);
-    Assertions.assertEquals("Idle", initialState.getName());
+    Assertions.assertEquals("Idle", initialState.name);
   }
 
   @Test
   public void transition() {
     this.stateMachine.state("Idle").initial().transition("Ready", "Planning").state("Planning");
-    List<Transition> transitions = this.stateMachine.getInitialState().getTransitions();
+    List<Transition> transitions = this.stateMachine.getInitialState().transitions;
     final List<Transition> _converted_transitions = (List<Transition>)transitions;
     Assertions.assertEquals(1, ((Object[])Conversions.unwrapArray(_converted_transitions, Object.class)).length);
     Transition transition = transitions.get(0);
-    Assertions.assertEquals("Planning", transition.getTarget().getName());
-    Assertions.assertEquals("Ready", transition.getEvent());
+    Assertions.assertEquals("Planning", transition.target.name);
+    Assertions.assertEquals("Ready", transition.event);
   }
 
   @Test
-  public void stateHasGuard() {
+  public void transitionHasGuard() {
     final String guard = "x > 1";
     this.stateMachine.state("Idle").initial().transition("Ready", "Planning").guard(guard);
-    Transition transition = this.stateMachine.getInitialState().getTransitions().get(0);
+    Transition transition = this.stateMachine.getInitialState().transitions.get(0);
     Assertions.assertNotNull(transition);
-    Assertions.assertEquals(guard, transition.getGuard());
+    Assertions.assertEquals(guard, transition.guard);
   }
 
   @Test
-  public void stateHasAction() {
+  public void transitionHasAction() {
     final String action = "x = 0";
     this.stateMachine.state("Idle").initial().transition("Ready", "Planning").action(action);
-    Transition transition = this.stateMachine.getInitialState().getTransitions().get(0);
+    Transition transition = this.stateMachine.getInitialState().transitions.get(0);
     Assertions.assertNotNull(transition);
-    Assertions.assertEquals(action, transition.getAction());
+    Assertions.assertEquals(action, transition.action);
+  }
+
+  @Test
+  public void transitionHasTimeout() {
+    final String timeout = "500";
+    this.stateMachine.state("Idle").initial().transition("Ready", "Planning").timeout(timeout);
+    Transition transition = this.stateMachine.getInitialState().transitions.get(0);
+    Assertions.assertNotNull(transition);
+    Assertions.assertEquals(timeout, transition.timeout);
   }
 
   @Test
@@ -80,16 +89,16 @@ public class StateMachineTest {
       it.nestedState("Evaluating").transition("Done");
     };
     this.stateMachine.state("Idle").initial().nesting(_function);
-    List<State> nestedStates = this.stateMachine.getInitialState().getNestedStates();
+    List<State> nestedStates = this.stateMachine.getInitialState().nestedStates;
     final List<State> _converted_nestedStates = (List<State>)nestedStates;
     Assertions.assertEquals(2, ((Object[])Conversions.unwrapArray(_converted_nestedStates, Object.class)).length);
     final Function1<State, Boolean> _function_1 = (State it) -> {
-      return Boolean.valueOf(it.getIsInitial());
+      return Boolean.valueOf(it.isInitial);
     };
     State initialState = IterableExtensions.<State>findFirst(nestedStates, _function_1);
     Assertions.assertNotNull(initialState);
-    Assertions.assertEquals("Testing", initialState.getName());
-    Assertions.assertFalse(initialState.getTransitions().isEmpty());
+    Assertions.assertEquals("Testing", initialState.name);
+    Assertions.assertFalse(initialState.transitions.isEmpty());
   }
 
   @Test
@@ -99,16 +108,16 @@ public class StateMachineTest {
       it.nestedState("Evaluating").transition("Done");
     };
     this.stateMachine.state("Idle").initial().nesting(_function).transition("Ready", "Planning").state("Planning").transition("Done");
-    List<State> nestedStates = this.stateMachine.getInitialState().getNestedStates();
+    List<State> nestedStates = this.stateMachine.getInitialState().nestedStates;
     final Function1<State, Boolean> _function_1 = (State it) -> {
-      return Boolean.valueOf(it.getIsInitial());
+      return Boolean.valueOf(it.isInitial);
     };
     State initialState = IterableExtensions.<State>findFirst(nestedStates, _function_1);
-    Transition transition = initialState.getTransitions().get(0);
-    Assertions.assertEquals("Evaluating", transition.getTarget().getName());
-    Assertions.assertEquals("Processed", transition.getEvent());
-    Assertions.assertEquals("x > 1", transition.getGuard());
-    Assertions.assertEquals("x = 0", transition.getAction());
+    Transition transition = initialState.transitions.get(0);
+    Assertions.assertEquals("Evaluating", transition.target.name);
+    Assertions.assertEquals("Processed", transition.event);
+    Assertions.assertEquals("x > 1", transition.guard);
+    Assertions.assertEquals("x = 0", transition.action);
     Printer printer = new Printer();
     printer.print(this.stateMachine);
   }
