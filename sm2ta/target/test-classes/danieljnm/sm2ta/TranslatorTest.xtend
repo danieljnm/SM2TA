@@ -26,13 +26,55 @@ class TranslatorTest {
 	
 	@Test
 	def void emptyMachine() {
-		stateMachine.name("Test")
+		stateMachine.name("test")
 		val uppaal = 
 		'''
-			process Test {
+			process test {
 			}
-			system Test;
+			system test;
 		'''
+		assertEquals(uppaal, stateMachine.toUppaal)
+	}
+	
+	@Test
+	def void states() {
+		stateMachine.name("test")
+			.state("one").initial
+			.state("two")
+		val uppaal = 
+		'''
+			process test {
+				state
+						one,
+						two;
+				init one;
+			}
+			system test;
+		'''
+		assertEquals(uppaal, stateMachine.toUppaal)
+	}
+	
+	@Test
+	def void transitions() {
+		stateMachine.name("test")
+			.state("one").initial
+				.transition("event", "two")
+			.state("two")
+		val uppaal = 
+		'''
+			process test {
+				state
+						one,
+						two;
+				init one;
+				trans
+						one -> two {
+						};
+			}
+			system test;
+		'''
+		println(uppaal)
+		println(stateMachine.toUppaal)
 		assertEquals(uppaal, stateMachine.toUppaal)
 	}
 }

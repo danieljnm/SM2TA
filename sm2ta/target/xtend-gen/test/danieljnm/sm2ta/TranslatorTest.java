@@ -2,6 +2,7 @@ package danieljnm.sm2ta;
 
 import danieljnm.sm2ta.StateMachine.StateMachine;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,15 +19,78 @@ public class TranslatorTest {
 
   @Test
   public void emptyMachine() {
-    this.stateMachine.name("Test");
+    this.stateMachine.name("test");
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("process Test {");
+    _builder.append("process test {");
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();
-    _builder.append("system Test;");
+    _builder.append("system test;");
     _builder.newLine();
     final String uppaal = _builder.toString();
+    Assertions.assertEquals(uppaal, this.stateMachine.toUppaal());
+  }
+
+  @Test
+  public void states() {
+    this.stateMachine.name("test").state("one").initial().state("two");
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("process test {");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("state");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("one,");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("two;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("init one;");
+    _builder.newLine();
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("system test;");
+    _builder.newLine();
+    final String uppaal = _builder.toString();
+    Assertions.assertEquals(uppaal, this.stateMachine.toUppaal());
+  }
+
+  @Test
+  public void transitions() {
+    this.stateMachine.name("test").state("one").initial().transition("event", "two").state("two");
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("process test {");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("state");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("one,");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("two;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("init one;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("trans");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("one -> two {");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("};");
+    _builder.newLine();
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("system test;");
+    _builder.newLine();
+    final String uppaal = _builder.toString();
+    InputOutput.<String>println(uppaal);
+    InputOutput.<String>println(this.stateMachine.toUppaal());
     Assertions.assertEquals(uppaal, this.stateMachine.toUppaal());
   }
 }
