@@ -16,7 +16,9 @@ class StateMachineTest {
 	
 	@Test
 	def void emptyMachine() {
+		stateMachine.name("Test")
 		assertEquals(true, stateMachine.states.values.length == 0)
+		assertEquals("Test", stateMachine.name)
 	}
 	
 	@Test

@@ -3,6 +3,7 @@ package danieljnm.sm2ta
 import static org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
+import danieljnm.sm2ta.StateMachine.StateMachine
 
 class TranslatorTest {
 	
@@ -16,13 +17,22 @@ class TranslatorTest {
 	// Urgent transitions are transitions that must occur as soon as their guards as satisfied without a delay
 	// Deadlines specify a maximum allowed delay for transitions and actions
 	
-	@Test
-	def void emptyTranslation() {
-		
+	StateMachine stateMachine
+	
+	@BeforeEach
+	def void reset() {
+		stateMachine = new StateMachine()
 	}
 	
 	@Test
-	def void basicTranslation() {
-			
+	def void emptyMachine() {
+		stateMachine.name("Test")
+		val uppaal = 
+		'''
+			process Test {
+			}
+			system Test;
+		'''
+		assertEquals(uppaal, stateMachine.toUppaal)
 	}
 }

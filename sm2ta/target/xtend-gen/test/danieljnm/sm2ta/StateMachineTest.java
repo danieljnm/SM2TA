@@ -24,9 +24,11 @@ public class StateMachineTest {
 
   @Test
   public void emptyMachine() {
+    this.stateMachine.name("Test");
     int _length = ((Object[])Conversions.unwrapArray(this.stateMachine.states.values(), Object.class)).length;
     boolean _equals = (_length == 0);
     Assertions.assertEquals(Boolean.valueOf(true), Boolean.valueOf(_equals));
+    Assertions.assertEquals("Test", this.stateMachine.name);
   }
 
   @Test
