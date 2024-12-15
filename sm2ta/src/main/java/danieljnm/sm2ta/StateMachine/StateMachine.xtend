@@ -27,52 +27,51 @@ class StateMachine {
 		states.values.findFirst[!it.transitions.empty] !== null
 	}
 	
-	def String toUppaal() {		
+	def String toUppaal() {
 		'''
-			«generateGloablVariables»
-			process «name» {
-				«IF !states.empty»
-					«generateStates»
-					«generateTransitions»
-				«ENDIF»
+		«IF !channels.empty»
+		chan «channels.join(', ')»;
+		«ENDIF»
+		«IF !clocks.empty»
+		clock «clocks.join(', ')»;
+		«ENDIF»
+		«FOR process : processes»
+		«process»
+		«ENDFOR»
+		system «processes.map[name].join(', ')»;
+		'''
+	}
+	
+	
+	def processes() {
+		val processes = newArrayList
+		val process = new Uppaal.Process(name)
+		
+		states.values.forEach[state |
+			if (!state.isNested) {
+				process.addState(state)
 			}
-			system «name»;
-		'''
+			
+			/* A state with nested states should be treated
+			 * as a separate process
+			 * state.nestedStates.forEach[nestedState |
+				processes.add(nestedState.toProcess)
+			]*/
+		]
+		
+		processes.add(process)
+		processes
 	}
 	
-	def String generateGloablVariables() {
-		'''
-		«IF states.values.exists[it.transitions.exists[timeout !== null]]»
-		clock gen_clock;
-		«ENDIF»
-		«IF states.values.exists[it.transitions.exists[when !== null]]»
-		chan «states.values.flatMap[it.transitions].filter[when !== null].map[when].join(', ')»;
-		«ENDIF»
-		'''
+	def channels() {
+		states.values.flatMap[transitions]
+		.filter[when !== null]
+		.map[it.when]
 	}
 	
-	def String generateStates() {
-		'''
-		state
-				«states.values.map[name].join(',\n')»;
-		init «initialState.name»;
-		'''
-	}
-	
-	def generateTransitions() {
-		'''
-		«IF hasTransitions»
-		trans
-				«states.values.filter[nestedStates.empty].map[state | state.transitions.map[
-				'''
-				«state.name» -> «target.name» {
-					«IF guard !== null»[«guard»]«ENDIF»
-					«IF timeout !== null»timeout = «timeout»;«ENDIF»
-					«IF action !== null»assign { «action» }«ENDIF»
-					«IF when !== null»sync «when»?«ENDIF»
-				};
-				'''].join('\n')].join('')»
-		«ENDIF»
-		'''
+	def clocks() {
+		states.values.flatMap[transitions]
+		.filter[timeout !== null]
+		.map['''«target.name»_gen_clock''']
 	}
 }

@@ -17,8 +17,6 @@ public class Process {
 
   private State initialState;
 
-  public List<Transition> transitions = CollectionLiterals.<Transition>newArrayList();
-
   public Process(final String name) {
     this.name = name;
   }
@@ -32,10 +30,6 @@ public class Process {
       _xblockexpression = this.states.add(state);
     }
     return _xblockexpression;
-  }
-
-  public boolean addTransition(final Transition transition) {
-    return this.transitions.add(transition);
   }
 
   public State getInitialState() {
@@ -78,19 +72,37 @@ public class Process {
         _builder.append("\t");
         _builder.append("init ");
         _builder.append(this.initialState.name, "\t");
+        _builder.append(";");
         _builder.newLineIfNotEmpty();
       }
     }
     {
-      boolean _isEmpty_1 = this.transitions.isEmpty();
-      boolean _not_1 = (!_isEmpty_1);
-      if (_not_1) {
+      final Function1<State, Boolean> _function_1 = (State it) -> {
+        boolean _isEmpty_1 = it.transitions.isEmpty();
+        return Boolean.valueOf((!_isEmpty_1));
+      };
+      boolean _exists = IterableExtensions.<State>exists(this.states, _function_1);
+      if (_exists) {
         _builder.append("\t");
         _builder.append("trans");
         _builder.newLine();
         _builder.append("\t");
         _builder.append("\t\t");
-        String _join_1 = IterableExtensions.join(this.transitions, "\n");
+        final Function1<State, List<String>> _function_2 = (State it) -> {
+          final Function1<Transition, String> _function_3 = (Transition transition) -> {
+            StringConcatenation _builder_1 = new StringConcatenation();
+            _builder_1.append(it.name);
+            _builder_1.append(" -> ");
+            _builder_1.append(transition.target.name);
+            _builder_1.append(" {");
+            _builder_1.newLineIfNotEmpty();
+            _builder_1.append("};");
+            _builder_1.newLine();
+            return _builder_1.toString();
+          };
+          return ListExtensions.<Transition, String>map(it.transitions, _function_3);
+        };
+        String _join_1 = IterableExtensions.join(IterableExtensions.<State, String>flatMap(this.states, _function_2), "\n");
         _builder.append(_join_1, "\t\t\t");
         _builder.newLineIfNotEmpty();
       }

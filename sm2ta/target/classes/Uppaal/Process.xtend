@@ -8,7 +8,6 @@ class Process {
 	public String name
 	public List<State> states = newArrayList
 	State initialState
-	public List<Transition> transitions = newArrayList
 	
 	new(String name) {
 		this.name = name
@@ -20,10 +19,6 @@ class Process {
 		}
 		
 		states.add(state)
-	}
-	
-	def addTransition(Transition transition) {
-		transitions.add(transition)
 	}
 	
 	def getInitialState() {
@@ -40,11 +35,16 @@ class Process {
 			«IF !states.empty»
 			state
 					«states.map[name].join(',\n')»;
-			init «initialState.name»
+			init «initialState.name»;
 			«ENDIF»
-			«IF !transitions.empty»
+			«IF states.exists[!transitions.empty]»
 			trans
-					«transitions.join('\n')»
+					«states.flatMap[transitions.map[transition | 
+					'''
+					«name» -> «transition.target.name» {
+					};
+					'''
+					]].join('\n')»
 			«ENDIF»
 		}
 		'''
