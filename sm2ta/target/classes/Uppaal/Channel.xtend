@@ -1,0 +1,5 @@
+package Uppaal
+
+class Channel {
+	
+}

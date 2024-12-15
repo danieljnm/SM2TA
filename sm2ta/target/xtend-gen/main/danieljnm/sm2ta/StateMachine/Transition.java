@@ -14,6 +14,8 @@ public class Transition {
 
   public String timeout;
 
+  public String when;
+
   public Transition(final String event, final State target) {
     this.event = event;
     this.target = target;

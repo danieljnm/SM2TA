@@ -27,24 +27,52 @@ class StateMachine {
 		states.values.findFirst[!it.transitions.empty] !== null
 	}
 	
-	def String toUppaal() {
+	def String toUppaal() {		
 		'''
+			«generateGloablVariables»
 			process «name» {
 				«IF !states.empty»
-				state
-						«states.values.map[name].join(',\n')»;
-				init «initialState.name»;
-				«IF hasTransitions»
-				trans
-						«states.values.map[state | state.transitions.map[
-						'''
-						«state.name» -> «target.name» {
-						};
-						'''].join('\n')].join('')»
-				«ENDIF»
+					«generateStates»
+					«generateTransitions»
 				«ENDIF»
 			}
 			system «name»;
+		'''
+	}
+	
+	def String generateGloablVariables() {
+		'''
+		«IF states.values.exists[it.transitions.exists[timeout !== null]]»
+		clock gen_clock;
+		«ENDIF»
+		«IF states.values.exists[it.transitions.exists[when !== null]]»
+		chan «states.values.flatMap[it.transitions].filter[when !== null].map[when].join(', ')»;
+		«ENDIF»
+		'''
+	}
+	
+	def String generateStates() {
+		'''
+		state
+				«states.values.map[name].join(',\n')»;
+		init «initialState.name»;
+		'''
+	}
+	
+	def generateTransitions() {
+		'''
+		«IF hasTransitions»
+		trans
+				«states.values.filter[nestedStates.empty].map[state | state.transitions.map[
+				'''
+				«state.name» -> «target.name» {
+					«IF guard !== null»[«guard»]«ENDIF»
+					«IF timeout !== null»timeout = «timeout»;«ENDIF»
+					«IF action !== null»assign { «action» }«ENDIF»
+					«IF when !== null»sync «when»?«ENDIF»
+				};
+				'''].join('\n')].join('')»
+		«ENDIF»
 		'''
 	}
 }

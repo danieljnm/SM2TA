@@ -73,7 +73,39 @@ class TranslatorTest {
 			}
 			system test;
 		'''
-		println(uppaal)
+		assertEquals(uppaal, stateMachine.toUppaal)
+	}
+	
+	@Test
+	def actionTransition() {
+		stateMachine.name("test")
+			.state("one").initial
+				.transition("event", "two").when("test")
+			.state("two")
+		val uppaal =
+		'''
+		chan test;
+		process test {
+			state
+				one,
+				two;
+			init one;
+			trans
+				one -> two {
+					sync test?;
+				};
+		}
+		process gen_sync_test {
+			state
+				initSync;
+			init initSync;
+			trans
+				initSync -> initSync {
+					sync test!;
+				};
+		}
+		system test, gen_sync_test;
+		'''
 		println(stateMachine.toUppaal)
 		assertEquals(uppaal, stateMachine.toUppaal)
 	}

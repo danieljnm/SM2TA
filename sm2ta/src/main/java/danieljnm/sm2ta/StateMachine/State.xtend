@@ -87,6 +87,7 @@ class State {
 		}
 		
 		transitions.lastOrNull.action = action
+		this
 	}
 	
 	def timeout(String timeout) {
@@ -95,6 +96,16 @@ class State {
 		}
 		
 		transitions.lastOrNull.timeout = timeout
+		this
+	}
+	
+	def when(String when) {
+		if (transitions.empty) {
+			return this
+		}
+		
+		transitions.lastOrNull.when = when
+		this
 	}
 	
 	def initial() {

@@ -130,28 +130,44 @@ public class State {
     return _xblockexpression;
   }
 
-  public Object action(final String action) {
-    String _xblockexpression = null;
+  public State action(final String action) {
+    State _xblockexpression = null;
     {
       boolean _isEmpty = this.transitions.isEmpty();
       if (_isEmpty) {
         return this;
       }
       Transition _lastOrNull = IterableExtensions.<Transition>lastOrNull(this.transitions);
-      _xblockexpression = _lastOrNull.action = action;
+      _lastOrNull.action = action;
+      _xblockexpression = this;
     }
     return _xblockexpression;
   }
 
-  public Object timeout(final String timeout) {
-    String _xblockexpression = null;
+  public State timeout(final String timeout) {
+    State _xblockexpression = null;
     {
       boolean _isEmpty = this.transitions.isEmpty();
       if (_isEmpty) {
         return this;
       }
       Transition _lastOrNull = IterableExtensions.<Transition>lastOrNull(this.transitions);
-      _xblockexpression = _lastOrNull.timeout = timeout;
+      _lastOrNull.timeout = timeout;
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+
+  public State when(final String when) {
+    State _xblockexpression = null;
+    {
+      boolean _isEmpty = this.transitions.isEmpty();
+      if (_isEmpty) {
+        return this;
+      }
+      Transition _lastOrNull = IterableExtensions.<Transition>lastOrNull(this.transitions);
+      _lastOrNull.when = when;
+      _xblockexpression = this;
     }
     return _xblockexpression;
   }

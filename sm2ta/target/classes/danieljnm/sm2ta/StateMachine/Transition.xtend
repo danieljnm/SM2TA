@@ -6,6 +6,7 @@ class Transition {
 	public String guard
 	public String action
 	public String timeout
+	public String when
 	
 	new(String event, State target) {
 		this.event = event
