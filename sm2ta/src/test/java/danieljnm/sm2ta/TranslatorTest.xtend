@@ -146,6 +146,62 @@ class TranslatorTest {
 		}
 		system test, two_inner;
 		'''
+		assertEquals(uppaal, stateMachine.toUppaal)
+	}
+	
+	@Test
+	def nestedMachineWithTransitions() {
+				stateMachine.name("test")
+			.state("one").initial
+				.transition("event", "two")
+			.state("two")
+				.nesting[
+					nestedState("innerOne")
+						.transition("event", "innerTwo").when("test")
+					nestedState("innerTwo")
+				]
+		val uppaal = 
+		'''
+		chan test, gen_two_inner_start;
+		process test {
+			state
+				one,
+				gen_pre_two,
+				two;
+			commit gen_pre_two;
+			init one;
+			trans
+				one -> gen_pre_two {
+				},
+				gen_pre_two -> two {
+					sync gen_two_inner_start!;
+				};
+		}
+		process two_inner {
+			state
+				gen_init,
+				innerOne,
+				innerTwo;
+			init gen_init;
+			trans
+				gen_init -> innerOne {
+					sync gen_two_inner_start?;
+				},
+				innerOne -> innerTwo {
+					sync test?;
+				};
+		}
+		process gen_sync_test {
+			state
+				initSync;
+			init initSync;
+			trans
+				initSync -> initSync {
+					sync test!;
+				};
+		}
+		system test, two_inner, gen_sync_test;
+		'''
 		println(stateMachine.toUppaal)
 		assertEquals(uppaal, stateMachine.toUppaal)
 	}

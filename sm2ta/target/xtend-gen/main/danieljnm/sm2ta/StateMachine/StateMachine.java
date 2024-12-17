@@ -189,16 +189,30 @@ public class StateMachine {
   }
 
   public Iterable<String> channels() {
-    final Function1<State, List<Transition>> _function = (State it) -> {
+    final Function1<State, List<State>> _function = (State it) -> {
+      return it.nestedStates;
+    };
+    final Function1<State, List<Transition>> _function_1 = (State it) -> {
       return it.transitions;
     };
-    final Function1<Transition, Boolean> _function_1 = (Transition it) -> {
+    final Function1<Transition, Boolean> _function_2 = (Transition it) -> {
       return Boolean.valueOf((it.when != null));
     };
-    final Function1<Transition, String> _function_2 = (Transition it) -> {
+    final Function1<Transition, String> _function_3 = (Transition it) -> {
       return it.when;
     };
-    return IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(IterableExtensions.<State, Transition>flatMap(this.states.values(), _function), _function_1), _function_2);
+    Iterable<String> _map = IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(IterableExtensions.<State, Transition>flatMap(IterableExtensions.<State, State>flatMap(this.states.values(), _function), _function_1), _function_2), _function_3);
+    final Function1<State, List<Transition>> _function_4 = (State it) -> {
+      return it.transitions;
+    };
+    final Function1<Transition, Boolean> _function_5 = (Transition it) -> {
+      return Boolean.valueOf((it.when != null));
+    };
+    final Function1<Transition, String> _function_6 = (Transition it) -> {
+      return it.when;
+    };
+    Iterable<String> _map_1 = IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(IterableExtensions.<State, Transition>flatMap(this.states.values(), _function_4), _function_5), _function_6);
+    return Iterables.<String>concat(_map, _map_1);
   }
 
   public Set<String> nestings() {

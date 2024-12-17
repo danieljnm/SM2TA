@@ -90,6 +90,8 @@ class StateMachine {
 	}
 	
 	def channels() {
+		states.values.flatMap[nestedStates].flatMap[transitions].filter[when !== null].map[it.when]
+		+
 		states.values.flatMap[transitions]
 		.filter[when !== null]
 		.map[it.when]
