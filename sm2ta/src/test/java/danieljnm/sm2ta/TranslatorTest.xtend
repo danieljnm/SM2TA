@@ -42,15 +42,15 @@ class TranslatorTest {
 			.state("one").initial
 			.state("two")
 		val uppaal = 
-		'''
+			'''
 			process test {
 				state
-						one,
-						two;
+					one,
+					two;
 				init one;
 			}
 			system test;
-		'''
+			'''
 		assertEquals(uppaal, stateMachine.toUppaal)
 	}
 	
@@ -61,18 +61,18 @@ class TranslatorTest {
 				.transition("event", "two")
 			.state("two")
 		val uppaal = 
-		'''
+			'''
 			process test {
 				state
-						one,
-						two;
+					one,
+					two;
 				init one;
 				trans
-						one -> two {
-						};
+					one -> two {
+					};
 			}
 			system test;
-		'''
+			'''
 		assertEquals(uppaal, stateMachine.toUppaal)
 	}
 	
@@ -83,29 +83,29 @@ class TranslatorTest {
 				.transition("event", "two").when("test")
 			.state("two")
 		val uppaal =
-		'''
-		chan test;
-		process test {
-			state
-				one,
-				two;
-			init one;
-			trans
-				one -> two {
-					sync test?;
-				};
-		}
-		process gen_sync_test {
-			state
-				initSync;
-			init initSync;
-			trans
-				initSync -> initSync {
-					sync test!;
-				};
-		}
-		system test, gen_sync_test;
-		'''
+			'''
+			chan test;
+			process test {
+				state
+					one,
+					two;
+				init one;
+				trans
+					one -> two {
+						sync test?;
+					};
+			}
+			process gen_sync_test {
+				state
+					initSync;
+				init initSync;
+				trans
+					initSync -> initSync {
+						sync test!;
+					};
+			}
+			system test, gen_sync_test;
+			'''
 		println(stateMachine.toUppaal)
 		assertEquals(uppaal, stateMachine.toUppaal)
 	}

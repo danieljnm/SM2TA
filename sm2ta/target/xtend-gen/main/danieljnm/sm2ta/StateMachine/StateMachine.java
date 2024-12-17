@@ -1,5 +1,6 @@
 package danieljnm.sm2ta.StateMachine;
 
+import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,14 +89,64 @@ public class StateMachine {
         _builder.newLineIfNotEmpty();
       }
     }
+    {
+      Iterable<String> _channels = this.channels();
+      for(final String channel : _channels) {
+        String _channelToUppaal = this.channelToUppaal(channel);
+        _builder.append(_channelToUppaal);
+        _builder.newLineIfNotEmpty();
+      }
+    }
     _builder.append("system ");
     final Function1<Uppaal.Process, String> _function = (Uppaal.Process it) -> {
       return it.name;
     };
-    String _join_2 = IterableExtensions.join(ListExtensions.<Uppaal.Process, String>map(this.processes(), _function), ", ");
+    List<String> _map = ListExtensions.<Uppaal.Process, String>map(this.processes(), _function);
+    final Function1<String, String> _function_1 = (String it) -> {
+      StringConcatenation _builder_1 = new StringConcatenation();
+      _builder_1.append("gen_sync_");
+      _builder_1.append(this.name);
+      return _builder_1.toString();
+    };
+    Iterable<String> _map_1 = IterableExtensions.<String, String>map(this.channels(), _function_1);
+    String _join_2 = IterableExtensions.join(Iterables.<String>concat(_map, _map_1), ", ");
     _builder.append(_join_2);
     _builder.append(";");
     _builder.newLineIfNotEmpty();
+    return _builder.toString();
+  }
+
+  public String channelToUppaal(final String channel) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("process gen_sync_");
+    _builder.append(channel);
+    _builder.append(" {");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("state");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("initSync;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("init initSync;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("trans");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("initSync -> initSync {");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("sync ");
+    _builder.append(channel, "\t\t\t");
+    _builder.append("!;");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t\t");
+    _builder.append("};");
+    _builder.newLine();
+    _builder.append("}");
+    _builder.newLine();
     return _builder.toString();
   }
 

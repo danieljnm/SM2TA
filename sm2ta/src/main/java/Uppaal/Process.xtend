@@ -34,17 +34,20 @@ class Process {
 		process «name» {
 			«IF !states.empty»
 			state
-					«states.map[name].join(',\n')»;
+				«states.map[name].join(',\n')»;
 			init «initialState.name»;
 			«ENDIF»
 			«IF states.exists[!transitions.empty]»
 			trans
-					«states.flatMap[transitions.map[transition | 
-					'''
-					«name» -> «transition.target.name» {
-					};
-					'''
-					]].join('\n')»
+				«states.flatMap[transitions.map[transition | 
+				'''
+				«name» -> «transition.target.name» {
+					«IF transition.when !== null»
+						sync «transition.when»?;
+					«ENDIF»
+				};
+				'''
+				]].join('\n')»
 			«ENDIF»
 		}
 		'''

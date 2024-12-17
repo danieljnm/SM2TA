@@ -40,10 +40,10 @@ public class TranslatorTest {
     _builder.append("\t");
     _builder.append("state");
     _builder.newLine();
-    _builder.append("\t\t\t");
+    _builder.append("\t\t");
     _builder.append("one,");
     _builder.newLine();
-    _builder.append("\t\t\t");
+    _builder.append("\t\t");
     _builder.append("two;");
     _builder.newLine();
     _builder.append("\t");
@@ -66,10 +66,10 @@ public class TranslatorTest {
     _builder.append("\t");
     _builder.append("state");
     _builder.newLine();
-    _builder.append("\t\t\t");
+    _builder.append("\t\t");
     _builder.append("one,");
     _builder.newLine();
-    _builder.append("\t\t\t");
+    _builder.append("\t\t");
     _builder.append("two;");
     _builder.newLine();
     _builder.append("\t");
@@ -78,10 +78,10 @@ public class TranslatorTest {
     _builder.append("\t");
     _builder.append("trans");
     _builder.newLine();
-    _builder.append("\t\t\t");
+    _builder.append("\t\t");
     _builder.append("one -> two {");
     _builder.newLine();
-    _builder.append("\t\t\t");
+    _builder.append("\t\t");
     _builder.append("};");
     _builder.newLine();
     _builder.append("}");

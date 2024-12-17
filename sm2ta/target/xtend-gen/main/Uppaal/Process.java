@@ -61,12 +61,12 @@ public class Process {
         _builder.append("state");
         _builder.newLine();
         _builder.append("\t");
-        _builder.append("\t\t");
+        _builder.append("\t");
         final Function1<State, String> _function = (State it) -> {
           return it.name;
         };
         String _join = IterableExtensions.join(ListExtensions.<State, String>map(this.states, _function), ",\n");
-        _builder.append(_join, "\t\t\t");
+        _builder.append(_join, "\t\t");
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.append("\t");
@@ -87,7 +87,7 @@ public class Process {
         _builder.append("trans");
         _builder.newLine();
         _builder.append("\t");
-        _builder.append("\t\t");
+        _builder.append("\t");
         final Function1<State, List<String>> _function_2 = (State it) -> {
           final Function1<Transition, String> _function_3 = (Transition transition) -> {
             StringConcatenation _builder_1 = new StringConcatenation();
@@ -96,6 +96,15 @@ public class Process {
             _builder_1.append(transition.target.name);
             _builder_1.append(" {");
             _builder_1.newLineIfNotEmpty();
+            {
+              if ((transition.when != null)) {
+                _builder_1.append("\t");
+                _builder_1.append("sync ");
+                _builder_1.append(transition.when, "\t");
+                _builder_1.append("?;");
+                _builder_1.newLineIfNotEmpty();
+              }
+            }
             _builder_1.append("};");
             _builder_1.newLine();
             return _builder_1.toString();
@@ -103,7 +112,7 @@ public class Process {
           return ListExtensions.<Transition, String>map(it.transitions, _function_3);
         };
         String _join_1 = IterableExtensions.join(IterableExtensions.<State, String>flatMap(this.states, _function_2), "\n");
-        _builder.append(_join_1, "\t\t\t");
+        _builder.append(_join_1, "\t\t");
         _builder.newLineIfNotEmpty();
       }
     }

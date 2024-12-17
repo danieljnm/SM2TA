@@ -38,7 +38,24 @@ class StateMachine {
 		«FOR process : processes»
 		«process»
 		«ENDFOR»
-		system «processes.map[name].join(', ')»;
+		«FOR channel : channels»
+		«channel.channelToUppaal»
+		«ENDFOR»
+		system «(processes.map[name] + channels.map['''gen_sync_«name»''']).join(', ')»;
+		'''
+	}
+	
+	def String channelToUppaal(String channel) {
+		'''
+		process gen_sync_«channel» {
+			state
+				initSync;
+			init initSync;
+			trans
+				initSync -> initSync {
+					sync «channel»!;
+				};
+		}
 		'''
 	}
 	
