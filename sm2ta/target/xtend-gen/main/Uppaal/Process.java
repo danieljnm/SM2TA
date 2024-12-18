@@ -1,5 +1,6 @@
 package Uppaal;
 
+import com.google.common.collect.Iterables;
 import danieljnm.sm2ta.StateMachine.State;
 import danieljnm.sm2ta.StateMachine.Transition;
 import java.util.Collections;
@@ -76,6 +77,59 @@ public class Process {
     return IterableExtensions.<String>toSet(IterableExtensions.<State, String>map(IterableExtensions.<State>filter(this.states, _function), _function_1));
   }
 
+  public String transitions() {
+    Iterable<String> _actualTransitions = this.actualTransitions();
+    Iterable<String> _nestedStateTransitions = this.nestedStateTransitions();
+    return IterableExtensions.join(Iterables.<String>concat(_actualTransitions, _nestedStateTransitions), ",\n");
+  }
+
+  public Iterable<String> actualTransitions() {
+    final Function1<State, List<String>> _function = (State state) -> {
+      final Function1<Transition, String> _function_1 = (Transition transition) -> {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append(state.name);
+        _builder.append(" -> ");
+        CharSequence _targetName = transition.targetName(state.isNested);
+        _builder.append(_targetName);
+        _builder.append(" {");
+        _builder.newLineIfNotEmpty();
+        {
+          if ((transition.when != null)) {
+            _builder.append("\t");
+            _builder.append("sync ");
+            _builder.append(transition.when, "\t");
+            _builder.append("?;");
+            _builder.newLineIfNotEmpty();
+          }
+        }
+        _builder.append("}");
+        return _builder.toString();
+      };
+      return ListExtensions.<Transition, String>map(state.transitions, _function_1);
+    };
+    return IterableExtensions.<State, String>flatMap(this.states, _function);
+  }
+
+  public Iterable<String> nestedStateTransitions() {
+    final Function1<String, String> _function = (String it) -> {
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("gen_pre_");
+      _builder.append(it);
+      _builder.append(" -> ");
+      _builder.append(it);
+      _builder.append(" {");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t");
+      _builder.append("sync gen_");
+      _builder.append(it, "\t");
+      _builder.append("_inner_start!;");
+      _builder.newLineIfNotEmpty();
+      _builder.append("}");
+      return _builder.toString();
+    };
+    return IterableExtensions.<String, String>map(this.nestedStateNames(), _function);
+  }
+
   @Override
   public String toString() {
     StringConcatenation _builder = new StringConcatenation();
@@ -131,56 +185,10 @@ public class Process {
         _builder.newLine();
         _builder.append("\t");
         _builder.append("\t");
-        final Function1<State, List<String>> _function_1 = (State it) -> {
-          final Function1<Transition, String> _function_2 = (Transition transition) -> {
-            StringConcatenation _builder_1 = new StringConcatenation();
-            _builder_1.append(it.name);
-            _builder_1.append(" -> ");
-            _builder_1.append(transition.target.name);
-            _builder_1.append(" {");
-            _builder_1.newLineIfNotEmpty();
-            {
-              if ((transition.when != null)) {
-                _builder_1.append("\t");
-                _builder_1.append("sync ");
-                _builder_1.append(transition.when, "\t");
-                _builder_1.append("?;");
-                _builder_1.newLineIfNotEmpty();
-              }
-            }
-            _builder_1.append("};");
-            _builder_1.newLine();
-            return _builder_1.toString();
-          };
-          return ListExtensions.<Transition, String>map(it.transitions, _function_2);
-        };
-        String _join_1 = IterableExtensions.join(IterableExtensions.<State, String>flatMap(this.states, _function_1), "\n");
-        _builder.append(_join_1, "\t\t");
+        String _transitions = this.transitions();
+        _builder.append(_transitions, "\t\t");
+        _builder.append(";");
         _builder.newLineIfNotEmpty();
-        {
-          Set<String> _nestedStateNames = this.nestedStateNames();
-          for(final String nestedState : _nestedStateNames) {
-            _builder.append("\t");
-            _builder.append("\t");
-            _builder.append("gen_pre_");
-            _builder.append(nestedState, "\t\t");
-            _builder.append(" -> ");
-            _builder.append(nestedState, "\t\t");
-            _builder.append(" {");
-            _builder.newLineIfNotEmpty();
-            _builder.append("\t");
-            _builder.append("\t");
-            _builder.append("\t");
-            _builder.append("sync gen_");
-            _builder.append(nestedState, "\t\t\t");
-            _builder.append("_inner_start!;");
-            _builder.newLineIfNotEmpty();
-            _builder.append("\t");
-            _builder.append("\t");
-            _builder.append("};");
-            _builder.newLine();
-          }
-        }
       }
     }
     _builder.append("}");

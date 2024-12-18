@@ -21,6 +21,20 @@ public class Transition {
     this.target = target;
   }
 
+  public CharSequence targetName(final boolean isParentNested) {
+    CharSequence _xblockexpression = null;
+    {
+      if ((isParentNested || this.target.nestedStates.isEmpty())) {
+        return this.target.name;
+      }
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("gen_pre_");
+      _builder.append(this.target.name);
+      _xblockexpression = _builder;
+    }
+    return _xblockexpression;
+  }
+
   @Override
   public String toString() {
     StringConcatenation _builder = new StringConcatenation();

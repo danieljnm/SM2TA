@@ -41,6 +41,30 @@ class Process {
 		.toSet
 	}
 	
+	def transitions() {
+		(actualTransitions + nestedStateTransitions).join(',\n')
+	}
+	
+	def actualTransitions() {
+		states.flatMap[state | state.transitions.map[transition | 
+			'''
+			«state.name» -> «transition.targetName(state.isNested)» {
+				«IF transition.when !== null»
+					sync «transition.when»?;
+				«ENDIF»
+			}'''
+			]]
+	}
+	
+	def nestedStateTransitions() {
+		nestedStateNames.map[
+			'''
+			gen_pre_«it» -> «it» {
+				sync gen_«it»_inner_start!;
+			}'''
+		]
+	}
+	
 	override toString() {
 		'''
 		process «name» {
@@ -54,20 +78,7 @@ class Process {
 			«ENDIF»
 			«IF states.exists[!transitions.empty] || !nestedStateNames.empty»
 			trans
-				«states.flatMap[transitions.map[transition | 
-				'''
-				«name» -> «transition.target.name» {
-					«IF transition.when !== null»
-						sync «transition.when»?;
-					«ENDIF»
-				};
-				'''
-				]].join('\n')»
-				«FOR nestedState : nestedStateNames»
-				gen_pre_«nestedState» -> «nestedState» {
-					sync gen_«nestedState»_inner_start!;
-				};
-				«ENDFOR»
+				«transitions»;
 			«ENDIF»
 		}
 		'''
