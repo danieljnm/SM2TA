@@ -54,7 +54,8 @@ public class Process {
       List<String> _xifexpression = null;
       boolean _isEmpty = it.nestedStates.isEmpty();
       if (_isEmpty) {
-        _xifexpression = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList(it.name));
+        String _format = this.format(it);
+        _xifexpression = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList(_format));
       } else {
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("gen_pre_");
@@ -64,6 +65,34 @@ public class Process {
       return _xifexpression;
     };
     return IterableExtensions.join(IterableExtensions.<String>toSet(IterableExtensions.<State, String>flatMap(this.states, _function)), ",\n");
+  }
+
+  public String format(final State state) {
+    String _xblockexpression = null;
+    {
+      boolean _isEmpty = state.transitions.isEmpty();
+      if (_isEmpty) {
+        return state.name;
+      }
+      final Function1<Transition, Boolean> _function = (Transition it) -> {
+        return Boolean.valueOf((it.timeout > 0));
+      };
+      final Transition timeoutTransition = IterableExtensions.<Transition>findFirst(state.transitions, _function);
+      if ((timeoutTransition != null)) {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append(state.name);
+        _builder.append(" {");
+        _builder.newLineIfNotEmpty();
+        _builder.append("\t");
+        _builder.append("gen_clock <= ");
+        _builder.append(timeoutTransition.timeout, "\t");
+        _builder.newLineIfNotEmpty();
+        _builder.append("}");
+        return _builder.toString();
+      }
+      _xblockexpression = state.name;
+    }
+    return _xblockexpression;
   }
 
   public Iterable<String> committedLocations() {
@@ -88,7 +117,7 @@ public class Process {
       return it.transitions;
     };
     final Function1<Transition, Boolean> _function_1 = (Transition it) -> {
-      return Boolean.valueOf((it.signal != null));
+      return Boolean.valueOf(((it.signal != null) && it.target.isNested));
     };
     final Function1<Transition, String> _function_2 = (Transition it) -> {
       return it.target.name;
@@ -101,7 +130,7 @@ public class Process {
       return it.transitions;
     };
     final Function1<Transition, Boolean> _function_1 = (Transition it) -> {
-      return Boolean.valueOf((it.signal != null));
+      return Boolean.valueOf(((it.signal != null) && it.target.isNested));
     };
     final Function1<Transition, String> _function_2 = (Transition it) -> {
       StringConcatenation _builder = new StringConcatenation();
@@ -141,11 +170,11 @@ public class Process {
           }
         }
         {
-          if ((transition.when != null)) {
+          if ((transition.timeout > 0)) {
             _builder.append("\t");
-            _builder.append("sync ");
-            _builder.append(transition.when, "\t");
-            _builder.append("?;");
+            _builder.append("guard gen_clock >= ");
+            _builder.append(transition.timeout, "\t");
+            _builder.append(";");
             _builder.newLineIfNotEmpty();
           }
         }
@@ -156,6 +185,26 @@ public class Process {
             _builder.append(transition.signal, "\t");
             _builder.append("!;");
             _builder.newLineIfNotEmpty();
+          }
+        }
+        {
+          if ((transition.when != null)) {
+            _builder.append("\t");
+            _builder.append("sync ");
+            _builder.append(transition.when, "\t");
+            _builder.append("?;");
+            _builder.newLineIfNotEmpty();
+          }
+        }
+        {
+          final Function1<Transition, Boolean> _function_2 = (Transition it) -> {
+            return Boolean.valueOf((it.timeout > 0));
+          };
+          boolean _exists = IterableExtensions.<Transition>exists(transition.target.transitions, _function_2);
+          if (_exists) {
+            _builder.append("\t");
+            _builder.append("assign gen_clock := 0;");
+            _builder.newLine();
           }
         }
         _builder.append("}");

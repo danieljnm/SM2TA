@@ -30,23 +30,26 @@ class StateMachine {
 	
 	def String toUppaal() {
 		'''
+		«IF hasClock»
+		clock gen_clock;
+		«ENDIF»
 		«IF !channels.empty || !nestings.empty»
 		chan «(channels + nestings).join(', ')»;
-		«ENDIF»
-		«IF !clocks.empty»
-		clock «clocks.join(', ')»;
 		«ENDIF»
 		«FOR process : processes»
 		«process»
 		«ENDFOR»
-		«FOR channel : uppaalChannels»
-		«channel.channelToUppaal»
+		«FOR channel : whenChannels»
+		«channel.channelToUppaal("!")»
+		«ENDFOR»
+		«FOR channel : signalChannels»
+		«channel.channelToUppaal("?")»
 		«ENDFOR»
 		system «(processes.map[name] + uppaalChannels.map['''gen_sync_«it»''']).join(', ')»;
 		'''
 	}
 	
-	def String channelToUppaal(String channel) {
+	def String channelToUppaal(String channel, String sign) {
 		'''
 		process gen_sync_«channel» {
 			state
@@ -54,7 +57,7 @@ class StateMachine {
 			init initSync;
 			trans
 				initSync -> initSync {
-					sync «channel»!;
+					sync «channel»«sign»;
 				};
 		}
 		'''
@@ -80,19 +83,36 @@ class StateMachine {
 		processes.add(process)
 		
 		nestings.forEach[nesting |
-			val nestedProcess = new Uppaal.Process('''«nesting.name»_inner''')
-			var initial = new State(nesting, "gen_init").initial.transition("event", nesting.nestedStates.get(0).name).when('''gen_«nesting.name»_inner_start''')
-			nestedProcess.addState(initial)
-			nesting.nestedStates.forEach[nestedProcess.addState(it)]
-			processes.add(nestedProcess)
+			processes.add(nesting.toProcess)
 		]
 		
 		processes
 	}
 	
+	def toProcess(State nesting) {
+		val nestedProcess = new Uppaal.Process('''«nesting.name»_inner''')
+		var initial = new State(nesting, "gen_init").initial.transition("event", nesting.nestedStates.get(0).name).when('''gen_«nesting.name»_inner_start''')
+		nestedProcess.addState(initial)
+		nesting.nestedStates.forEach[nestedProcess.addState(it)]
+		nestedProcess
+	}
+	
 	def uppaalChannels() {
-		val set = signals.toSet
-		whens.filter[!set.contains(it)]
+		(whenChannels + signalChannels).toSet
+	}
+	
+	def whenChannels() {
+		states.values.filter[nestedStates.empty]
+			.flatMap[transitions]
+			.filter[when !== null]
+			.map[when]
+	}
+	
+	def signalChannels() {
+		states.values.filter[nestedStates.empty]
+			.flatMap[transitions]
+			.filter[signal !== null]
+			.map[signal]
 	}
 	
 	def channels() {
@@ -117,6 +137,11 @@ class StateMachine {
 		states.values.filter[!nestedStates.empty]
 		.map['''gen_«name»_inner_start''']
 		.toSet
+	}
+	
+	def hasClock() {
+		states.values.flatMap[transitions]
+		.exists[timeout > 0]
 	}
 	
 	def clocks() {

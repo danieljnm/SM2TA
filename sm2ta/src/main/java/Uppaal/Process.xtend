@@ -29,9 +29,25 @@ class Process {
 	}
 	
 	def stateNames() {
-		states.flatMap[it.nestedStates.empty ? #[it.name] : #['''gen_pre_«it.name»''', it.name]]
+		states.flatMap[it.nestedStates.empty ? #[it.format] : #['''gen_pre_«it.name»''', it.name]]
 		.toSet
 		.join(',\n')
+	}
+	
+	def format(State state) {
+		if (state.transitions.empty) {
+			return state.name
+		}
+		
+		val timeoutTransition = state.transitions.findFirst[timeout > 0]
+		if (timeoutTransition !== null) {
+			return '''
+			«state.name» {
+				gen_clock <= «timeoutTransition.timeout»
+			}'''
+		}
+		
+		state.name
 	}
 	
 	def committedLocations() {
@@ -45,13 +61,13 @@ class Process {
 	}
 	
 	def signalTargets() {
-		states.flatMap[transitions].filter[signal !== null]
+		states.flatMap[transitions].filter[signal !== null && target.isNested]
 		.map[target.name]
 		.toSet
 	}
 	
 	def signalTransitions() {
-		states.flatMap[transitions].filter[signal !== null]
+		states.flatMap[transitions].filter[signal !== null && target.isNested]
 		.map[
 		'''
 		«target.name» -> gen_init {
@@ -71,11 +87,17 @@ class Process {
 				«IF transition.guard !== null»
 					gen_clock <= «transition.guard»
 				«ENDIF»
-				«IF transition.when !== null»
-					sync «transition.when»?;
+				«IF transition.timeout > 0»
+					guard gen_clock >= «transition.timeout»;
 				«ENDIF»
 				«IF transition.signal !== null»
 					sync «transition.signal»!;
+				«ENDIF»
+				«IF transition.when !== null»
+					sync «transition.when»?;
+				«ENDIF»
+				«IF transition.target.transitions.exists[timeout > 0]»
+					assign gen_clock := 0;
 				«ENDIF»
 			}'''
 			]]

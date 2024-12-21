@@ -176,15 +176,16 @@ public class State {
     return _xblockexpression;
   }
 
-  public Object signal(final String signal) {
-    String _xblockexpression = null;
+  public State signal(final String signal) {
+    State _xblockexpression = null;
     {
       boolean _isEmpty = this.transitions.isEmpty();
       if (_isEmpty) {
         return this;
       }
       Transition _lastOrNull = IterableExtensions.<Transition>lastOrNull(this.transitions);
-      _xblockexpression = _lastOrNull.signal = signal;
+      _lastOrNull.signal = signal;
+      _xblockexpression = this;
     }
     return _xblockexpression;
   }

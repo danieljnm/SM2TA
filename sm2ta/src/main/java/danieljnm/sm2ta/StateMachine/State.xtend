@@ -116,6 +116,7 @@ class State {
 		}
 		
 		transitions.lastOrNull.signal = signal
+		this
 	}
 	
 	def initial() {

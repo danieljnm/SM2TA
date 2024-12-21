@@ -99,6 +99,50 @@ class TranslatorTest {
 	}
 	
 	@Test
+	def timeoutTransition() {
+		stateMachine.name("test")
+			.state("one").initial
+				.transition("event", "two")
+			.state("two")
+				.transition("event", "three").timeout(5).signal("finish")
+			.state("three")
+		val uppaal =
+			'''
+			clock gen_clock;
+			chan finish;
+			process test {
+				state
+					one,
+					two {
+						gen_clock <= 5
+					},
+					three;
+				init one;
+				trans
+					one -> two {
+						assign gen_clock := 0;
+					},
+					two -> three {
+						guard gen_clock >= 5;
+						sync finish!;
+					};
+			}
+			process gen_sync_finish {
+				state
+					initSync;
+				init initSync;
+				trans
+					initSync -> initSync {
+						sync finish?;
+					};
+			}
+			system test, gen_sync_finish;
+			'''
+		println(stateMachine.toUppaal)
+		assertEquals(uppaal, stateMachine.toUppaal)
+	}
+	
+	@Test
 	def nestedMachine() {
 		stateMachine.name("test")
 			.state("one").initial

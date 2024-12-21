@@ -10,9 +10,10 @@ public class Translator {
   private static StateMachine stateMachine = new StateMachine();
 
   public static void main(final String[] args) {
-    Translator.stateMachine.state("Idle").initial().transition("Ready", "Position acquisition").state("Position acquisition").transition("Systems ready", "Global planning").transition("Lost control").state("Global planning").transition("Success", "Next position").transition("Lost control").state("Next position").transition("Continue loop", "Capture state").transition("Done", "Mission completed").transition("Lost control").state("Capture state").transition("Success", "Validate state").transition("Lost control").state("Validate state").transition("Success", "Next position").transition("Lost control").state("Mission completed").transition("Success");
+    Translator.stateMachine.name("FOD").state("Idle").initial().transition("Ready", "PositionAcquisition").state("PositionAcquisition").transition("Systems ready", "GlobalPlanning").transition("LostControl").state("GlobalPlanning").transition("Success", "NextPosition").transition("LostControl").state("NextPosition").transition("Continue loop", "CaptureState").transition("Done", "MissionCompleted").transition("LostControl").state("CaptureState").transition("Success", "ValidateState").transition("LostControl").state("ValidateState").transition("Success", "NextPosition").transition("LostControl").state("MissionCompleted").transition("Success");
     Printer printer = new Printer();
     printer.print(Translator.stateMachine);
+    InputOutput.<String>println(Translator.stateMachine.toUppaal());
   }
 
   public static StateMachine getStateMachine() {
