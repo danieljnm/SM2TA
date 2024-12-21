@@ -15,6 +15,8 @@ import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
 public class StateMachine {
+  public int index;
+
   public String name;
 
   public HashMap<String, State> states = CollectionLiterals.<String, State>newHashMap();
@@ -157,7 +159,10 @@ public class StateMachine {
       final ArrayList<Uppaal.Process> processes = CollectionLiterals.<Uppaal.Process>newArrayList();
       final Uppaal.Process process = new Uppaal.Process(this.name);
       final ArrayList<State> nestings = CollectionLiterals.<State>newArrayList();
-      final Consumer<State> _function = (State state) -> {
+      final Function1<State, Integer> _function = (State it) -> {
+        return Integer.valueOf(it.index);
+      };
+      final Consumer<State> _function_1 = (State state) -> {
         if ((!state.isNested)) {
           process.addState(state);
         }
@@ -167,9 +172,9 @@ public class StateMachine {
           nestings.add(state);
         }
       };
-      this.states.values().forEach(_function);
+      IterableExtensions.<State, Integer>sortBy(this.states.values(), _function).forEach(_function_1);
       processes.add(process);
-      final Consumer<State> _function_1 = (State nesting) -> {
+      final Consumer<State> _function_2 = (State nesting) -> {
         StringConcatenation _builder = new StringConcatenation();
         _builder.append(nesting.name);
         _builder.append("_inner");
@@ -181,13 +186,13 @@ public class StateMachine {
         _builder_1.append("_inner_start");
         State initial = _transition.when(_builder_1.toString());
         nestedProcess.addState(initial);
-        final Consumer<State> _function_2 = (State it) -> {
+        final Consumer<State> _function_3 = (State it) -> {
           nestedProcess.addState(it);
         };
-        nesting.nestedStates.forEach(_function_2);
+        nesting.nestedStates.forEach(_function_3);
         processes.add(nestedProcess);
       };
-      nestings.forEach(_function_1);
+      nestings.forEach(_function_2);
       _xblockexpression = processes;
     }
     return _xblockexpression;

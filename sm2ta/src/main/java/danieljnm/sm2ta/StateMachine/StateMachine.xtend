@@ -3,6 +3,7 @@ package danieljnm.sm2ta.StateMachine
 import java.util.HashMap
 
 class StateMachine {
+	public int index
 	public String name
 	public HashMap<String, State> states = newHashMap
 	
@@ -66,7 +67,7 @@ class StateMachine {
 		
 		val nestings = newArrayList
 		
-		states.values.forEach[state |
+		states.values.sortBy[index].forEach[state |
 			if (!state.isNested) {
 				process.addState(state)
 			}

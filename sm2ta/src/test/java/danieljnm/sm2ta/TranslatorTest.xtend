@@ -99,63 +99,6 @@ class TranslatorTest {
 	}
 	
 	@Test
-	def timeoutTransition() {
-		stateMachine.name("test")
-			.state("one").initial
-				.transition("event", "two")
-			.state("two")
-				.nesting[
-					nestedState("innerOne")
-						.transition("event", "innerTwo").signal("finish")
-					nestedState("innerTwo")
-				]
-				.transition("event", "three").when("finish")
-			.state("three")
-		val uppaal =
-			'''
-			chan finish, gen_two_inner_start;
-			process test {
-				state
-					one,
-					gen_pre_two,
-					two,
-					three;
-				commit gen_pre_two;
-				init one;
-				trans
-					one -> gen_pre_two {
-					},
-					two -> three {
-						sync finish?;
-					},
-					gen_pre_two -> two {
-						sync gen_two_inner_start!;
-					};
-			}
-			process two_inner {
-				state
-					gen_init,
-					innerOne,
-					innerTwo;
-				commit innerTwo;
-				init gen_init;
-				trans
-					gen_init -> innerOne {
-						sync gen_two_inner_start?;
-					},
-					innerOne -> innerTwo {
-						sync finish!;
-					},
-					innerTwo -> gen_init {
-					};
-			}
-			system test, two_inner;
-			'''
-		println(stateMachine.toUppaal)
-		assertEquals(uppaal, stateMachine.toUppaal)
-	}
-	
-	@Test
 	def nestedMachine() {
 		stateMachine.name("test")
 			.state("one").initial
@@ -203,51 +146,51 @@ class TranslatorTest {
 			.state("two")
 				.nesting[
 					nestedState("innerOne")
-						.transition("event", "innerTwo").when("test")
+						.transition("event", "innerTwo").signal("finish")
 					nestedState("innerTwo")
 				]
+				.transition("event", "three").when("finish")
+			.state("three")
 		val uppaal = 
-		'''
-		chan test, gen_two_inner_start;
-		process test {
-			state
-				one,
-				gen_pre_two,
-				two;
-			commit gen_pre_two;
-			init one;
-			trans
-				one -> gen_pre_two {
-				},
-				gen_pre_two -> two {
-					sync gen_two_inner_start!;
-				};
-		}
-		process two_inner {
-			state
-				gen_init,
-				innerOne,
-				innerTwo;
-			init gen_init;
-			trans
-				gen_init -> innerOne {
-					sync gen_two_inner_start?;
-				},
-				innerOne -> innerTwo {
-					sync test?;
-				};
-		}
-		process gen_sync_test {
-			state
-				initSync;
-			init initSync;
-			trans
-				initSync -> initSync {
-					sync test!;
-				};
-		}
-		system test, two_inner, gen_sync_test;
-		'''
+			'''
+			chan finish, gen_two_inner_start;
+			process test {
+				state
+					one,
+					gen_pre_two,
+					two,
+					three;
+				commit gen_pre_two;
+				init one;
+				trans
+					one -> gen_pre_two {
+					},
+					two -> three {
+						sync finish?;
+					},
+					gen_pre_two -> two {
+						sync gen_two_inner_start!;
+					};
+			}
+			process two_inner {
+				state
+					gen_init,
+					innerOne,
+					innerTwo;
+				commit innerTwo;
+				init gen_init;
+				trans
+					gen_init -> innerOne {
+						sync gen_two_inner_start?;
+					},
+					innerOne -> innerTwo {
+						sync finish!;
+					},
+					innerTwo -> gen_init {
+					};
+			}
+			system test, two_inner;
+			'''
 		assertEquals(uppaal, stateMachine.toUppaal)
 	}
 }

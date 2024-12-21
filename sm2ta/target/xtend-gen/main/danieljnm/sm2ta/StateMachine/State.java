@@ -13,6 +13,8 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 public class State {
   private StateMachine stateMachine;
 
+  public int index;
+
   public State parent;
 
   public String name;
@@ -34,6 +36,8 @@ public class State {
   public State(final StateMachine stateMachine, final String name) {
     this.stateMachine = stateMachine;
     this.name = name;
+    int _plusPlus = stateMachine.index++;
+    this.index = _plusPlus;
   }
 
   public State state(final String name) {

@@ -34,14 +34,34 @@ class Process {
 		.join(',\n')
 	}
 	
+	def committedLocations() {
+		nestedStateNames + signalTargets
+	}
+	
 	def nestedStateNames() {
 		states.filter[!nestedStates.empty]
 		.map[it.name]
 		.toSet
 	}
 	
+	def signalTargets() {
+		states.flatMap[transitions].filter[signal !== null]
+		.map[target.name]
+		.toSet
+	}
+	
+	def signalTransitions() {
+		states.flatMap[transitions].filter[signal !== null]
+		.map[
+		'''
+		«target.name» -> gen_init {
+		}'''
+		]
+		.toSet
+	}
+	
 	def transitions() {
-		(actualTransitions + nestedStateTransitions).join(',\n')
+		(actualTransitions + nestedStateTransitions + signalTransitions).join(',\n')
 	}
 	
 	def actualTransitions() {
@@ -76,8 +96,8 @@ class Process {
 			«IF !states.empty»
 			state
 				«stateNames»;
-			«IF !nestedStateNames.empty»
-			commit «nestedStateNames.map['''gen_pre_«it»'''].join(', ')»;
+			«IF !committedLocations.empty»
+			commit «(nestedStateNames.map['''gen_pre_«it»''']+signalTargets).join(', ')»;
 			«ENDIF»
 			init «initialState.name»;
 			«ENDIF»

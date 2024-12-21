@@ -4,6 +4,7 @@ import java.util.List
 
 class State {
 	StateMachine stateMachine
+	public int index
 	public State parent
 	public String name
 	public List<Transition> transitions = newArrayList
@@ -20,6 +21,7 @@ class State {
 	new(StateMachine stateMachine, String name) {
 		this.stateMachine = stateMachine
 		this.name = name
+		this.index = stateMachine.index++
 	}
 	
 	def State state(String name) {
