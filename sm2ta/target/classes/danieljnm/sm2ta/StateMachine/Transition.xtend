@@ -5,8 +5,9 @@ class Transition {
 	public State target
 	public String guard
 	public String action
-	public String timeout
+	public int timeout
 	public String when
+	public String signal
 	
 	new(String event, State target) {
 		this.event = event
@@ -23,7 +24,7 @@ class Transition {
 	override toString() {
 		'''
 		«IF target !== null»
-		«event» -> «target.name»«IF guard !== null» (Guard: «guard»)«ENDIF»«IF action !== null» (Action: «action»)«ENDIF»«IF timeout !== null» (Timeout: «timeout»)«ENDIF»
+		«event» -> «target.name»«IF guard !== null» (Guard: «guard»)«ENDIF»«IF action !== null» (Action: «action»)«ENDIF»«IF timeout > 0» (Timeout: «timeout»)«ENDIF»
 		«ENDIF»
 		'''
 	}

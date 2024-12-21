@@ -77,7 +77,7 @@ public class StateMachineTest {
 
   @Test
   public void transitionHasTimeout() {
-    final String timeout = "500";
+    final int timeout = 5;
     this.stateMachine.state("Idle").initial().transition("Ready", "Planning").timeout(timeout);
     Transition transition = this.stateMachine.getInitialState().transitions.get(0);
     Assertions.assertNotNull(transition);

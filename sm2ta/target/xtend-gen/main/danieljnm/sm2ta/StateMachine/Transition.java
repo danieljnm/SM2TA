@@ -12,9 +12,11 @@ public class Transition {
 
   public String action;
 
-  public String timeout;
+  public int timeout;
 
   public String when;
+
+  public String signal;
 
   public Transition(final String event, final State target) {
     this.event = event;
@@ -58,7 +60,7 @@ public class Transition {
           }
         }
         {
-          if ((this.timeout != null)) {
+          if ((this.timeout > 0)) {
             _builder.append(" (Timeout: ");
             _builder.append(this.timeout);
             _builder.append(")");

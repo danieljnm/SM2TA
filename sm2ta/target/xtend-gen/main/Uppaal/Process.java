@@ -94,11 +94,28 @@ public class Process {
         _builder.append(" {");
         _builder.newLineIfNotEmpty();
         {
+          if ((transition.guard != null)) {
+            _builder.append("\t");
+            _builder.append("gen_clock <= ");
+            _builder.append(transition.guard, "\t");
+            _builder.newLineIfNotEmpty();
+          }
+        }
+        {
           if ((transition.when != null)) {
             _builder.append("\t");
             _builder.append("sync ");
             _builder.append(transition.when, "\t");
             _builder.append("?;");
+            _builder.newLineIfNotEmpty();
+          }
+        }
+        {
+          if ((transition.signal != null)) {
+            _builder.append("\t");
+            _builder.append("sync ");
+            _builder.append(transition.signal, "\t");
+            _builder.append("!;");
             _builder.newLineIfNotEmpty();
           }
         }

@@ -38,10 +38,10 @@ class StateMachine {
 		«FOR process : processes»
 		«process»
 		«ENDFOR»
-		«FOR channel : channels»
+		«FOR channel : uppaalChannels»
 		«channel.channelToUppaal»
 		«ENDFOR»
-		system «(processes.map[name] + channels.map['''gen_sync_«it»''']).join(', ')»;
+		system «(processes.map[name] + uppaalChannels.map['''gen_sync_«it»''']).join(', ')»;
 		'''
 	}
 	
@@ -80,7 +80,7 @@ class StateMachine {
 		
 		nestings.forEach[nesting |
 			val nestedProcess = new Uppaal.Process('''«nesting.name»_inner''')
-			var initial = new State(nesting, "gen_init").initial.transition("event", nesting.nestedStates.get(0).name).when("gen_two_inner_start")
+			var initial = new State(nesting, "gen_init").initial.transition("event", nesting.nestedStates.get(0).name).when('''gen_«nesting.name»_inner_start''')
 			nestedProcess.addState(initial)
 			nesting.nestedStates.forEach[nestedProcess.addState(it)]
 			processes.add(nestedProcess)
@@ -89,12 +89,27 @@ class StateMachine {
 		processes
 	}
 	
+	def uppaalChannels() {
+		val set = signals.toSet
+		whens.filter[!set.contains(it)]
+	}
+	
 	def channels() {
-		states.values.flatMap[nestedStates].flatMap[transitions].filter[when !== null].map[it.when]
+		(signals + whens).toSet
+	}
+	
+	def signals() {
+		transitions.filter[signal !== null].map[signal]
+	}
+	
+	def whens() {
+		transitions.filter[when !== null].map[when]
+	}
+	
+	def transitions() {
+		states.values.flatMap[nestedStates].flatMap[transitions]
 		+
 		states.values.flatMap[transitions]
-		.filter[when !== null]
-		.map[it.when]
 	}
 	
 	def nestings() {
@@ -105,7 +120,7 @@ class StateMachine {
 	
 	def clocks() {
 		states.values.flatMap[transitions]
-		.filter[timeout !== null]
+		.filter[timeout > 0]
 		.map['''«target.name»_gen_clock''']
 	}
 }

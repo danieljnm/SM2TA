@@ -62,9 +62,9 @@ public class StateMachine {
   public String toUppaal() {
     StringConcatenation _builder = new StringConcatenation();
     {
-      if (((!IterableExtensions.isEmpty(this.channels())) || (!this.nestings().isEmpty()))) {
+      if (((!this.channels().isEmpty()) || (!this.nestings().isEmpty()))) {
         _builder.append("chan ");
-        Iterable<String> _channels = this.channels();
+        Set<String> _channels = this.channels();
         Set<String> _nestings = this.nestings();
         String _join = IterableExtensions.join(Iterables.<String>concat(_channels, _nestings), ", ");
         _builder.append(_join);
@@ -91,8 +91,8 @@ public class StateMachine {
       }
     }
     {
-      Iterable<String> _channels_1 = this.channels();
-      for(final String channel : _channels_1) {
+      Iterable<String> _uppaalChannels = this.uppaalChannels();
+      for(final String channel : _uppaalChannels) {
         String _channelToUppaal = this.channelToUppaal(channel);
         _builder.append(_channelToUppaal);
         _builder.newLineIfNotEmpty();
@@ -109,7 +109,7 @@ public class StateMachine {
       _builder_1.append(it);
       return _builder_1.toString();
     };
-    Iterable<String> _map_1 = IterableExtensions.<String, String>map(this.channels(), _function_1);
+    Iterable<String> _map_1 = IterableExtensions.<String, String>map(this.uppaalChannels(), _function_1);
     String _join_2 = IterableExtensions.join(Iterables.<String>concat(_map, _map_1), ", ");
     _builder.append(_join_2);
     _builder.append(";");
@@ -174,7 +174,12 @@ public class StateMachine {
         _builder.append(nesting.name);
         _builder.append("_inner");
         final Uppaal.Process nestedProcess = new Uppaal.Process(_builder.toString());
-        State initial = new State(nesting, "gen_init").initial().transition("event", nesting.nestedStates.get(0).name).when("gen_two_inner_start");
+        State _transition = new State(nesting, "gen_init").initial().transition("event", nesting.nestedStates.get(0).name);
+        StringConcatenation _builder_1 = new StringConcatenation();
+        _builder_1.append("gen_");
+        _builder_1.append(nesting.name);
+        _builder_1.append("_inner_start");
+        State initial = _transition.when(_builder_1.toString());
         nestedProcess.addState(initial);
         final Consumer<State> _function_2 = (State it) -> {
           nestedProcess.addState(it);
@@ -188,31 +193,58 @@ public class StateMachine {
     return _xblockexpression;
   }
 
-  public Iterable<String> channels() {
+  public Iterable<String> uppaalChannels() {
+    Iterable<String> _xblockexpression = null;
+    {
+      final Set<String> set = IterableExtensions.<String>toSet(this.signals());
+      final Function1<String, Boolean> _function = (String it) -> {
+        boolean _contains = set.contains(it);
+        return Boolean.valueOf((!_contains));
+      };
+      _xblockexpression = IterableExtensions.<String>filter(this.whens(), _function);
+    }
+    return _xblockexpression;
+  }
+
+  public Set<String> channels() {
+    Iterable<String> _signals = this.signals();
+    Iterable<String> _whens = this.whens();
+    return IterableExtensions.<String>toSet(Iterables.<String>concat(_signals, _whens));
+  }
+
+  public Iterable<String> signals() {
+    final Function1<Transition, Boolean> _function = (Transition it) -> {
+      return Boolean.valueOf((it.signal != null));
+    };
+    final Function1<Transition, String> _function_1 = (Transition it) -> {
+      return it.signal;
+    };
+    return IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(this.transitions(), _function), _function_1);
+  }
+
+  public Iterable<String> whens() {
+    final Function1<Transition, Boolean> _function = (Transition it) -> {
+      return Boolean.valueOf((it.when != null));
+    };
+    final Function1<Transition, String> _function_1 = (Transition it) -> {
+      return it.when;
+    };
+    return IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(this.transitions(), _function), _function_1);
+  }
+
+  public Iterable<Transition> transitions() {
     final Function1<State, List<State>> _function = (State it) -> {
       return it.nestedStates;
     };
     final Function1<State, List<Transition>> _function_1 = (State it) -> {
       return it.transitions;
     };
-    final Function1<Transition, Boolean> _function_2 = (Transition it) -> {
-      return Boolean.valueOf((it.when != null));
-    };
-    final Function1<Transition, String> _function_3 = (Transition it) -> {
-      return it.when;
-    };
-    Iterable<String> _map = IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(IterableExtensions.<State, Transition>flatMap(IterableExtensions.<State, State>flatMap(this.states.values(), _function), _function_1), _function_2), _function_3);
-    final Function1<State, List<Transition>> _function_4 = (State it) -> {
+    Iterable<Transition> _flatMap = IterableExtensions.<State, Transition>flatMap(IterableExtensions.<State, State>flatMap(this.states.values(), _function), _function_1);
+    final Function1<State, List<Transition>> _function_2 = (State it) -> {
       return it.transitions;
     };
-    final Function1<Transition, Boolean> _function_5 = (Transition it) -> {
-      return Boolean.valueOf((it.when != null));
-    };
-    final Function1<Transition, String> _function_6 = (Transition it) -> {
-      return it.when;
-    };
-    Iterable<String> _map_1 = IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(IterableExtensions.<State, Transition>flatMap(this.states.values(), _function_4), _function_5), _function_6);
-    return Iterables.<String>concat(_map, _map_1);
+    Iterable<Transition> _flatMap_1 = IterableExtensions.<State, Transition>flatMap(this.states.values(), _function_2);
+    return Iterables.<Transition>concat(_flatMap, _flatMap_1);
   }
 
   public Set<String> nestings() {
@@ -235,7 +267,7 @@ public class StateMachine {
       return it.transitions;
     };
     final Function1<Transition, Boolean> _function_1 = (Transition it) -> {
-      return Boolean.valueOf((it.timeout != null));
+      return Boolean.valueOf((it.timeout > 0));
     };
     final Function1<Transition, String> _function_2 = (Transition it) -> {
       StringConcatenation _builder = new StringConcatenation();

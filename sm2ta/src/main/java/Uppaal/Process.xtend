@@ -2,7 +2,6 @@ package Uppaal
 
 import java.util.List
 import danieljnm.sm2ta.StateMachine.State
-import danieljnm.sm2ta.StateMachine.Transition
 
 class Process {
 	public String name
@@ -49,8 +48,14 @@ class Process {
 		states.flatMap[state | state.transitions.map[transition | 
 			'''
 			«state.name» -> «transition.targetName(state.isNested)» {
+				«IF transition.guard !== null»
+					gen_clock <= «transition.guard»
+				«ENDIF»
 				«IF transition.when !== null»
 					sync «transition.when»?;
+				«ENDIF»
+				«IF transition.signal !== null»
+					sync «transition.signal»!;
 				«ENDIF»
 			}'''
 			]]

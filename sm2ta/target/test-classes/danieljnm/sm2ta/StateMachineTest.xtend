@@ -71,7 +71,7 @@ class StateMachineTest {
 	}
 	
 	@Test def void transitionHasTimeout() {
-		val timeout = "500"
+		val timeout = 5
 		stateMachine
 			.state("Idle").initial
 				.transition("Ready", "Planning").timeout(timeout)

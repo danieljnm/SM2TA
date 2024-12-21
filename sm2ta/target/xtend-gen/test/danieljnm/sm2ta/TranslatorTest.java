@@ -160,6 +160,124 @@ public class TranslatorTest {
   }
 
   @Test
+  public void timeoutTransition() {
+    final Procedure1<State> _function = (State it) -> {
+      it.nestedState("innerOne").transition("event", "innerTwo").signal("finish");
+      it.nestedState("innerTwo");
+    };
+    this.stateMachine.name("test").state("one").initial().transition("event", "two").state("two").nesting(_function).transition("event", "three").when("finish").state("three");
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("chan finish, gen_two_inner_start;");
+    _builder.newLine();
+    _builder.append("process test {");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("state");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("one,");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("gen_pre_two,");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("two,");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("three;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("commit gen_pre_two;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("init one;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("trans");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("one -> gen_pre_two {");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("},");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("two -> three {");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("sync finish?;");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("},");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("gen_pre_two -> two {");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("sync gen_two_inner_start!;");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("};");
+    _builder.newLine();
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("process two_inner {");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("state");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("gen_init,");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("innerOne,");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("innerTwo;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("commit innerTwo;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("init gen_init;");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("trans");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("gen_init -> innerOne {");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("sync gen_two_inner_start?;");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("},");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("innerOne -> innerTwo {");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("sync finish!;");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("},");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("innerTwo -> gen_init {");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("};");
+    _builder.newLine();
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("system test, two_inner;");
+    _builder.newLine();
+    final String uppaal = _builder.toString();
+    InputOutput.<String>println(this.stateMachine.toUppaal());
+    Assertions.assertEquals(uppaal, this.stateMachine.toUppaal());
+  }
+
+  @Test
   public void nestedMachine() {
     final Procedure1<State> _function = (State it) -> {
       it.nestedState("three");
@@ -358,7 +476,6 @@ public class TranslatorTest {
     _builder.append("system test, two_inner, gen_sync_test;");
     _builder.newLine();
     final String uppaal = _builder.toString();
-    InputOutput.<String>println(this.stateMachine.toUppaal());
     Assertions.assertEquals(uppaal, this.stateMachine.toUppaal());
   }
 }

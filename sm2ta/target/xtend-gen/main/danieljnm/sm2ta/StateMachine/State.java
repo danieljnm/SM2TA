@@ -144,7 +144,7 @@ public class State {
     return _xblockexpression;
   }
 
-  public State timeout(final String timeout) {
+  public State timeout(final int timeout) {
     State _xblockexpression = null;
     {
       boolean _isEmpty = this.transitions.isEmpty();
@@ -168,6 +168,19 @@ public class State {
       Transition _lastOrNull = IterableExtensions.<Transition>lastOrNull(this.transitions);
       _lastOrNull.when = when;
       _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+
+  public Object signal(final String signal) {
+    String _xblockexpression = null;
+    {
+      boolean _isEmpty = this.transitions.isEmpty();
+      if (_isEmpty) {
+        return this;
+      }
+      Transition _lastOrNull = IterableExtensions.<Transition>lastOrNull(this.transitions);
+      _xblockexpression = _lastOrNull.signal = signal;
     }
     return _xblockexpression;
   }
