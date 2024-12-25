@@ -116,7 +116,7 @@ class StateMachine {
 	}
 	
 	def channels() {
-		(signals + whens).toSet
+		(whens + signals).toSet
 	}
 	
 	def signals() {
@@ -141,6 +141,9 @@ class StateMachine {
 	
 	def hasClock() {
 		states.values.flatMap[transitions]
+		.exists[timeout > 0]
+		||
+		states.values.flatMap[nestings].flatMap[transitions]
 		.exists[timeout > 0]
 	}
 	

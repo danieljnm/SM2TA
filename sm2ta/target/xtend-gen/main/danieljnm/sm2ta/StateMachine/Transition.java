@@ -37,6 +37,31 @@ public class Transition {
     return _xblockexpression;
   }
 
+  public Object guardValue() {
+    Object _switchResult = null;
+    String _lowerCase = this.guard.toLowerCase();
+    if (_lowerCase != null) {
+      switch (_lowerCase) {
+        case "true":
+          _switchResult = Integer.valueOf(1);
+          break;
+        case "false":
+          _switchResult = Integer.valueOf(0);
+          break;
+        default:
+          _switchResult = this.guard;
+          break;
+      }
+    } else {
+      _switchResult = this.guard;
+    }
+    return _switchResult;
+  }
+
+  public Object stringToBool(final String value) {
+    return null;
+  }
+
   @Override
   public String toString() {
     StringConcatenation _builder = new StringConcatenation();

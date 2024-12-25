@@ -99,6 +99,33 @@ class TranslatorTest {
 	}
 	
 	@Test
+	def guardTransitions() {
+		stateMachine.name("test")
+			.state("one").initial
+				.transition("event", "two").guard("false")
+				.transition("event", "two").guard("true")
+			.state("two")
+		val uppaal =
+			'''
+			process test {
+				state
+					one,
+					two;
+				init one;
+				trans
+					one -> two {
+						guard 0;
+					},
+					one -> two {
+						guard 1;
+					};
+			}
+			system test;
+			'''
+		assertEquals(uppaal, stateMachine.toUppaal)
+	}	
+	
+	@Test
 	def timeoutTransition() {
 		stateMachine.name("test")
 			.state("one").initial
@@ -138,7 +165,6 @@ class TranslatorTest {
 			}
 			system test, gen_sync_finish;
 			'''
-		println(stateMachine.toUppaal)
 		assertEquals(uppaal, stateMachine.toUppaal)
 	}
 	
@@ -234,6 +260,75 @@ class TranslatorTest {
 					};
 			}
 			system test, two_inner;
+			'''
+		assertEquals(uppaal, stateMachine.toUppaal)
+	}
+	
+	@Test
+	def nestedMachineWithSignalsAndTimeout() {
+		stateMachine.name("test")
+			.state("one").initial
+				.transition("event", "two").when("ready")
+			.state("two")
+				.nesting[
+					nestedState("innerOne")
+						.transition("event", "innerTwo").timeout(5).signal("finish")
+					nestedState("innerTwo")
+				]
+				.transition("event", "one").when("finish")
+		val uppaal = 
+			'''
+			clock gen_clock;
+			chan ready, finish, gen_two_inner_start;
+			process test {
+				state
+					one,
+					gen_pre_two,
+					two;
+				commit gen_pre_two;
+				init one;
+				trans
+					one -> gen_pre_two {
+						sync ready?;
+					},
+					two -> one {
+						sync finish?;
+					},
+					gen_pre_two -> two {
+						sync gen_two_inner_start!;
+					};
+			}
+			process two_inner {
+				state
+					gen_init,
+					innerOne {
+						gen_clock <= 5
+					},
+					innerTwo;
+				commit innerTwo;
+				init gen_init;
+				trans
+					gen_init -> innerOne {
+						sync gen_two_inner_start?;
+						assign gen_clock := 0;
+					},
+					innerOne -> innerTwo {
+						guard gen_clock >= 5;
+						sync finish!;
+					},
+					innerTwo -> gen_init {
+					};
+			}
+			process gen_sync_ready {
+				state
+					initSync;
+				init initSync;
+				trans
+					initSync -> initSync {
+						sync ready!;
+					};
+			}
+			system test, two_inner, gen_sync_ready;
 			'''
 		assertEquals(uppaal, stateMachine.toUppaal)
 	}

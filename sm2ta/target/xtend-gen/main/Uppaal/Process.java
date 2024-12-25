@@ -164,8 +164,10 @@ public class Process {
         {
           if ((transition.guard != null)) {
             _builder.append("\t");
-            _builder.append("gen_clock <= ");
-            _builder.append(transition.guard, "\t");
+            _builder.append("guard ");
+            Object _guardValue = transition.guardValue();
+            _builder.append(_guardValue, "\t");
+            _builder.append(";");
             _builder.newLineIfNotEmpty();
           }
         }

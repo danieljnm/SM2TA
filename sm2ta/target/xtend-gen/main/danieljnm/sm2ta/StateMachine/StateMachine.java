@@ -250,9 +250,9 @@ public class StateMachine {
   }
 
   public Set<String> channels() {
-    Iterable<String> _signals = this.signals();
     Iterable<String> _whens = this.whens();
-    return IterableExtensions.<String>toSet(Iterables.<String>concat(_signals, _whens));
+    Iterable<String> _signals = this.signals();
+    return IterableExtensions.<String>toSet(Iterables.<String>concat(_whens, _signals));
   }
 
   public Iterable<String> signals() {
@@ -306,13 +306,18 @@ public class StateMachine {
   }
 
   public boolean hasClock() {
-    final Function1<State, List<Transition>> _function = (State it) -> {
+    return (IterableExtensions.<Transition>exists(IterableExtensions.<State, Transition>flatMap(this.states.values(), ((Function1<State, List<Transition>>) (State it) -> {
       return it.transitions;
-    };
-    final Function1<Transition, Boolean> _function_1 = (Transition it) -> {
+    })), ((Function1<Transition, Boolean>) (Transition it) -> {
       return Boolean.valueOf((it.timeout > 0));
-    };
-    return IterableExtensions.<Transition>exists(IterableExtensions.<State, Transition>flatMap(this.states.values(), _function), _function_1);
+    })) || 
+      IterableExtensions.<Transition>exists(IterableExtensions.<String, Transition>flatMap(IterableExtensions.<State, String>flatMap(this.states.values(), ((Function1<State, Set<String>>) (State it) -> {
+        return this.nestings();
+      })), ((Function1<String, Iterable<Transition>>) (String it) -> {
+        return this.transitions();
+      })), ((Function1<Transition, Boolean>) (Transition it) -> {
+        return Boolean.valueOf((it.timeout > 0));
+      })));
   }
 
   public Iterable<String> clocks() {

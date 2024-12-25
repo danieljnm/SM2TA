@@ -20,6 +20,18 @@ class Transition {
 		
 		'''gen_pre_«target.name»'''
 	}
+	
+	def guardValue() {
+		switch guard.toLowerCase {
+			case "true": 1
+			case "false": 0
+			default: guard
+		}
+	}
+	
+	def stringToBool(String value) {
+		
+	}
 		
 	override toString() {
 		'''

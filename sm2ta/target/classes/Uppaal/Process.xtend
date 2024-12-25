@@ -85,7 +85,7 @@ class Process {
 			'''
 			«state.name» -> «transition.targetName(state.isNested)» {
 				«IF transition.guard !== null»
-					gen_clock <= «transition.guard»
+					guard «transition.guardValue»;
 				«ENDIF»
 				«IF transition.timeout > 0»
 					guard gen_clock >= «transition.timeout»;
