@@ -1,7 +1,6 @@
 package danieljnm.sm2ta.StateMachine
 
 class Transition {
-	public String event
 	public State target
 	public String guard
 	public String action
@@ -9,8 +8,7 @@ class Transition {
 	public String when
 	public String signal
 	
-	new(String event, State target) {
-		this.event = event
+	new(State target) {
 		this.target = target
 	}
 	
@@ -28,15 +26,11 @@ class Transition {
 			default: guard
 		}
 	}
-	
-	def stringToBool(String value) {
-		
-	}
 		
 	override toString() {
 		'''
 		«IF target !== null»
-		«event» -> «target.name»«IF guard !== null» (Guard: «guard»)«ENDIF»«IF action !== null» (Action: «action»)«ENDIF»«IF timeout > 0» (Timeout: «timeout»)«ENDIF»
+		-> «target.name»«IF guard !== null» (Guard: «guard»)«ENDIF»«IF action !== null» (Action: «action»)«ENDIF»«IF timeout > 0» (Timeout: «timeout»)«ENDIF»
 		«ENDIF»
 		'''
 	}

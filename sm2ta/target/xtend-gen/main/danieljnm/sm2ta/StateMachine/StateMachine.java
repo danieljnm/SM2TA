@@ -195,7 +195,7 @@ public class StateMachine {
       _builder.append(nesting.name);
       _builder.append("_inner");
       final Uppaal.Process nestedProcess = new Uppaal.Process(_builder.toString());
-      State _transition = new State(nesting, "gen_init").initial().transition("event", nesting.nestedStates.get(0).name);
+      State _transition = new State(nesting, "gen_init").initial().transition(nesting.nestedStates.get(0).name);
       StringConcatenation _builder_1 = new StringConcatenation();
       _builder_1.append("gen_");
       _builder_1.append(nesting.name);

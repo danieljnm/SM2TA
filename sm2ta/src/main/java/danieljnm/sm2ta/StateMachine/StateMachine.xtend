@@ -91,7 +91,7 @@ class StateMachine {
 	
 	def toProcess(State nesting) {
 		val nestedProcess = new Uppaal.Process('''«nesting.name»_inner''')
-		var initial = new State(nesting, "gen_init").initial.transition("event", nesting.nestedStates.get(0).name).when('''gen_«nesting.name»_inner_start''')
+		var initial = new State(nesting, "gen_init").initial.transition(nesting.nestedStates.get(0).name).when('''gen_«nesting.name»_inner_start''')
 		nestedProcess.addState(initial)
 		nesting.nestedStates.forEach[nestedProcess.addState(it)]
 		nestedProcess

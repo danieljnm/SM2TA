@@ -47,7 +47,7 @@ class TranslatorTest {
 	def void transitions() {
 		stateMachine.name("test")
 			.state("one").initial
-				.transition("event", "two")
+				.transition("two")
 			.state("two")
 		val uppaal = 
 			'''
@@ -69,7 +69,7 @@ class TranslatorTest {
 	def actionTransition() {
 		stateMachine.name("test")
 			.state("one").initial
-				.transition("event", "two").when("test")
+				.transition("two").when("test")
 			.state("two")
 		val uppaal =
 			'''
@@ -102,8 +102,8 @@ class TranslatorTest {
 	def guardTransitions() {
 		stateMachine.name("test")
 			.state("one").initial
-				.transition("event", "two").guard("false")
-				.transition("event", "two").guard("true")
+				.transition("two").guard("false")
+				.transition("two").guard("true")
 			.state("two")
 		val uppaal =
 			'''
@@ -129,9 +129,9 @@ class TranslatorTest {
 	def timeoutTransition() {
 		stateMachine.name("test")
 			.state("one").initial
-				.transition("event", "two")
+				.transition("two")
 			.state("two")
-				.transition("event", "three").timeout(5).signal("finish")
+				.transition("three").timeout(5).signal("finish")
 			.state("three")
 		val uppaal =
 			'''
@@ -212,14 +212,14 @@ class TranslatorTest {
 	def nestedMachineWithTransitions() {
 		stateMachine.name("test")
 			.state("one").initial
-				.transition("event", "two")
+				.transition("two")
 			.state("two")
 				.nesting[
 					nestedState("innerOne")
-						.transition("event", "innerTwo").signal("finish")
+						.transition("innerTwo").signal("finish")
 					nestedState("innerTwo")
 				]
-				.transition("event", "three").when("finish")
+				.transition("three").when("finish")
 			.state("three")
 		val uppaal = 
 			'''
@@ -268,14 +268,14 @@ class TranslatorTest {
 	def nestedMachineWithSignalsAndTimeout() {
 		stateMachine.name("test")
 			.state("one").initial
-				.transition("event", "two").when("ready")
+				.transition("two").when("ready")
 			.state("two")
 				.nesting[
 					nestedState("innerOne")
-						.transition("event", "innerTwo").timeout(5).signal("finish")
+						.transition("innerTwo").timeout(5).signal("finish")
 					nestedState("innerTwo")
 				]
-				.transition("event", "one").when("finish")
+				.transition("one").when("finish")
 		val uppaal = 
 			'''
 			clock gen_clock;

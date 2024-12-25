@@ -40,13 +40,12 @@ class StateMachineTest {
 	def void transition() {
 		stateMachine
 			.state("Idle").initial
-				.transition("Ready", "Planning")
+				.transition("Planning")
 			.state("Planning")
 		var transitions = stateMachine.initialState.transitions
 		assertEquals(1, transitions.length)
 		var transition = transitions.get(0)
 		assertEquals("Planning", transition.target.name)
-		assertEquals("Ready", transition.event)
 	}
 	
 	@Test
@@ -54,7 +53,7 @@ class StateMachineTest {
 		val guard = "x > 1"
 		stateMachine
 			.state("Idle").initial
-				.transition("Ready", "Planning").guard(guard)
+				.transition("Planning").guard(guard)
 		var transition = stateMachine.initialState.transitions.get(0)
 		assertNotNull(transition)
 		assertEquals(guard, transition.guard)
@@ -64,7 +63,7 @@ class StateMachineTest {
 		val action = "x = 0"
 		stateMachine
 			.state("Idle").initial
-				.transition("Ready", "Planning").action(action)
+				.transition("Planning").action(action)
 		var transition = stateMachine.initialState.transitions.get(0)
 		assertNotNull(transition)
 		assertEquals(action, transition.action)
@@ -74,7 +73,7 @@ class StateMachineTest {
 		val timeout = 5
 		stateMachine
 			.state("Idle").initial
-				.transition("Ready", "Planning").timeout(timeout)
+				.transition("Planning").timeout(timeout)
 		var transition = stateMachine.initialState.transitions.get(0)
 		assertNotNull(transition)
 		assertEquals(timeout, transition.timeout)
@@ -86,10 +85,10 @@ class StateMachineTest {
 			.state("Idle").initial
 				.nesting[
 					nestedState("Testing").initial
-						.transition("Processed", "Evaluating").guard("x > 1").action("x = 0")
+						.transition("Evaluating").guard("x > 1").action("x = 0")
 					nestedState("Evaluating")
-						.transition("Done")
 				]
+				.transition("Done")
 		
 		var nestedStates = stateMachine.initialState.nestedStates
 		assertEquals(2, nestedStates.length)
@@ -106,11 +105,11 @@ class StateMachineTest {
 			.state("Idle").initial
 				.nesting[
 					nestedState("Testing").initial
-						.transition("Processed", "Evaluating").guard("x > 1").action("x = 0")
+						.transition("Evaluating").guard("x > 1").action("x = 0")
 					nestedState("Evaluating")
 						.transition("Done")
 				]
-				.transition("Ready", "Planning")
+				.transition("Planning")
 			.state("Planning")
 				.transition("Done")
 		
@@ -118,7 +117,6 @@ class StateMachineTest {
 		var initialState = nestedStates.findFirst[it.isInitial]
 		var transition = initialState.transitions.get(0)
 		assertEquals("Evaluating", transition.target.name)
-		assertEquals("Processed", transition.event)
 		assertEquals("x > 1", transition.guard)
 		assertEquals("x = 0", transition.action)
 		

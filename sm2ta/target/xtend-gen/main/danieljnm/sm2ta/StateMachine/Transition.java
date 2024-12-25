@@ -4,8 +4,6 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
 public class Transition {
-  public String event;
-
   public State target;
 
   public String guard;
@@ -18,8 +16,7 @@ public class Transition {
 
   public String signal;
 
-  public Transition(final String event, final State target) {
-    this.event = event;
+  public Transition(final State target) {
     this.target = target;
   }
 
@@ -58,17 +55,12 @@ public class Transition {
     return _switchResult;
   }
 
-  public Object stringToBool(final String value) {
-    return null;
-  }
-
   @Override
   public String toString() {
     StringConcatenation _builder = new StringConcatenation();
     {
       if ((this.target != null)) {
-        _builder.append(this.event);
-        _builder.append(" -> ");
+        _builder.append("-> ");
         _builder.append(this.target.name);
         {
           if ((this.guard != null)) {

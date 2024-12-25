@@ -70,23 +70,7 @@ public class State {
     return _xblockexpression;
   }
 
-  public State transition(final String event) {
-    State _xblockexpression = null;
-    {
-      if (this.isNested) {
-        Transition _transition = new Transition(event, this.parent);
-        this.transitions.add(_transition);
-        return this;
-      }
-      State _initialState = this.stateMachine.getInitialState();
-      Transition _transition_1 = new Transition(event, _initialState);
-      this.transitions.add(_transition_1);
-      _xblockexpression = this;
-    }
-    return _xblockexpression;
-  }
-
-  public State transition(final String event, final String target) {
+  public State transition(final String target) {
     State _xblockexpression = null;
     {
       if (this.isNested) {
@@ -99,12 +83,12 @@ public class State {
           targetState = _state;
           this.parent.nestedStates.add(targetState);
         }
-        Transition _transition = new Transition(event, targetState);
+        Transition _transition = new Transition(targetState);
         this.transitions.add(_transition);
         return this;
       }
       State targetState_1 = this.stateMachine.state(target);
-      Transition _transition_1 = new Transition(event, targetState_1);
+      Transition _transition_1 = new Transition(targetState_1);
       this.transitions.add(_transition_1);
       _xblockexpression = this;
     }

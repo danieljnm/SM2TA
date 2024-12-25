@@ -10,7 +10,7 @@ public class Translator {
   private static StateMachine stateMachine = new StateMachine();
 
   public static void main(final String[] args) {
-    Translator.stateMachine.name("FOD").state("Idle").initial().transition("Ready", "PositionAcquisition").state("PositionAcquisition").transition("Systems ready", "GlobalPlanning").transition("LostControl").state("GlobalPlanning").transition("Success", "NextPosition").transition("LostControl").state("NextPosition").transition("Continue loop", "CaptureState").transition("Done", "MissionCompleted").transition("LostControl").state("CaptureState").transition("Success", "ValidateState").transition("LostControl").state("ValidateState").transition("Success", "NextPosition").transition("LostControl").state("MissionCompleted").transition("Success");
+    Translator.stateMachine.name("FOD").state("Idle").initial().transition("PositionAcquisition").state("PositionAcquisition").transition("GlobalPlanning").transition("LostControl").state("GlobalPlanning").transition("NextPosition").transition("LostControl").state("NextPosition").transition("CaptureState").transition("MissionCompleted").transition("LostControl").state("CaptureState").transition("ValidateState").transition("LostControl").state("ValidateState").transition("NextPosition").transition("LostControl").state("MissionCompleted").transition("Success");
     Printer printer = new Printer();
     printer.print(Translator.stateMachine);
     InputOutput.<String>println(Translator.stateMachine.toUppaal());

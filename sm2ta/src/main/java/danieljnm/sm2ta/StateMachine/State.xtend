@@ -44,28 +44,19 @@ class State {
 		this
 	}
 	
-	def transition(String event) {
-		if (isNested) {
-			transitions.add(new Transition(event, parent))
-			return this
-		}
-		transitions.add(new Transition(event, stateMachine.initialState))
-		this
-	}
-	
-	def transition(String event, String target) {
+	def transition(String target) {
 		if (isNested) {
 			var targetState = parent.nestedStates.findFirst[it.name === target]
 			if (targetState === null) {
 				targetState = new State(parent, target)
 				parent.nestedStates.add(targetState)
 			}
-			transitions.add(new Transition(event, targetState))
+			transitions.add(new Transition(targetState))
 			return this
 		}
 		
 		var targetState = stateMachine.state(target)
-		transitions.add(new Transition(event, targetState))
+		transitions.add(new Transition(targetState))
 		this
 	}
 	

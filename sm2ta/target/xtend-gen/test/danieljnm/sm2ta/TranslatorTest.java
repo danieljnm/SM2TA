@@ -60,7 +60,7 @@ public class TranslatorTest {
 
   @Test
   public void transitions() {
-    this.stateMachine.name("test").state("one").initial().transition("event", "two").state("two");
+    this.stateMachine.name("test").state("one").initial().transition("two").state("two");
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("process test {");
     _builder.newLine();
@@ -95,7 +95,7 @@ public class TranslatorTest {
 
   @Test
   public void actionTransition() {
-    this.stateMachine.name("test").state("one").initial().transition("event", "two").when("test").state("two");
+    this.stateMachine.name("test").state("one").initial().transition("two").when("test").state("two");
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("chan test;");
     _builder.newLine();
@@ -160,7 +160,7 @@ public class TranslatorTest {
 
   @Test
   public void guardTransitions() {
-    this.stateMachine.name("test").state("one").initial().transition("event", "two").guard("false").transition("event", "two").guard("true").state("two");
+    this.stateMachine.name("test").state("one").initial().transition("two").guard("false").transition("two").guard("true").state("two");
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("process test {");
     _builder.newLine();
@@ -207,7 +207,7 @@ public class TranslatorTest {
 
   @Test
   public void timeoutTransition() {
-    this.stateMachine.name("test").state("one").initial().transition("event", "two").state("two").transition("event", "three").timeout(5).signal("finish").state("three");
+    this.stateMachine.name("test").state("one").initial().transition("two").state("two").transition("three").timeout(5).signal("finish").state("three");
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("clock gen_clock;");
     _builder.newLine();
@@ -377,10 +377,10 @@ public class TranslatorTest {
   @Test
   public void nestedMachineWithTransitions() {
     final Procedure1<State> _function = (State it) -> {
-      it.nestedState("innerOne").transition("event", "innerTwo").signal("finish");
+      it.nestedState("innerOne").transition("innerTwo").signal("finish");
       it.nestedState("innerTwo");
     };
-    this.stateMachine.name("test").state("one").initial().transition("event", "two").state("two").nesting(_function).transition("event", "three").when("finish").state("three");
+    this.stateMachine.name("test").state("one").initial().transition("two").state("two").nesting(_function).transition("three").when("finish").state("three");
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("chan finish, gen_two_inner_start;");
     _builder.newLine();
@@ -494,10 +494,10 @@ public class TranslatorTest {
   @Test
   public void nestedMachineWithSignalsAndTimeout() {
     final Procedure1<State> _function = (State it) -> {
-      it.nestedState("innerOne").transition("event", "innerTwo").timeout(5).signal("finish");
+      it.nestedState("innerOne").transition("innerTwo").timeout(5).signal("finish");
       it.nestedState("innerTwo");
     };
-    this.stateMachine.name("test").state("one").initial().transition("event", "two").when("ready").state("two").nesting(_function).transition("event", "one").when("finish");
+    this.stateMachine.name("test").state("one").initial().transition("two").when("ready").state("two").nesting(_function).transition("one").when("finish");
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("clock gen_clock;");
     _builder.newLine();
