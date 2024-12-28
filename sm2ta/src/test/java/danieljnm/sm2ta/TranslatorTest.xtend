@@ -44,44 +44,39 @@ class TranslatorTest {
 	}
 	
 	@Test
-	def void transitions() {
+	def transitions() {
 		stateMachine.name("test")
 			.state("one").initial
-				.transition("two")
+				.transition("two").guard("false").when("test")
+				.transition("two").guard("true").when("test")
 			.state("two")
-		val uppaal = 
-			'''
-			process test {
-				state
-					one,
-					two;
-				init one;
-				trans
-					one -> two {
-					};
-			}
-			system test;
-			'''
-		assertEquals(uppaal, stateMachine.toUppaal)
-	}
-	
-	@Test
-	def actionTransition() {
-		stateMachine.name("test")
-			.state("one").initial
-				.transition("two").when("test")
-			.state("two")
+				.transition("three").timeout(5).signal("finish")
 		val uppaal =
 			'''
-			chan test;
+			clock gen_clock;
+			chan test, finish;
 			process test {
 				state
 					one,
-					two;
+					two {
+						gen_clock <= 5
+					},
+					three;
 				init one;
 				trans
 					one -> two {
+						guard 0;
 						sync test?;
+						assign gen_clock := 0;
+					},
+					one -> two {
+						guard 1;
+						sync test?;
+						assign gen_clock := 0;
+					},
+					two -> three {
+						guard gen_clock >= 5;
+						sync finish!;
 					};
 			}
 			process gen_sync_test {
@@ -93,67 +88,6 @@ class TranslatorTest {
 						sync test!;
 					};
 			}
-			system test, gen_sync_test;
-			'''
-		assertEquals(uppaal, stateMachine.toUppaal)
-	}
-	
-	@Test
-	def guardTransitions() {
-		stateMachine.name("test")
-			.state("one").initial
-				.transition("two").guard("false")
-				.transition("two").guard("true")
-			.state("two")
-		val uppaal =
-			'''
-			process test {
-				state
-					one,
-					two;
-				init one;
-				trans
-					one -> two {
-						guard 0;
-					},
-					one -> two {
-						guard 1;
-					};
-			}
-			system test;
-			'''
-		assertEquals(uppaal, stateMachine.toUppaal)
-	}	
-	
-	@Test
-	def timeoutTransition() {
-		stateMachine.name("test")
-			.state("one").initial
-				.transition("two")
-			.state("two")
-				.transition("three").timeout(5).signal("finish")
-			.state("three")
-		val uppaal =
-			'''
-			clock gen_clock;
-			chan finish;
-			process test {
-				state
-					one,
-					two {
-						gen_clock <= 5
-					},
-					three;
-				init one;
-				trans
-					one -> two {
-						assign gen_clock := 0;
-					},
-					two -> three {
-						guard gen_clock >= 5;
-						sync finish!;
-					};
-			}
 			process gen_sync_finish {
 				state
 					initSync;
@@ -163,8 +97,9 @@ class TranslatorTest {
 						sync finish?;
 					};
 			}
-			system test, gen_sync_finish;
+			system test, gen_sync_test, gen_sync_finish;
 			'''
+		println(stateMachine.toUppaal)
 		assertEquals(uppaal, stateMachine.toUppaal)
 	}
 	

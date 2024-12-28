@@ -89,7 +89,7 @@ public class StateMachine {
       }
     }
     {
-      Iterable<String> _whenChannels = this.whenChannels();
+      Set<String> _whenChannels = this.whenChannels();
       for(final String channel : _whenChannels) {
         String _channelToUppaal = this.channelToUppaal(channel, "!");
         _builder.append(_channelToUppaal);
@@ -97,7 +97,7 @@ public class StateMachine {
       }
     }
     {
-      Iterable<String> _signalChannels = this.signalChannels();
+      Set<String> _signalChannels = this.signalChannels();
       for(final String channel_1 : _signalChannels) {
         String _channelToUppaal_1 = this.channelToUppaal(channel_1, "?");
         _builder.append(_channelToUppaal_1);
@@ -212,12 +212,12 @@ public class StateMachine {
   }
 
   public Set<String> uppaalChannels() {
-    Iterable<String> _whenChannels = this.whenChannels();
-    Iterable<String> _signalChannels = this.signalChannels();
+    Set<String> _whenChannels = this.whenChannels();
+    Set<String> _signalChannels = this.signalChannels();
     return IterableExtensions.<String>toSet(Iterables.<String>concat(_whenChannels, _signalChannels));
   }
 
-  public Iterable<String> whenChannels() {
+  public Set<String> whenChannels() {
     final Function1<State, Boolean> _function = (State it) -> {
       return Boolean.valueOf(it.nestedStates.isEmpty());
     };
@@ -230,10 +230,10 @@ public class StateMachine {
     final Function1<Transition, String> _function_3 = (Transition it) -> {
       return it.when;
     };
-    return IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(IterableExtensions.<State, Transition>flatMap(IterableExtensions.<State>filter(this.states.values(), _function), _function_1), _function_2), _function_3);
+    return IterableExtensions.<String>toSet(IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(IterableExtensions.<State, Transition>flatMap(IterableExtensions.<State>filter(this.states.values(), _function), _function_1), _function_2), _function_3));
   }
 
-  public Iterable<String> signalChannels() {
+  public Set<String> signalChannels() {
     final Function1<State, Boolean> _function = (State it) -> {
       return Boolean.valueOf(it.nestedStates.isEmpty());
     };
@@ -246,7 +246,7 @@ public class StateMachine {
     final Function1<Transition, String> _function_3 = (Transition it) -> {
       return it.signal;
     };
-    return IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(IterableExtensions.<State, Transition>flatMap(IterableExtensions.<State>filter(this.states.values(), _function), _function_1), _function_2), _function_3);
+    return IterableExtensions.<String>toSet(IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(IterableExtensions.<State, Transition>flatMap(IterableExtensions.<State>filter(this.states.values(), _function), _function_1), _function_2), _function_3));
   }
 
   public Set<String> channels() {

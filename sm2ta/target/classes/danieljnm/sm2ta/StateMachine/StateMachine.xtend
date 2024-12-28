@@ -106,6 +106,7 @@ class StateMachine {
 			.flatMap[transitions]
 			.filter[when !== null]
 			.map[when]
+			.toSet
 	}
 	
 	def signalChannels() {
@@ -113,6 +114,7 @@ class StateMachine {
 			.flatMap[transitions]
 			.filter[signal !== null]
 			.map[signal]
+			.toSet
 	}
 	
 	def channels() {
