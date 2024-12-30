@@ -99,7 +99,6 @@ class TranslatorTest {
 			}
 			system test, gen_sync_test, gen_sync_finish;
 			'''
-		println(stateMachine.toUppaal)
 		assertEquals(uppaal, stateMachine.toUppaal)
 	}
 	
@@ -147,18 +146,19 @@ class TranslatorTest {
 	def nestedMachineWithTransitions() {
 		stateMachine.name("test")
 			.state("one").initial
-				.transition("two")
+				.transition("two").when("ready")
 			.state("two")
 				.nesting[
 					nestedState("innerOne")
-						.transition("innerTwo").signal("finish")
+						.transition("innerTwo").timeout(5).signal("finish")
 					nestedState("innerTwo")
 				]
 				.transition("three").when("finish")
 			.state("three")
 		val uppaal = 
 			'''
-			chan finish, gen_two_inner_start;
+			clock gen_clock;
+			chan ready, finish, gen_two_inner_start;
 			process test {
 				state
 					one,
@@ -169,64 +169,9 @@ class TranslatorTest {
 				init one;
 				trans
 					one -> gen_pre_two {
-					},
-					two -> three {
-						sync finish?;
-					},
-					gen_pre_two -> two {
-						sync gen_two_inner_start!;
-					};
-			}
-			process two_inner {
-				state
-					gen_init,
-					innerOne,
-					innerTwo;
-				commit innerTwo;
-				init gen_init;
-				trans
-					gen_init -> innerOne {
-						sync gen_two_inner_start?;
-					},
-					innerOne -> innerTwo {
-						sync finish!;
-					},
-					innerTwo -> gen_init {
-					};
-			}
-			system test, two_inner;
-			'''
-		assertEquals(uppaal, stateMachine.toUppaal)
-	}
-	
-	@Test
-	def nestedMachineWithSignalsAndTimeout() {
-		stateMachine.name("test")
-			.state("one").initial
-				.transition("two").when("ready")
-			.state("two")
-				.nesting[
-					nestedState("innerOne")
-						.transition("innerTwo").timeout(5).signal("finish")
-					nestedState("innerTwo")
-				]
-				.transition("one").when("finish")
-		val uppaal = 
-			'''
-			clock gen_clock;
-			chan ready, finish, gen_two_inner_start;
-			process test {
-				state
-					one,
-					gen_pre_two,
-					two;
-				commit gen_pre_two;
-				init one;
-				trans
-					one -> gen_pre_two {
 						sync ready?;
 					},
-					two -> one {
+					two -> three {
 						sync finish?;
 					},
 					gen_pre_two -> two {
