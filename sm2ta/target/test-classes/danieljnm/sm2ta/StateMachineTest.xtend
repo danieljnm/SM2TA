@@ -119,8 +119,5 @@ class StateMachineTest {
 		assertEquals("Evaluating", transition.target.name)
 		assertEquals("x > 1", transition.guard)
 		assertEquals("x = 0", transition.action)
-		
-		var printer = new Printer()
-		printer.print(stateMachine)
 	}
 }

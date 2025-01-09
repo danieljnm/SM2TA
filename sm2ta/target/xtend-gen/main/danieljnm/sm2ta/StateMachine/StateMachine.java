@@ -256,13 +256,16 @@ public class StateMachine {
   }
 
   public Iterable<String> signals() {
-    final Function1<Transition, Boolean> _function = (Transition it) -> {
+    final Function1<State, List<Transition>> _function = (State it) -> {
+      return it.transitions;
+    };
+    final Function1<Transition, Boolean> _function_1 = (Transition it) -> {
       return Boolean.valueOf((it.signal != null));
     };
-    final Function1<Transition, String> _function_1 = (Transition it) -> {
+    final Function1<Transition, String> _function_2 = (Transition it) -> {
       return it.signal;
     };
-    return IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(this.transitions(), _function), _function_1);
+    return IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(IterableExtensions.<State, Transition>flatMap(this.states.values(), _function), _function_1), _function_2);
   }
 
   public Iterable<String> whens() {

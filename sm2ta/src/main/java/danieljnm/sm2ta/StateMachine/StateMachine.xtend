@@ -122,7 +122,7 @@ class StateMachine {
 	}
 	
 	def signals() {
-		transitions.filter[signal !== null].map[signal]
+		states.values.flatMap[transitions].filter[signal !== null].map[signal]
 	}
 	
 	def whens() {

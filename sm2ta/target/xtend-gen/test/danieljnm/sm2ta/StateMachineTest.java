@@ -118,7 +118,5 @@ public class StateMachineTest {
     Assertions.assertEquals("Evaluating", transition.target.name);
     Assertions.assertEquals("x > 1", transition.guard);
     Assertions.assertEquals("x = 0", transition.action);
-    Printer printer = new Printer();
-    printer.print(this.stateMachine);
   }
 }
