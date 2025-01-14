@@ -18,7 +18,10 @@ public class Translator {
   public static StateMachine regular() {
     StateMachine _xblockexpression = null;
     {
-      Translator.stateMachine.name("FOD").state("Idle").initial().transition("PositionAcquisition").state("PositionAcquisition").transition("GlobalPlanning").when("Ready").transition("Idle").when("LostControl").transition("Idle").when("Abort").transition("Idle").when("FailedEstimation").state("GlobalPlanning").transition("NextPosition").when("Success").transition("Idle").when("LostControl").transition("Idle").when("Abort").state("NextPosition").transition("CaptureState").when("ContinueLoop").transition("MissionCompleted").when("Success").transition("Idle").when("LostControl").state("CaptureState").transition("ValidateState").when("Success").transition("Idle").when("LostControl").state("ValidateState").transition("NextPosition").when("Success").transition("Idle").when("LostControl").state("MissionCompleted").transition("Idle").when("Success").transition("Idle").when("Abort").transition("Idle").when("LostControl");
+      final Procedure1<StateMachine> _function = (StateMachine it) -> {
+        it.variable("bool hasControl = false");
+      };
+      Translator.stateMachine.name("FOD").variables(_function).state("Idle").initial().transition("PositionAcquisition").action("error := false, hasControl := true").state("PositionAcquisition").transition("GlobalPlanning").when("Ready").transition("Idle").when("LostControl").action("hasControl := false").transition("Idle").when("Abort").action("error := true, hasControl := false").transition("Idle").when("FailedEstimation").state("GlobalPlanning").transition("NextPosition").when("Success").transition("Idle").when("LostControl").action("hasControl := false").transition("Idle").when("Abort").action("error := true, hasControl := false").state("NextPosition").transition("CaptureState").when("ContinueLoop").transition("MissionCompleted").when("Success").transition("Idle").when("LostControl").action("hasControl := false").state("CaptureState").transition("ValidateState").when("Success").transition("Idle").when("LostControl").action("hasControl := false").state("ValidateState").transition("NextPosition").when("Success").transition("Idle").when("LostControl").action("hasControl := false").state("MissionCompleted").transition("Idle").when("Success").transition("Idle").when("Abort").action("error := true, hasControl := false").transition("Idle").when("LostControl").action("hasControl := false");
       _xblockexpression = Translator.stateMachine;
     }
     return _xblockexpression;
@@ -27,7 +30,10 @@ public class Translator {
   public static StateMachine withNesting() {
     StateMachine _xblockexpression = null;
     {
-      final Procedure1<State> _function = (State it) -> {
+      final Procedure1<StateMachine> _function = (StateMachine it) -> {
+        it.variable("bool hasControl = false");
+      };
+      final Procedure1<State> _function_1 = (State it) -> {
         it.nestedState("NextPosition").transition("CaptureState").transition("MissionCompleted");
         it.nestedState("CaptureState").transition("ValidateState").transition("LostControl").signal("NestedLostControl");
         it.nestedState("ValidateState").transition("NextPosition").transition("LostControl").signal("NestedLostControl");
@@ -36,7 +42,7 @@ public class Translator {
         it.nestedState("LostControl");
         it.nestedState("Success");
       };
-      Translator.stateMachine.name("FOD").state("Idle").initial().transition("PositionAcquisition").when("Ready").state("PositionAcquisition").transition("GlobalPlanning").transition("Idle").when("LostControl").transition("Idle").when("Abort").transition("Idle").when("FailedEstimation").state("GlobalPlanning").nesting(_function).transition("Idle").when("NestedLostControl").transition("Idle").when("NestedAbort").transition("Idle").when("NestedSuccess");
+      Translator.stateMachine.name("FOD").variables(_function).state("Idle").initial().transition("PositionAcquisition").when("Ready").action("hasControl := true").state("PositionAcquisition").transition("GlobalPlanning").transition("Idle").when("LostControl").transition("Idle").when("Abort").transition("Idle").when("FailedEstimation").state("GlobalPlanning").nesting(_function_1).transition("Idle").when("NestedLostControl").transition("Idle").when("NestedAbort").transition("Idle").when("NestedSuccess");
       _xblockexpression = Translator.stateMachine;
     }
     return _xblockexpression;

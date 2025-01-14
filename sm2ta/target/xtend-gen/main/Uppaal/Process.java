@@ -3,6 +3,7 @@ package Uppaal;
 import com.google.common.collect.Iterables;
 import danieljnm.sm2ta.StateMachine.State;
 import danieljnm.sm2ta.StateMachine.Transition;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -199,14 +200,15 @@ public class Process {
           }
         }
         {
-          final Function1<Transition, Boolean> _function_2 = (Transition it) -> {
-            return Boolean.valueOf((it.timeout > 0));
-          };
-          boolean _exists = IterableExtensions.<Transition>exists(transition.target.transitions, _function_2);
-          if (_exists) {
+          boolean _isEmpty = this.assignments(transition).isEmpty();
+          boolean _not = (!_isEmpty);
+          if (_not) {
             _builder.append("\t");
-            _builder.append("assign gen_clock := 0;");
-            _builder.newLine();
+            _builder.append("assign ");
+            String _join = IterableExtensions.join(this.assignments(transition), ", ");
+            _builder.append(_join, "\t");
+            _builder.append(";");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("}");
@@ -215,6 +217,25 @@ public class Process {
       return ListExtensions.<Transition, String>map(state.transitions, _function_1);
     };
     return IterableExtensions.<State, String>flatMap(this.states, _function);
+  }
+
+  public ArrayList<String> assignments(final Transition transition) {
+    ArrayList<String> _xblockexpression = null;
+    {
+      ArrayList<String> assigns = CollectionLiterals.<String>newArrayList();
+      final Function1<Transition, Boolean> _function = (Transition it) -> {
+        return Boolean.valueOf((it.timeout > 0));
+      };
+      boolean _exists = IterableExtensions.<Transition>exists(transition.target.transitions, _function);
+      if (_exists) {
+        assigns.add("gen_clock := 0");
+      }
+      if ((transition.action != null)) {
+        assigns.add(transition.action);
+      }
+      _xblockexpression = assigns;
+    }
+    return _xblockexpression;
   }
 
   public Iterable<String> nestedStateTransitions() {

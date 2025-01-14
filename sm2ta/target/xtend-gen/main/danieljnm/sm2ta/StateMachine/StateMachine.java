@@ -12,6 +12,7 @@ import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 @SuppressWarnings("all")
 public class StateMachine {
@@ -20,6 +21,8 @@ public class StateMachine {
   public String name;
 
   public HashMap<String, State> states = CollectionLiterals.<String, State>newHashMap();
+
+  public List<String> variables = CollectionLiterals.<String>newArrayList();
 
   public StateMachine name(final String name) {
     StateMachine _xblockexpression = null;
@@ -64,6 +67,16 @@ public class StateMachine {
   public String toUppaal() {
     StringConcatenation _builder = new StringConcatenation();
     {
+      boolean _isEmpty = this.variables.isEmpty();
+      boolean _not = (!_isEmpty);
+      if (_not) {
+        String _join = IterableExtensions.join(this.variables, ";\n");
+        _builder.append(_join);
+        _builder.append(";");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    {
       boolean _hasClock = this.hasClock();
       if (_hasClock) {
         _builder.append("clock gen_clock;");
@@ -75,8 +88,8 @@ public class StateMachine {
         _builder.append("chan ");
         Set<String> _channels = this.channels();
         Set<String> _nestings = this.nestings();
-        String _join = IterableExtensions.join(Iterables.<String>concat(_channels, _nestings), ", ");
-        _builder.append(_join);
+        String _join_1 = IterableExtensions.join(Iterables.<String>concat(_channels, _nestings), ", ");
+        _builder.append(_join_1);
         _builder.append(";");
         _builder.newLineIfNotEmpty();
       }
@@ -116,8 +129,8 @@ public class StateMachine {
       return _builder_1.toString();
     };
     Iterable<String> _map_1 = IterableExtensions.<String, String>map(this.uppaalChannels(), _function_1);
-    String _join_1 = IterableExtensions.join(Iterables.<String>concat(_map, _map_1), ", ");
-    _builder.append(_join_1);
+    String _join_2 = IterableExtensions.join(Iterables.<String>concat(_map, _map_1), ", ");
+    _builder.append(_join_2);
     _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder.toString();
@@ -337,5 +350,18 @@ public class StateMachine {
       return _builder.toString();
     };
     return IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(IterableExtensions.<State, Transition>flatMap(this.states.values(), _function), _function_1), _function_2);
+  }
+
+  public StateMachine variables(final Procedure1<? super StateMachine> context) {
+    StateMachine _xblockexpression = null;
+    {
+      context.apply(this);
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+
+  public boolean variable(final String variable) {
+    return this.variables.add(variable);
   }
 }

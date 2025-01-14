@@ -1,11 +1,13 @@
 package danieljnm.sm2ta.StateMachine
 
 import java.util.HashMap
+import java.util.List
 
 class StateMachine {
 	public int index
 	public String name
 	public HashMap<String, State> states = newHashMap
+	public List<String> variables = newArrayList
 	
 	def name(String name) {
 		this.name = name
@@ -30,6 +32,9 @@ class StateMachine {
 	
 	def String toUppaal() {
 		'''
+		«IF !variables.empty»
+		«variables.join(';\n')»;
+		«ENDIF»
 		«IF hasClock»
 		clock gen_clock;
 		«ENDIF»
@@ -154,4 +159,14 @@ class StateMachine {
 		.filter[timeout > 0]
 		.map['''«target.name»_gen_clock''']
 	}
+	
+	def StateMachine variables((StateMachine) => void context) {
+		context.apply(this)
+		this
+	}
+	
+	def variable(String variable) {
+		variables.add(variable)
+	}
+	
 }

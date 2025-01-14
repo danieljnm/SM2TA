@@ -103,6 +103,69 @@ class TranslatorTest {
 	}
 	
 	@Test
+	def variables() {
+		stateMachine.name("test")
+			.variables[
+				variable("bool hasControl = false")
+			]
+			.state("one").initial
+				.transition("two").guard("false").when("test")
+				.transition("two").guard("true").when("test").action("hasControl := true")
+			.state("two")
+				.transition("three").timeout(5).signal("finish")
+				val uppaal =
+			'''
+			bool hasControl = false;
+			clock gen_clock;
+			chan test, finish;
+			process test {
+				state
+					one,
+					two {
+						gen_clock <= 5
+					},
+					three;
+				init one;
+				trans
+					one -> two {
+						guard 0;
+						sync test?;
+						assign gen_clock := 0;
+					},
+					one -> two {
+						guard 1;
+						sync test?;
+						assign gen_clock := 0, hasControl := true;
+					},
+					two -> three {
+						guard gen_clock >= 5;
+						sync finish!;
+					};
+			}
+			process gen_sync_test {
+				state
+					initSync;
+				init initSync;
+				trans
+					initSync -> initSync {
+						sync test!;
+					};
+			}
+			process gen_sync_finish {
+				state
+					initSync;
+				init initSync;
+				trans
+					initSync -> initSync {
+						sync finish?;
+					};
+			}
+			system test, gen_sync_test, gen_sync_finish;
+			'''
+		assertEquals(uppaal, stateMachine.toUppaal)
+	}
+	
+	@Test
 	def nestedMachine() {
 		stateMachine.name("test")
 			.state("one").initial

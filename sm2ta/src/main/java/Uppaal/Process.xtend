@@ -2,6 +2,7 @@ package Uppaal
 
 import java.util.List
 import danieljnm.sm2ta.StateMachine.State
+import danieljnm.sm2ta.StateMachine.Transition
 
 class Process {
 	public String name
@@ -96,11 +97,22 @@ class Process {
 				«IF transition.when !== null»
 					sync «transition.when»?;
 				«ENDIF»
-				«IF transition.target.transitions.exists[timeout > 0]»
-					assign gen_clock := 0;
+				«IF !transition.assignments.empty»
+					assign «transition.assignments.join(', ')»;
 				«ENDIF»
 			}'''
 			]]
+	}
+	
+	def assignments(Transition transition) {
+		var assigns = newArrayList
+		if (transition.target.transitions.exists[timeout > 0])
+			assigns.add('gen_clock := 0')
+			
+		if (transition.action !== null)
+			assigns.add(transition.action)
+		
+		assigns
 	}
 	
 	def nestedStateTransitions() {

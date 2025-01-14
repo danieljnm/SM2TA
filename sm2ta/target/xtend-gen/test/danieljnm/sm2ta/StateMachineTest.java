@@ -119,4 +119,17 @@ public class StateMachineTest {
     Assertions.assertEquals("x > 1", transition.guard);
     Assertions.assertEquals("x = 0", transition.action);
   }
+
+  @Test
+  public void variables() {
+    final Procedure1<StateMachine> _function = (StateMachine it) -> {
+      it.variable("bool hasControl = false");
+    };
+    this.stateMachine.name("test").variables(_function).state("Idle").initial().transition("Planning").when("Ready").action("hasControl = true").transition("Idle").when("LostControl").action("hasControl = false").state("Planning");
+    Assertions.assertEquals(1, ((Object[])Conversions.unwrapArray(this.stateMachine.variables, Object.class)).length);
+    Assertions.assertEquals("bool hasControl = false", this.stateMachine.variables.get(0));
+    List<Transition> transitions = this.stateMachine.getInitialState().transitions;
+    Assertions.assertEquals("hasControl = true", transitions.get(0).action);
+    Assertions.assertEquals("hasControl = false", transitions.get(1).action);
+  }
 }

@@ -12,38 +12,44 @@ class Translator {
 	
 	def static regular() {
 		stateMachine.name("FOD")
+			.variables[
+				variable("bool hasControl = false")
+			]
 			.state("Idle").initial
-				.transition("PositionAcquisition")
+				.transition("PositionAcquisition").action("error := false, hasControl := true")
 			.state("PositionAcquisition")
 				.transition("GlobalPlanning").when("Ready")
-				.transition("Idle").when("LostControl")
-				.transition("Idle").when("Abort")
+				.transition("Idle").when("LostControl").action("hasControl := false")
+				.transition("Idle").when("Abort").action("error := true, hasControl := false")
 				.transition("Idle").when("FailedEstimation")
 			.state("GlobalPlanning")
 				.transition("NextPosition").when("Success")
-				.transition("Idle").when("LostControl")
-				.transition("Idle").when("Abort")
+				.transition("Idle").when("LostControl").action("hasControl := false")
+				.transition("Idle").when("Abort").action("error := true, hasControl := false")
 			.state("NextPosition")
 				.transition("CaptureState").when("ContinueLoop")
 				.transition("MissionCompleted").when("Success")
-				.transition("Idle").when("LostControl")
+				.transition("Idle").when("LostControl").action("hasControl := false")
 			.state("CaptureState")
 				.transition("ValidateState").when("Success")
-				.transition("Idle").when("LostControl")
+				.transition("Idle").when("LostControl").action("hasControl := false")
 			.state("ValidateState")
 				.transition("NextPosition").when("Success")
-				.transition("Idle").when("LostControl")
+				.transition("Idle").when("LostControl").action("hasControl := false")
 			.state("MissionCompleted")
 				.transition("Idle").when("Success")
-				.transition("Idle").when("Abort")
-				.transition("Idle").when("LostControl")
+				.transition("Idle").when("Abort").action("error := true, hasControl := false")
+				.transition("Idle").when("LostControl").action("hasControl := false")
 		stateMachine
 	}
 	
 	def static withNesting() {
 		stateMachine.name("FOD")
+			.variables[
+				variable("bool hasControl = false")
+			]
 			.state("Idle").initial
-				.transition("PositionAcquisition").when("Ready")
+				.transition("PositionAcquisition").when("Ready").action("hasControl := true")
 			.state("PositionAcquisition")
 				.transition("GlobalPlanning")
 				.transition("Idle").when("LostControl")

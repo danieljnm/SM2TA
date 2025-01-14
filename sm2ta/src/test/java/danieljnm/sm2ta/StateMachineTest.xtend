@@ -120,4 +120,22 @@ class StateMachineTest {
 		assertEquals("x > 1", transition.guard)
 		assertEquals("x = 0", transition.action)
 	}
+	
+	@Test
+	def void variables() {
+		stateMachine.name("test")
+			.variables[
+				variable("bool hasControl = false")
+			]
+			.state("Idle").initial
+				.transition("Planning").when("Ready").action("hasControl = true")
+				.transition("Idle").when("LostControl").action("hasControl = false")
+			.state("Planning")
+		
+		assertEquals(1, stateMachine.variables.length)
+		assertEquals("bool hasControl = false", stateMachine.variables.get(0))
+		var transitions = stateMachine.initialState.transitions
+		assertEquals("hasControl = true", transitions.get(0).action)
+		assertEquals("hasControl = false", transitions.get(1).action)
+	}
 }
