@@ -195,7 +195,7 @@ public class TranslatorTest {
   @Test
   public void variables() {
     final Procedure1<StateMachine> _function = (StateMachine it) -> {
-      it.variable("bool hasControl = false");
+      it.variable("hasControl").type("bool").value("false");
     };
     this.stateMachine.name("test").variables(_function).state("one").initial().transition("two").guard("false").when("test").transition("two").guard("true").when("test").action("hasControl := true").state("two").transition("three").timeout(5).signal("finish");
     StringConcatenation _builder = new StringConcatenation();

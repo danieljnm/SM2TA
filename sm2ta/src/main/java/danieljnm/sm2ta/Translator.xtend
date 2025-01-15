@@ -13,7 +13,8 @@ class Translator {
 	def static regular() {
 		stateMachine.name("FOD")
 			.variables[
-				variable("bool hasControl = false")
+				variable("error").type("bool").value("false")
+				variable("hasControl").type("bool").value("false")
 			]
 			.state("Idle").initial
 				.transition("PositionAcquisition").action("error := false, hasControl := true")
@@ -21,7 +22,7 @@ class Translator {
 				.transition("GlobalPlanning").when("Ready")
 				.transition("Idle").when("LostControl").action("hasControl := false")
 				.transition("Idle").when("Abort").action("error := true, hasControl := false")
-				.transition("Idle").when("FailedEstimation")
+				.transition("Idle").when("FailedEstimation").action("hasControl := false")
 			.state("GlobalPlanning")
 				.transition("NextPosition").when("Success")
 				.transition("Idle").when("LostControl").action("hasControl := false")

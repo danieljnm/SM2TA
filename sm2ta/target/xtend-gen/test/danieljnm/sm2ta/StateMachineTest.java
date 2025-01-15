@@ -3,6 +3,7 @@ package danieljnm.sm2ta;
 import danieljnm.sm2ta.StateMachine.State;
 import danieljnm.sm2ta.StateMachine.StateMachine;
 import danieljnm.sm2ta.StateMachine.Transition;
+import danieljnm.sm2ta.StateMachine.Variable;
 import java.util.List;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -123,11 +124,14 @@ public class StateMachineTest {
   @Test
   public void variables() {
     final Procedure1<StateMachine> _function = (StateMachine it) -> {
-      it.variable("bool hasControl = false");
+      it.variable("hasControl").type("bool").value("false");
     };
     this.stateMachine.name("test").variables(_function).state("Idle").initial().transition("Planning").when("Ready").action("hasControl = true").transition("Idle").when("LostControl").action("hasControl = false").state("Planning");
     Assertions.assertEquals(1, ((Object[])Conversions.unwrapArray(this.stateMachine.variables, Object.class)).length);
-    Assertions.assertEquals("bool hasControl = false", this.stateMachine.variables.get(0));
+    Variable variable = this.stateMachine.variables.get(0);
+    Assertions.assertEquals("hasControl", variable.name);
+    Assertions.assertEquals("bool", variable.type);
+    Assertions.assertEquals("false", variable.value);
     List<Transition> transitions = this.stateMachine.getInitialState().transitions;
     Assertions.assertEquals("hasControl = true", transitions.get(0).action);
     Assertions.assertEquals("hasControl = false", transitions.get(1).action);

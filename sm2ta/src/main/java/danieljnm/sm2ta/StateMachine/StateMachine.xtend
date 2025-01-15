@@ -7,7 +7,7 @@ class StateMachine {
 	public int index
 	public String name
 	public HashMap<String, State> states = newHashMap
-	public List<String> variables = newArrayList
+	public List<Variable> variables = newArrayList
 	
 	def name(String name) {
 		this.name = name
@@ -33,7 +33,7 @@ class StateMachine {
 	def String toUppaal() {
 		'''
 		«IF !variables.empty»
-		«variables.join(';\n')»;
+		«variables.map['''«type» «name» = «value»'''].join(';\n')»;
 		«ENDIF»
 		«IF hasClock»
 		clock gen_clock;
@@ -165,8 +165,27 @@ class StateMachine {
 		this
 	}
 	
-	def variable(String variable) {
-		variables.add(variable)
+	def variable(String name) {
+		variables.add(new Variable(name))
+		this
+	}
+	
+	def type(String type) {
+		if (variables.empty) {
+			return this
+		}
+		
+		variables.lastOrNull.type = type
+		this
+	}
+	
+	def value(String value) {
+		if (variables.empty) {
+			return this
+		}
+		
+		variables.lastOrNull.value = value
+		this
 	}
 	
 }

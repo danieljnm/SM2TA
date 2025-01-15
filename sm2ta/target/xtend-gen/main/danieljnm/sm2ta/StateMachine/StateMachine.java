@@ -22,7 +22,7 @@ public class StateMachine {
 
   public HashMap<String, State> states = CollectionLiterals.<String, State>newHashMap();
 
-  public List<String> variables = CollectionLiterals.<String>newArrayList();
+  public List<Variable> variables = CollectionLiterals.<Variable>newArrayList();
 
   public StateMachine name(final String name) {
     StateMachine _xblockexpression = null;
@@ -70,7 +70,16 @@ public class StateMachine {
       boolean _isEmpty = this.variables.isEmpty();
       boolean _not = (!_isEmpty);
       if (_not) {
-        String _join = IterableExtensions.join(this.variables, ";\n");
+        final Function1<Variable, String> _function = (Variable it) -> {
+          StringConcatenation _builder_1 = new StringConcatenation();
+          _builder_1.append(it.type);
+          _builder_1.append(" ");
+          _builder_1.append(it.name);
+          _builder_1.append(" = ");
+          _builder_1.append(it.value);
+          return _builder_1.toString();
+        };
+        String _join = IterableExtensions.join(ListExtensions.<Variable, String>map(this.variables, _function), ";\n");
         _builder.append(_join);
         _builder.append(";");
         _builder.newLineIfNotEmpty();
@@ -118,17 +127,17 @@ public class StateMachine {
       }
     }
     _builder.append("system ");
-    final Function1<Uppaal.Process, String> _function = (Uppaal.Process it) -> {
+    final Function1<Uppaal.Process, String> _function_1 = (Uppaal.Process it) -> {
       return it.name;
     };
-    List<String> _map = ListExtensions.<Uppaal.Process, String>map(this.processes(), _function);
-    final Function1<String, String> _function_1 = (String it) -> {
+    List<String> _map = ListExtensions.<Uppaal.Process, String>map(this.processes(), _function_1);
+    final Function1<String, String> _function_2 = (String it) -> {
       StringConcatenation _builder_1 = new StringConcatenation();
       _builder_1.append("gen_sync_");
       _builder_1.append(it);
       return _builder_1.toString();
     };
-    Iterable<String> _map_1 = IterableExtensions.<String, String>map(this.uppaalChannels(), _function_1);
+    Iterable<String> _map_1 = IterableExtensions.<String, String>map(this.uppaalChannels(), _function_2);
     String _join_2 = IterableExtensions.join(Iterables.<String>concat(_map, _map_1), ", ");
     _builder.append(_join_2);
     _builder.append(";");
@@ -361,7 +370,41 @@ public class StateMachine {
     return _xblockexpression;
   }
 
-  public boolean variable(final String variable) {
-    return this.variables.add(variable);
+  public StateMachine variable(final String name) {
+    StateMachine _xblockexpression = null;
+    {
+      Variable _variable = new Variable(name);
+      this.variables.add(_variable);
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+
+  public StateMachine type(final String type) {
+    StateMachine _xblockexpression = null;
+    {
+      boolean _isEmpty = this.variables.isEmpty();
+      if (_isEmpty) {
+        return this;
+      }
+      Variable _lastOrNull = IterableExtensions.<Variable>lastOrNull(this.variables);
+      _lastOrNull.type = type;
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+
+  public StateMachine value(final String value) {
+    StateMachine _xblockexpression = null;
+    {
+      boolean _isEmpty = this.variables.isEmpty();
+      if (_isEmpty) {
+        return this;
+      }
+      Variable _lastOrNull = IterableExtensions.<Variable>lastOrNull(this.variables);
+      _lastOrNull.value = value;
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
   }
 }

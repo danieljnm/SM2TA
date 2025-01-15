@@ -106,7 +106,7 @@ class TranslatorTest {
 	def variables() {
 		stateMachine.name("test")
 			.variables[
-				variable("bool hasControl = false")
+				variable("hasControl").type("bool").value("false")
 			]
 			.state("one").initial
 				.transition("two").guard("false").when("test")
