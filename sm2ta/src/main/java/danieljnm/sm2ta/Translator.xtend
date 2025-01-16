@@ -15,6 +15,8 @@ class Translator {
 			.variables[
 				variable("error").type("bool").value("false")
 				variable("hasControl").type("bool").value("false")
+				variable("missionIndex").type("int").value("0")
+				variable("waypoints").type("int").value("10")
 			]
 			.state("Idle").initial
 				.transition("PositionAcquisition").action("error := false, hasControl := true")
@@ -28,17 +30,17 @@ class Translator {
 				.transition("Idle").when("LostControl").action("hasControl := false")
 				.transition("Idle").when("Abort").action("error := true, hasControl := false")
 			.state("NextPosition")
-				.transition("CaptureState").when("ContinueLoop")
-				.transition("MissionCompleted").when("Success")
+				.transition("CaptureState").when("ContinueLoop").guard("missionIndex < waypoints")
+				.transition("MissionCompleted").when("Success").guard("missionIndex >= waypoints")
 				.transition("Idle").when("LostControl").action("hasControl := false")
 			.state("CaptureState")
 				.transition("ValidateState").when("Success")
 				.transition("Idle").when("LostControl").action("hasControl := false")
 			.state("ValidateState")
-				.transition("NextPosition").when("Success")
+				.transition("NextPosition").when("Success").action("missionIndex++")
 				.transition("Idle").when("LostControl").action("hasControl := false")
 			.state("MissionCompleted")
-				.transition("Idle").when("Success")
+				.transition("Idle").when("Success").action("missionIndex := 0")
 				.transition("Idle").when("Abort").action("error := true, hasControl := false")
 				.transition("Idle").when("LostControl").action("hasControl := false")
 		stateMachine
