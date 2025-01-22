@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
 import danieljnm.sm2ta.StateMachine.StateMachine
 
-class TranslatorTest {
+class XtaTranslationTest {
 	StateMachine stateMachine
 	
 	@BeforeEach
@@ -22,7 +22,7 @@ class TranslatorTest {
 			}
 			system test;
 		'''
-		assertEquals(uppaal, stateMachine.toUppaal)
+		assertEquals(uppaal, stateMachine.toXta)
 	}
 	
 	@Test
@@ -40,7 +40,7 @@ class TranslatorTest {
 			}
 			system test;
 			'''
-		assertEquals(uppaal, stateMachine.toUppaal)
+		assertEquals(uppaal, stateMachine.toXta)
 	}
 	
 	@Test
@@ -99,7 +99,7 @@ class TranslatorTest {
 			}
 			system test, gen_sync_test, gen_sync_finish;
 			'''
-		assertEquals(uppaal, stateMachine.toUppaal)
+		assertEquals(uppaal, stateMachine.toXta)
 	}
 	
 	@Test
@@ -162,7 +162,7 @@ class TranslatorTest {
 			}
 			system test, gen_sync_test, gen_sync_finish;
 			'''
-		assertEquals(uppaal, stateMachine.toUppaal)
+		assertEquals(uppaal, stateMachine.toXta)
 	}
 	
 	@Test
@@ -202,7 +202,7 @@ class TranslatorTest {
 		}
 		system test, two_inner;
 		'''
-		assertEquals(uppaal, stateMachine.toUppaal)
+		assertEquals(uppaal, stateMachine.toXta)
 	}
 	
 	@Test
@@ -273,6 +273,6 @@ class TranslatorTest {
 			}
 			system test, two_inner, gen_sync_ready;
 			'''
-		assertEquals(uppaal, stateMachine.toUppaal)
+		assertEquals(uppaal, stateMachine.toXta)
 	}
 }

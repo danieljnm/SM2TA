@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("all")
-public class TranslatorTest {
+public class XtaTranslationTest {
   private StateMachine stateMachine;
 
   @BeforeEach
@@ -29,7 +29,7 @@ public class TranslatorTest {
     _builder.append("system test;");
     _builder.newLine();
     final String uppaal = _builder.toString();
-    Assertions.assertEquals(uppaal, this.stateMachine.toUppaal());
+    Assertions.assertEquals(uppaal, this.stateMachine.toXta());
   }
 
   @Test
@@ -55,7 +55,7 @@ public class TranslatorTest {
     _builder.append("system test;");
     _builder.newLine();
     final String uppaal = _builder.toString();
-    Assertions.assertEquals(uppaal, this.stateMachine.toUppaal());
+    Assertions.assertEquals(uppaal, this.stateMachine.toXta());
   }
 
   @Test
@@ -189,7 +189,7 @@ public class TranslatorTest {
     _builder.append("system test, gen_sync_test, gen_sync_finish;");
     _builder.newLine();
     final String uppaal = _builder.toString();
-    Assertions.assertEquals(uppaal, this.stateMachine.toUppaal());
+    Assertions.assertEquals(uppaal, this.stateMachine.toXta());
   }
 
   @Test
@@ -328,7 +328,7 @@ public class TranslatorTest {
     _builder.append("system test, gen_sync_test, gen_sync_finish;");
     _builder.newLine();
     final String uppaal = _builder.toString();
-    Assertions.assertEquals(uppaal, this.stateMachine.toUppaal());
+    Assertions.assertEquals(uppaal, this.stateMachine.toXta());
   }
 
   @Test
@@ -409,7 +409,7 @@ public class TranslatorTest {
     _builder.append("system test, two_inner;");
     _builder.newLine();
     final String uppaal = _builder.toString();
-    Assertions.assertEquals(uppaal, this.stateMachine.toUppaal());
+    Assertions.assertEquals(uppaal, this.stateMachine.toXta());
   }
 
   @Test
@@ -568,6 +568,6 @@ public class TranslatorTest {
     _builder.append("system test, two_inner, gen_sync_ready;");
     _builder.newLine();
     final String uppaal = _builder.toString();
-    Assertions.assertEquals(uppaal, this.stateMachine.toUppaal());
+    Assertions.assertEquals(uppaal, this.stateMachine.toXta());
   }
 }

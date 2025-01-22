@@ -26,6 +26,10 @@ class Transition {
 			default: guard
 		}
 	}
+	
+	def xmlGuard() {
+		guardValue.toString.replace('<', '&lt;').replace('>', '&gt;')
+	}
 		
 	override toString() {
 		'''

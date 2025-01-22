@@ -64,7 +64,85 @@ public class StateMachine {
     return _xblockexpression;
   }
 
-  public String toUppaal() {
+  public String toXml() {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+    _builder.newLine();
+    _builder.append("<nta>");
+    _builder.newLine();
+    _builder.append("<declaration>");
+    _builder.newLine();
+    {
+      boolean _isEmpty = this.variables.isEmpty();
+      boolean _not = (!_isEmpty);
+      if (_not) {
+        final Function1<Variable, String> _function = (Variable it) -> {
+          StringConcatenation _builder_1 = new StringConcatenation();
+          _builder_1.append(it.type);
+          _builder_1.append(" ");
+          _builder_1.append(it.name);
+          _builder_1.append(" = ");
+          _builder_1.append(it.value);
+          return _builder_1.toString();
+        };
+        String _join = IterableExtensions.join(ListExtensions.<Variable, String>map(this.variables, _function), ";\n");
+        _builder.append(_join);
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    {
+      boolean _hasClock = this.hasClock();
+      if (_hasClock) {
+        _builder.append("clock gen_clock;");
+        _builder.newLine();
+      }
+    }
+    {
+      if (((!this.channels().isEmpty()) || (!this.nestings().isEmpty()))) {
+        _builder.append("chan ");
+        Set<String> _channels = this.channels();
+        Set<String> _nestings = this.nestings();
+        String _join_1 = IterableExtensions.join(Iterables.<String>concat(_channels, _nestings), ", ");
+        _builder.append(_join_1);
+        _builder.append(";");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    _builder.append("</declaration>");
+    _builder.newLine();
+    {
+      ArrayList<Uppaal.Process> _processes = this.processes();
+      for(final Uppaal.Process process : _processes) {
+        CharSequence _xml = process.toXml();
+        _builder.append(_xml);
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    _builder.append("<system>");
+    _builder.newLine();
+    _builder.append("\t");
+    final Function1<Uppaal.Process, String> _function_1 = (Uppaal.Process it) -> {
+      return it.name;
+    };
+    List<String> _map = ListExtensions.<Uppaal.Process, String>map(this.processes(), _function_1);
+    final Function1<String, String> _function_2 = (String it) -> {
+      StringConcatenation _builder_1 = new StringConcatenation();
+      _builder_1.append("gen_sync_");
+      _builder_1.append(it);
+      return _builder_1.toString();
+    };
+    Iterable<String> _map_1 = IterableExtensions.<String, String>map(this.uppaalChannels(), _function_2);
+    String _join_2 = IterableExtensions.join(Iterables.<String>concat(_map, _map_1), ", ");
+    _builder.append(_join_2, "\t");
+    _builder.newLineIfNotEmpty();
+    _builder.append("</system>");
+    _builder.newLine();
+    _builder.append("</nta>");
+    _builder.newLine();
+    return _builder.toString();
+  }
+
+  public String toXta() {
     StringConcatenation _builder = new StringConcatenation();
     {
       boolean _isEmpty = this.variables.isEmpty();
@@ -113,16 +191,16 @@ public class StateMachine {
     {
       Set<String> _whenChannels = this.whenChannels();
       for(final String channel : _whenChannels) {
-        String _channelToUppaal = this.channelToUppaal(channel, "!");
-        _builder.append(_channelToUppaal);
+        String _channeltoUppaal = this.channeltoUppaal(channel, "!");
+        _builder.append(_channeltoUppaal);
         _builder.newLineIfNotEmpty();
       }
     }
     {
       Set<String> _signalChannels = this.signalChannels();
       for(final String channel_1 : _signalChannels) {
-        String _channelToUppaal_1 = this.channelToUppaal(channel_1, "?");
-        _builder.append(_channelToUppaal_1);
+        String _channeltoUppaal_1 = this.channeltoUppaal(channel_1, "?");
+        _builder.append(_channeltoUppaal_1);
         _builder.newLineIfNotEmpty();
       }
     }
@@ -145,7 +223,7 @@ public class StateMachine {
     return _builder.toString();
   }
 
-  public String channelToUppaal(final String channel, final String sign) {
+  public String channeltoUppaal(final String channel, final String sign) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("process gen_sync_");
     _builder.append(channel);

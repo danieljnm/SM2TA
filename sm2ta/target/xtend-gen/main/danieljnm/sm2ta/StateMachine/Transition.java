@@ -55,6 +55,10 @@ public class Transition {
     return _switchResult;
   }
 
+  public String xmlGuard() {
+    return this.guardValue().toString().replace("<", "&lt;").replace(">", "&gt;");
+  }
+
   @Override
   public String toString() {
     StringConcatenation _builder = new StringConcatenation();

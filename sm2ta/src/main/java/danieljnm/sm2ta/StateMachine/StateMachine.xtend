@@ -30,7 +30,32 @@ class StateMachine {
 		states.values.findFirst[!it.transitions.empty] !== null
 	}
 	
-	def String toUppaal() {
+	def String toXml() {
+		'''
+		<?xml version="1.0" encoding="utf-8"?>
+		<nta>
+		<declaration>
+		«IF !variables.empty»
+		«variables.map['''«type» «name» = «value»'''].join(';\n')»
+		«ENDIF»
+		«IF hasClock»
+		clock gen_clock;
+		«ENDIF»
+		«IF !channels.empty || !nestings.empty»
+		chan «(channels + nestings).join(', ')»;
+		«ENDIF»
+		</declaration>
+		«FOR process : processes»
+		«process.toXml»
+		«ENDFOR»
+		<system>
+			«(processes.map[name] + uppaalChannels.map['''gen_sync_«it»''']).join(', ')»
+		</system>
+		</nta>
+		'''
+	}
+	
+	def String toXta() {
 		'''
 		«IF !variables.empty»
 		«variables.map['''«type» «name» = «value»'''].join(';\n')»;
@@ -45,16 +70,16 @@ class StateMachine {
 		«process»
 		«ENDFOR»
 		«FOR channel : whenChannels»
-		«channel.channelToUppaal("!")»
+		«channel.channeltoUppaal("!")»
 		«ENDFOR»
 		«FOR channel : signalChannels»
-		«channel.channelToUppaal("?")»
+		«channel.channeltoUppaal("?")»
 		«ENDFOR»
 		system «(processes.map[name] + uppaalChannels.map['''gen_sync_«it»''']).join(', ')»;
 		'''
 	}
 	
-	def String channelToUppaal(String channel, String sign) {
+	def String channeltoUppaal(String channel, String sign) {
 		'''
 		process gen_sync_«channel» {
 			state
@@ -187,5 +212,4 @@ class StateMachine {
 		variables.lastOrNull.value = value
 		this
 	}
-	
 }

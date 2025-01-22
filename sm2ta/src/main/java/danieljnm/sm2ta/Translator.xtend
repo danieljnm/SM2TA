@@ -7,7 +7,7 @@ class Translator {
 	
 	def static void main(String[] args) {
 		stateMachine = regular
-		println(stateMachine.toUppaal)
+		println(stateMachine.toXta)
 	}
 	
 	def static regular() {
@@ -15,7 +15,7 @@ class Translator {
 			.variables[
 				variable("error").type("bool").value("false")
 				variable("hasControl").type("bool").value("false")
-				variable("missionIndex").type("int").value("0")
+				variable("missionIndex").type("int").value("-1")
 				variable("waypoints").type("int").value("10")
 			]
 			.state("Idle").initial
@@ -26,7 +26,7 @@ class Translator {
 				.transition("Idle").when("Abort").action("error := true, hasControl := false")
 				.transition("Idle").when("FailedEstimation").action("hasControl := false")
 			.state("GlobalPlanning")
-				.transition("NextPosition").when("Success")
+				.transition("NextPosition").when("Success").action("missionIndex := 0")
 				.transition("Idle").when("LostControl").action("hasControl := false")
 				.transition("Idle").when("Abort").action("error := true, hasControl := false")
 			.state("NextPosition")
