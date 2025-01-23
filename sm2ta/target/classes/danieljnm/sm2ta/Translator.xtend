@@ -40,7 +40,7 @@ class Translator {
 				.transition("NextPosition").when("Success").action("missionIndex++")
 				.transition("Idle").when("LostControl").action("hasControl := false")
 			.state("MissionCompleted")
-				.transition("Idle").when("Success").action("missionIndex := 0")
+				.transition("Idle").when("Success")
 				.transition("Idle").when("Abort").action("error := true, hasControl := false")
 				.transition("Idle").when("LostControl").action("hasControl := false")
 		stateMachine

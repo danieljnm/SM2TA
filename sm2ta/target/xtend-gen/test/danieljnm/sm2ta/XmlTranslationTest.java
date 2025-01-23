@@ -2,6 +2,7 @@ package danieljnm.sm2ta;
 
 import danieljnm.sm2ta.StateMachine.StateMachine;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,16 +70,16 @@ public class XmlTranslationTest {
     _builder.append("<location id=\"one\" x=\"0\" y=\"0\">");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<name x=\"-10\" y=\"10\">one</name>");
+    _builder.append("<name x=\"-15\" y=\"15\">one</name>");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</location>");
     _builder.newLine();
     _builder.append("\t");
-    _builder.append("<location id=\"two\" x=\"100\" y=\"0\">");
+    _builder.append("<location id=\"two\" x=\"200\" y=\"0\">");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<name x=\"90\" y=\"10\">two</name>");
+    _builder.append("<name x=\"185\" y=\"15\">two</name>");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</location>");
@@ -126,7 +127,7 @@ public class XmlTranslationTest {
     _builder.append("<location id=\"one\" x=\"0\" y=\"0\">");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<name x=\"-10\" y=\"15\">one</name>");
+    _builder.append("<name x=\"-15\" y=\"15\">one</name>");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</location>");
@@ -135,10 +136,10 @@ public class XmlTranslationTest {
     _builder.append("<location id=\"two\" x=\"200\" y=\"0\">");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<name x=\"190\" y=\"15\">two</name>");
+    _builder.append("<name x=\"185\" y=\"15\">two</name>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<label kind=\"invariant\" x=\"190\" y=\"30\">gen_clock &lt;= 5</label>");
+    _builder.append("<label kind=\"invariant\" x=\"185\" y=\"30\">gen_clock &lt;= 5</label>");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</location>");
@@ -147,7 +148,7 @@ public class XmlTranslationTest {
     _builder.append("<location id=\"three\" x=\"400\" y=\"0\">");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<name x=\"390\" y=\"15\">three</name>");
+    _builder.append("<name x=\"385\" y=\"15\">three</name>");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</location>");
@@ -165,13 +166,13 @@ public class XmlTranslationTest {
     _builder.append("<target ref=\"two\"/>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<label kind=\"guard\" x=\"-10\" y=\"30\">0</label>");
+    _builder.append("<label kind=\"guard\" x=\"-15\" y=\"30\">0</label>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<label kind=\"synchronisation\" x=\"-10\" y=\"45\">test?</label>");
+    _builder.append("<label kind=\"synchronisation\" x=\"-15\" y=\"45\">test?</label>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<label kind=\"assignment\" x=\"-10\" y=\"60\">gen_clock := 0</label>");
+    _builder.append("<label kind=\"assignment\" x=\"-15\" y=\"60\">gen_clock := 0</label>");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</transition>");
@@ -186,13 +187,13 @@ public class XmlTranslationTest {
     _builder.append("<target ref=\"two\"/>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<label kind=\"guard\" x=\"-10\" y=\"75\">1</label>");
+    _builder.append("<label kind=\"guard\" x=\"-15\" y=\"75\">1</label>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<label kind=\"synchronisation\" x=\"-10\" y=\"90\">test?</label>");
+    _builder.append("<label kind=\"synchronisation\" x=\"-15\" y=\"90\">test?</label>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<label kind=\"assignment\" x=\"-10\" y=\"105\">gen_clock := 0</label>");
+    _builder.append("<label kind=\"assignment\" x=\"-15\" y=\"105\">gen_clock := 0</label>");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</transition>");
@@ -207,10 +208,10 @@ public class XmlTranslationTest {
     _builder.append("<target ref=\"three\"/>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<label kind=\"guard\" x=\"190\" y=\"45\">gen_clock &gt;= 5</label>");
+    _builder.append("<label kind=\"guard\" x=\"185\" y=\"45\">gen_clock &gt;= 5</label>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<label kind=\"synchronisation\" x=\"190\" y=\"60\">finish!</label>");
+    _builder.append("<label kind=\"synchronisation\" x=\"185\" y=\"60\">finish!</label>");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</transition>");
@@ -226,7 +227,7 @@ public class XmlTranslationTest {
     _builder.append("<location id=\"initSync\" x=\"0\" y=\"0\">");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<name x=\"-10\" y=\"15\">initSync</name>");
+    _builder.append("<name x=\"-15\" y=\"15\">initSync</name>");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</location>");
@@ -244,7 +245,7 @@ public class XmlTranslationTest {
     _builder.append("<target ref=\"initSync\"/>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<label kind=\"synchronisation\" x=\"-10\" y=\"30\">finish?</label>");
+    _builder.append("<label kind=\"synchronisation\" x=\"-15\" y=\"30\">finish?</label>");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</transition>");
@@ -261,6 +262,7 @@ public class XmlTranslationTest {
     _builder.append("</nta>");
     _builder.newLine();
     final String uppaal = _builder.toString();
+    InputOutput.<String>println(this.stateMachine.toXml());
     Assertions.assertEquals(uppaal, this.stateMachine.toXml());
   }
 }

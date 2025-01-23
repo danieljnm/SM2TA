@@ -11,8 +11,8 @@ class Process {
 	
 	var x = 0
 	var y = 0
-	val increment = 100
-	val spacing = 10
+	val increment = 200
+	val spacing = 15
 	
 	new(String name) {
 		this.name = name
@@ -65,10 +65,22 @@ class Process {
 		'''
 		<location id="«state.name»" x="«x»" y="«y»">
 			<name x="«x - spacing»" y="«y + spacing»">«state.name»</name>
+			«state.labels»
 		</location>
 		'''
 		x += increment
+		y = 0
 		location
+	}
+	
+	def labels(State state) {
+		y += spacing
+		state.transitions.filter[timeout > 0].toList.map[
+			'''
+			<label kind="invariant" x="«x - spacing»" y="«y + spacing»">gen_clock &lt;= «timeout»</label>
+			'''
+		]
+		.join()
 	}
 	
 	def format(State state) {
@@ -143,25 +155,27 @@ class Process {
 	def xmlTransitions() {
 		states.flatMap[state | state.transitions.map[transition | 
 			'''
-			<source ref="«state.name»"/>
-			<target ref="«transition.targetName(state.isNested)»"/>
-			«IF transition.guard !== null»
-				<label kind="guard">«transition.xmlGuard»</label>
-			«ENDIF»
-			«IF transition.timeout > 0»
-				guard gen_clock &gt;= «transition.timeout»;
-			«ENDIF»
-			«IF transition.signal !== null»
-				sync «transition.signal»!;
-			«ENDIF»
-			«IF transition.when !== null»
-				sync «transition.when»?;
-			«ENDIF»
-			«IF !transition.assignments.empty»
-				assign «transition.assignments.join(', ')»;
-			«ENDIF»
+			<transition>
+				<source ref="«state.name»"/>
+				<target ref="«transition.targetName(state.isNested)»"/>
+				«IF transition.guard !== null»
+					<label kind="guard">«transition.xmlGuard»</label>
+				«ENDIF»
+				«IF transition.timeout > 0»
+					<label kind="guard">gen_clock &gt;= «transition.timeout»</label>
+				«ENDIF»
+				«IF transition.signal !== null»
+					<label kind="syncronisation">«transition.signal»!</label>
+				«ENDIF»
+				«IF transition.when !== null»
+					<label kind="syncronisation">«transition.when»?</label>
+				«ENDIF»
+				«IF !transition.assignments.empty»
+					<label kind="assignment">«transition.assignments.join(', ')»</label>
+				«ENDIF»
+			</transition>
 			'''
-			]]
+			]].join()
 	}
 	
 	def assignments(Transition transition) {
@@ -210,11 +224,11 @@ class Process {
 			«IF xmlStates.length > 0»
 			«xmlStates»
 			«ENDIF»
-			«IF states.exists[!transitions.empty] || !nestedStateNames.empty»
-			«xmlTransitions»
-			«ENDIF»
 			«IF initialState !== null»
 			<init ref="«initialState.name»"/>
+			«ENDIF»
+			«IF states.exists[!transitions.empty] || !nestedStateNames.empty»
+			«xmlTransitions»
 			«ENDIF»
 		</template>
 		'''

@@ -47,10 +47,10 @@ class XmlTranslationTest {
 		<template>
 			<name>test</name>
 			<location id="one" x="0" y="0">
-				<name x="-10" y="10">one</name>
+				<name x="-15" y="15">one</name>
 			</location>
-			<location id="two" x="100" y="0">
-				<name x="90" y="10">two</name>
+			<location id="two" x="200" y="0">
+				<name x="185" y="15">two</name>
 			</location>
 			<init ref="one"/>
 		</template>
@@ -81,47 +81,47 @@ class XmlTranslationTest {
 			<template>
 				<name>test</name>
 				<location id="one" x="0" y="0">
-					<name x="-10" y="15">one</name>
+					<name x="-15" y="15">one</name>
 				</location>
 				<location id="two" x="200" y="0">
-					<name x="190" y="15">two</name>
-					<label kind="invariant" x="190" y="30">gen_clock &lt;= 5</label>
+					<name x="185" y="15">two</name>
+					<label kind="invariant" x="185" y="30">gen_clock &lt;= 5</label>
 				</location>
 				<location id="three" x="400" y="0">
-					<name x="390" y="15">three</name>
+					<name x="385" y="15">three</name>
 				</location>
 				<init ref="one"/>
 				<transition>
 					<source ref="one"/>
 					<target ref="two"/>
-					<label kind="guard" x="-10" y="30">0</label>
-					<label kind="synchronisation" x="-10" y="45">test?</label>
-					<label kind="assignment" x="-10" y="60">gen_clock := 0</label>
+					<label kind="guard" x="-15" y="30">0</label>
+					<label kind="synchronisation" x="-15" y="45">test?</label>
+					<label kind="assignment" x="-15" y="60">gen_clock := 0</label>
 				</transition>
 				<transition>
 					<source ref="one"/>
 					<target ref="two"/>
-					<label kind="guard" x="-10" y="75">1</label>
-					<label kind="synchronisation" x="-10" y="90">test?</label>
-					<label kind="assignment" x="-10" y="105">gen_clock := 0</label>
+					<label kind="guard" x="-15" y="75">1</label>
+					<label kind="synchronisation" x="-15" y="90">test?</label>
+					<label kind="assignment" x="-15" y="105">gen_clock := 0</label>
 				</transition>
 				<transition>
 					<source ref="two"/>
 					<target ref="three"/>
-					<label kind="guard" x="190" y="45">gen_clock &gt;= 5</label>
-					<label kind="synchronisation" x="190" y="60">finish!</label>
+					<label kind="guard" x="185" y="45">gen_clock &gt;= 5</label>
+					<label kind="synchronisation" x="185" y="60">finish!</label>
 				</transition>
 			</template>
 			<template>
 				<name>gen_sync_finish</name>
 				<location id="initSync" x="0" y="0">
-					<name x="-10" y="15">initSync</name>
+					<name x="-15" y="15">initSync</name>
 				</location>
 				<init ref="initSync"/>
 				<transition>
 					<source ref="initSync"/>
 					<target ref="initSync"/>
-					<label kind="synchronisation" x="-10" y="30">finish?</label>
+					<label kind="synchronisation" x="-15" y="30">finish?</label>
 				</transition>
 			</template>
 			<system>
@@ -129,6 +129,7 @@ class XmlTranslationTest {
 			</system>
 			</nta>
 			'''
+		println(stateMachine.toXml)
 		assertEquals(uppaal, stateMachine.toXml)
 	}
 }

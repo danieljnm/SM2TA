@@ -25,9 +25,9 @@ public class Process {
 
   private int y = 0;
 
-  private final int increment = 100;
+  private final int increment = 200;
 
-  private final int spacing = 10;
+  private final int spacing = 15;
 
   public Process(final String name) {
     this.name = name;
@@ -151,12 +151,42 @@ public class Process {
       _builder.append(state.name, "\t");
       _builder.append("</name>");
       _builder.newLineIfNotEmpty();
+      _builder.append("\t");
+      String _labels = this.labels(state);
+      _builder.append(_labels, "\t");
+      _builder.newLineIfNotEmpty();
       _builder.append("</location>");
       _builder.newLine();
       String location = _builder.toString();
       int _x = this.x;
       this.x = (_x + this.increment);
+      this.y = 0;
       _xblockexpression = location;
+    }
+    return _xblockexpression;
+  }
+
+  public String labels(final State state) {
+    String _xblockexpression = null;
+    {
+      int _y = this.y;
+      this.y = (_y + this.spacing);
+      final Function1<Transition, Boolean> _function = (Transition it) -> {
+        return Boolean.valueOf((it.timeout > 0));
+      };
+      final Function1<Transition, String> _function_1 = (Transition it) -> {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("<label kind=\"invariant\" x=\"");
+        _builder.append((this.x - this.spacing));
+        _builder.append("\" y=\"");
+        _builder.append((this.y + this.spacing));
+        _builder.append("\">gen_clock &lt;= ");
+        _builder.append(it.timeout);
+        _builder.append("</label>");
+        _builder.newLineIfNotEmpty();
+        return _builder.toString();
+      };
+      _xblockexpression = IterableExtensions.join(ListExtensions.<Transition, String>map(IterableExtensions.<Transition>toList(IterableExtensions.<Transition>filter(state.transitions, _function)), _function_1));
     }
     return _xblockexpression;
   }
@@ -312,49 +342,57 @@ public class Process {
     return IterableExtensions.<State, String>flatMap(this.states, _function);
   }
 
-  public Iterable<String> xmlTransitions() {
+  public String xmlTransitions() {
     final Function1<State, List<String>> _function = (State state) -> {
       final Function1<Transition, String> _function_1 = (Transition transition) -> {
         StringConcatenation _builder = new StringConcatenation();
+        _builder.append("<transition>");
+        _builder.newLine();
+        _builder.append("\t");
         _builder.append("<source ref=\"");
-        _builder.append(state.name);
+        _builder.append(state.name, "\t");
         _builder.append("\"/>");
         _builder.newLineIfNotEmpty();
+        _builder.append("\t");
         _builder.append("<target ref=\"");
         CharSequence _targetName = transition.targetName(state.isNested);
-        _builder.append(_targetName);
+        _builder.append(_targetName, "\t");
         _builder.append("\"/>");
         _builder.newLineIfNotEmpty();
         {
           if ((transition.guard != null)) {
+            _builder.append("\t");
             _builder.append("<label kind=\"guard\">");
             String _xmlGuard = transition.xmlGuard();
-            _builder.append(_xmlGuard);
+            _builder.append(_xmlGuard, "\t");
             _builder.append("</label>");
             _builder.newLineIfNotEmpty();
           }
         }
         {
           if ((transition.timeout > 0)) {
-            _builder.append("guard gen_clock &gt;= ");
-            _builder.append(transition.timeout);
-            _builder.append(";");
+            _builder.append("\t");
+            _builder.append("<label kind=\"guard\">gen_clock &gt;= ");
+            _builder.append(transition.timeout, "\t");
+            _builder.append("</label>");
             _builder.newLineIfNotEmpty();
           }
         }
         {
           if ((transition.signal != null)) {
-            _builder.append("sync ");
-            _builder.append(transition.signal);
-            _builder.append("!;");
+            _builder.append("\t");
+            _builder.append("<label kind=\"syncronisation\">");
+            _builder.append(transition.signal, "\t");
+            _builder.append("!</label>");
             _builder.newLineIfNotEmpty();
           }
         }
         {
           if ((transition.when != null)) {
-            _builder.append("sync ");
-            _builder.append(transition.when);
-            _builder.append("?;");
+            _builder.append("\t");
+            _builder.append("<label kind=\"syncronisation\">");
+            _builder.append(transition.when, "\t");
+            _builder.append("?</label>");
             _builder.newLineIfNotEmpty();
           }
         }
@@ -362,18 +400,21 @@ public class Process {
           boolean _isEmpty = this.assignments(transition).isEmpty();
           boolean _not = (!_isEmpty);
           if (_not) {
-            _builder.append("assign ");
+            _builder.append("\t");
+            _builder.append("<label kind=\"assignment\">");
             String _join = IterableExtensions.join(this.assignments(transition), ", ");
-            _builder.append(_join);
-            _builder.append(";");
+            _builder.append(_join, "\t");
+            _builder.append("</label>");
             _builder.newLineIfNotEmpty();
           }
         }
+        _builder.append("</transition>");
+        _builder.newLine();
         return _builder.toString();
       };
       return ListExtensions.<Transition, String>map(state.transitions, _function_1);
     };
-    return IterableExtensions.<State, String>flatMap(this.states, _function);
+    return IterableExtensions.join(IterableExtensions.<State, String>flatMap(this.states, _function));
   }
 
   public ArrayList<String> assignments(final Transition transition) {
@@ -503,22 +544,22 @@ public class Process {
       }
     }
     {
-      if ((IterableExtensions.<State>exists(this.states, ((Function1<State, Boolean>) (State it) -> {
-        boolean _isEmpty = it.transitions.isEmpty();
-        return Boolean.valueOf((!_isEmpty));
-      })) || (!this.nestedStateNames().isEmpty()))) {
-        _builder.append("\t");
-        Iterable<String> _xmlTransitions = this.xmlTransitions();
-        _builder.append(_xmlTransitions, "\t");
-        _builder.newLineIfNotEmpty();
-      }
-    }
-    {
       if ((this.initialState != null)) {
         _builder.append("\t");
         _builder.append("<init ref=\"");
         _builder.append(this.initialState.name, "\t");
         _builder.append("\"/>");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    {
+      if ((IterableExtensions.<State>exists(this.states, ((Function1<State, Boolean>) (State it) -> {
+        boolean _isEmpty = it.transitions.isEmpty();
+        return Boolean.valueOf((!_isEmpty));
+      })) || (!this.nestedStateNames().isEmpty()))) {
+        _builder.append("\t");
+        String _xmlTransitions = this.xmlTransitions();
+        _builder.append(_xmlTransitions, "\t");
         _builder.newLineIfNotEmpty();
       }
     }
