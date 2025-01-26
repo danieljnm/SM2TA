@@ -52,10 +52,15 @@ class Process {
 		states.flatMap[it.nestedStates.empty ? #[it.xmlFormat] : 
 			#[
 			'''
-			<location id="gen_pre_«it.name»" x="«x»" y="«x»">
+			<location id="gen_pre_«it.name»" x="«x»" y="«y»" committed="true">
 				<name x="«x - spacing»" y="«y + spacing»">gen_pre_«it.name»</name>
 			</location>
-			''', it.name
+			''',
+			'''
+			<location id="«it.name»" x="«x + 400»" y="«y»">
+				<name x="«x - spacing + 400»" y="«y + spacing»">«it.name»</name>
+			</location>
+			'''
 		]]
 		.toSet
 		.join()
@@ -113,18 +118,8 @@ class Process {
 		.toSet
 	}
 	
-	def signalTransitions() {
-		states.flatMap[transitions].filter[signal !== null && target.isNested]
-		.map[
-		'''
-		«target.name» -> gen_init {
-		}'''
-		]
-		.toSet
-	}
-	
 	def transitions() {
-		(actualTransitions + nestedStateTransitions + signalTransitions).join(',\n')
+		(actualTransitions + nestedStateTransitions(false) + signalTransitions(false)).join(',\n')
 	}
 	
 	def actualTransitions() {
@@ -150,8 +145,44 @@ class Process {
 			]]
 	}
 	
+	def nestedStateTransitions(boolean xml) {
+		nestedStateNames.map[
+			if (!xml) {
+				return '''
+				gen_pre_«it» -> «it» {
+					sync gen_«it»_inner_start!;
+				}'''
+			}
+			'''
+			<transition>
+				<source ref="gen_pre_«it»"/>
+				<target ref="«it»"/>
+				<label kind="synchronisation">gen_«it»_inner_start!</label>
+			</transition>
+			'''
+		]
+	}
+	
+	def signalTransitions(boolean xml) {
+		states.flatMap[transitions].filter[signal !== null && target.isNested]
+		.map[
+		if (!xml) {
+			return '''
+			«target.name» -> gen_init {
+			}'''
+		}
+		'''
+		<transition>
+			<source ref="«target.name»"/>
+			<target ref="gen_init"/>
+		</transition>
+		'''
+		]
+		.toSet
+	}
+	
 	def xmlTransitions() {
-		states.flatMap[state | state.transitions.map[transition | 
+		(states.flatMap[state | state.transitions.map[transition | 
 			'''
 			<transition>
 				<source ref="«state.name»"/>
@@ -173,16 +204,7 @@ class Process {
 				«ENDIF»
 			</transition>
 			'''
-			]].join()
-	}
-	
-	def nestedStateTransitions() {
-		nestedStateNames.map[
-			'''
-			gen_pre_«it» -> «it» {
-				sync gen_«it»_inner_start!;
-			}'''
-		]
+			]]+nestedStateTransitions(true)+signalTransitions(true)).join()
 	}
 	
 	override toString() {

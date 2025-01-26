@@ -97,6 +97,7 @@ public class StateMachine {
           };
           String _join = IterableExtensions.join(ListExtensions.<Variable, String>map(this.variables, _function), ";\n");
           _builder.append(_join);
+          _builder.append(";");
           _builder.newLineIfNotEmpty();
         }
       }
@@ -386,6 +387,7 @@ public class StateMachine {
       initial.y = this.y;
       nestedProcess.addState(initial);
       final Procedure2<State, Integer> _function = (State it, Integer index) -> {
+        it.x = (it.x + (this.increment * ((index).intValue() + 1)));
         nestedProcess.addState(it);
       };
       IterableExtensions.<State>forEach(nesting.nestedStates, _function);

@@ -41,7 +41,7 @@ class StateMachine {
 		<nta>
 		<declaration>
 		«IF !variables.empty»
-		«variables.map['''«type» «name» = «value»'''].join(';\n')»
+		«variables.map['''«type» «name» = «value»'''].join(';\n')»;
 		«ENDIF»
 		«IF hasClock»
 		clock gen_clock;
@@ -161,7 +161,7 @@ class StateMachine {
 		initial.y = y
 		nestedProcess.addState(initial)
 		nesting.nestedStates.forEach[it, index |
-			//x += increment
+			it.x = x + increment * (index + 1)
 			nestedProcess.addState(it)
 		]
 		nestedProcess
