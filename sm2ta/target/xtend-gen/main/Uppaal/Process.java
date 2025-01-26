@@ -21,10 +21,6 @@ public class Process {
 
   private State initialState;
 
-  private int spacing = 15;
-
-  private int increment = 150;
-
   private int currentY = 0;
 
   public Process(final String name) {
@@ -38,18 +34,18 @@ public class Process {
     }
     this.states.add(state);
     final Procedure2<Transition, Integer> _function = (Transition transition, Integer index) -> {
-      transition.x = (state.x + this.increment);
+      transition.x = (state.x + CoordinateManager.increment);
       if (((index).intValue() == 0)) {
         transition.y = state.y;
         int _currentY = this.currentY;
         Integer _properties = transition.properties();
-        int _multiply = (this.spacing * (_properties).intValue());
+        int _multiply = (CoordinateManager.spacing * (_properties).intValue());
         this.currentY = (_currentY + _multiply);
         return;
       }
-      transition.y = (this.currentY + this.spacing);
+      transition.y = (this.currentY + CoordinateManager.spacing);
       Integer _properties_1 = transition.properties();
-      int _multiply_1 = (this.spacing * (_properties_1).intValue());
+      int _multiply_1 = (CoordinateManager.spacing * (_properties_1).intValue());
       int _plus = (transition.y + _multiply_1);
       this.currentY = _plus;
     };
@@ -90,12 +86,14 @@ public class Process {
 
   public String xmlStates() {
     final Function1<State, List<String>> _function = (State it) -> {
-      List<String> _xifexpression = null;
-      boolean _isEmpty = it.nestedStates.isEmpty();
-      if (_isEmpty) {
-        String _xmlFormat = this.xmlFormat(it);
-        _xifexpression = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList(_xmlFormat));
-      } else {
+      List<String> _xblockexpression = null;
+      {
+        boolean _isEmpty = it.nestedStates.isEmpty();
+        if (_isEmpty) {
+          String _xmlFormat = this.xmlFormat(it);
+          return Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList(_xmlFormat));
+        }
+        final Coordinate coordinates = CoordinateManager.next(it);
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("<location id=\"gen_pre_");
         _builder.append(it.name);
@@ -107,9 +105,9 @@ public class Process {
         _builder.newLineIfNotEmpty();
         _builder.append("\t");
         _builder.append("<name x=\"");
-        _builder.append((it.x - this.spacing), "\t");
+        _builder.append((it.x - CoordinateManager.spacing), "\t");
         _builder.append("\" y=\"");
-        _builder.append((it.y + this.spacing), "\t");
+        _builder.append((it.y + CoordinateManager.spacing), "\t");
         _builder.append("\">gen_pre_");
         _builder.append(it.name, "\t");
         _builder.append("</name>");
@@ -120,25 +118,25 @@ public class Process {
         _builder_1.append("<location id=\"");
         _builder_1.append(it.name);
         _builder_1.append("\" x=\"");
-        _builder_1.append((it.x + 400));
+        _builder_1.append(coordinates.x);
         _builder_1.append("\" y=\"");
-        _builder_1.append(it.y);
+        _builder_1.append(coordinates.y);
         _builder_1.append("\">");
         _builder_1.newLineIfNotEmpty();
         _builder_1.append("\t");
         _builder_1.append("<name x=\"");
-        _builder_1.append(((it.x - this.spacing) + 400), "\t");
+        _builder_1.append((coordinates.x - CoordinateManager.spacing), "\t");
         _builder_1.append("\" y=\"");
-        _builder_1.append((it.y + this.spacing), "\t");
+        _builder_1.append((coordinates.y + CoordinateManager.spacing), "\t");
         _builder_1.append("\">");
         _builder_1.append(it.name, "\t");
         _builder_1.append("</name>");
         _builder_1.newLineIfNotEmpty();
         _builder_1.append("</location>");
         _builder_1.newLine();
-        _xifexpression = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList(_builder.toString(), _builder_1.toString()));
+        _xblockexpression = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList(_builder.toString(), _builder_1.toString()));
       }
-      return _xifexpression;
+      return _xblockexpression;
     };
     return IterableExtensions.join(IterableExtensions.<String>toSet(IterableExtensions.<State, String>flatMap(this.states, _function)));
   }
@@ -157,9 +155,9 @@ public class Process {
       _builder.newLineIfNotEmpty();
       _builder.append("\t");
       _builder.append("<name x=\"");
-      _builder.append((state.x - this.spacing), "\t");
+      _builder.append((state.x - CoordinateManager.spacing), "\t");
       _builder.append("\" y=\"");
-      _builder.append((state.y + this.spacing), "\t");
+      _builder.append((state.y + CoordinateManager.spacing), "\t");
       _builder.append("\">");
       _builder.append(state.name, "\t");
       _builder.append("</name>");
@@ -183,9 +181,9 @@ public class Process {
     final Function1<Transition, String> _function_1 = (Transition it) -> {
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("<label kind=\"invariant\" x=\"");
-      _builder.append(((it.x - this.spacing) - this.increment));
+      _builder.append(((it.x - CoordinateManager.spacing) - CoordinateManager.increment));
       _builder.append("\" y=\"");
-      _builder.append((it.y + (this.spacing * 2)));
+      _builder.append((it.y + (CoordinateManager.spacing * 2)));
       _builder.append("\">gen_clock &lt;= ");
       _builder.append(it.timeout);
       _builder.append("</label>");

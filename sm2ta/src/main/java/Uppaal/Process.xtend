@@ -7,8 +7,6 @@ class Process {
 	public String name
 	public List<State> states = newArrayList
 	State initialState
-	int spacing = 15
-	int increment = 150
 	int currentY = 0
 	
 	new(String name) {
@@ -23,14 +21,14 @@ class Process {
 		
 		states.add(state)
 		state.transitions.forEach[transition, index |
-			transition.x = state.x + increment
+			transition.x = state.x + CoordinateManager.increment
 			if (index == 0) {
 				transition.y = state.y
-				currentY += spacing * transition.properties
+				currentY += CoordinateManager.spacing * transition.properties
         		return
 			}
-			transition.y = currentY + spacing
-       		currentY = transition.y + spacing * transition.properties
+			transition.y = currentY + CoordinateManager.spacing
+       		currentY = transition.y + CoordinateManager.spacing * transition.properties
 		]
 	}
 	
@@ -49,16 +47,21 @@ class Process {
 	}
 	
 	def xmlStates() {
-		states.flatMap[it.nestedStates.empty ? #[it.xmlFormat] : 
+		states.flatMap[it |
+			if (it.nestedStates.empty) {
+				return #[it.xmlFormat]
+			}
+			
+			val coordinates = CoordinateManager.next(it)	
 			#[
 			'''
-			<location id="gen_pre_«it.name»" x="«x»" y="«y»" committed="true">
-				<name x="«x - spacing»" y="«y + spacing»">gen_pre_«it.name»</name>
+			<location id="gen_pre_«it.name»" x="«it.x»" y="«it.y»" committed="true">
+				<name x="«it.x - CoordinateManager.spacing»" y="«it.y + CoordinateManager.spacing»">gen_pre_«it.name»</name>
 			</location>
 			''',
 			'''
-			<location id="«it.name»" x="«x + 400»" y="«y»">
-				<name x="«x - spacing + 400»" y="«y + spacing»">«it.name»</name>
+			<location id="«it.name»" x="«coordinates.x»" y="«coordinates.y»">
+				<name x="«coordinates.x - CoordinateManager.spacing»" y="«coordinates.y + CoordinateManager.spacing»">«it.name»</name>
 			</location>
 			'''
 		]]
@@ -70,7 +73,7 @@ class Process {
 		var location =
 		'''
 		<location id="«state.name»" x="«state.x»" y="«state.y»">
-			<name x="«state.x - spacing»" y="«state.y + spacing»">«state.name»</name>
+			<name x="«state.x - CoordinateManager.spacing»" y="«state.y + CoordinateManager.spacing»">«state.name»</name>
 			«state.labels»
 		</location>
 		'''
@@ -80,7 +83,7 @@ class Process {
 	def labels(State state) {
 		state.transitions.filter[timeout > 0].toList.map[
 			'''
-			<label kind="invariant" x="«x - spacing - increment»" y="«y + spacing * 2»">gen_clock &lt;= «timeout»</label>
+			<label kind="invariant" x="«x - CoordinateManager.spacing - CoordinateManager.increment»" y="«y + CoordinateManager.spacing * 2»">gen_clock &lt;= «timeout»</label>
 			'''
 		]
 		.join()
