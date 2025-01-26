@@ -9,6 +9,10 @@ class StateMachine {
 	public HashMap<String, State> states = newHashMap
 	public List<Variable> variables = newArrayList
 	
+	int x = 0
+	int y = 0
+	int increment = 400
+	
 	def name(String name) {
 		this.name = name
 		this
@@ -31,6 +35,7 @@ class StateMachine {
 	}
 	
 	def String toXml() {
+		var xmlProcesses = processes
 		'''
 		<?xml version="1.0" encoding="utf-8"?>
 		<nta>
@@ -45,11 +50,17 @@ class StateMachine {
 		chan «(channels + nestings).join(', ')»;
 		«ENDIF»
 		</declaration>
-		«FOR process : processes»
+		«FOR process : xmlProcesses»
 		«process.toXml»
 		«ENDFOR»
+		«FOR channel : whenChannels»
+		«channel.channelToXml("!")»
+		«ENDFOR»
+		«FOR channel : signalChannels»
+		«channel.channelToXml("?")»
+		«ENDFOR»
 		<system>
-			«(processes.map[name] + uppaalChannels.map['''gen_sync_«it»''']).join(', ')»
+			«(xmlProcesses.map[name] + uppaalChannels.map['''gen_sync_«it»''']).join(', ')»
 		</system>
 		</nta>
 		'''
@@ -70,16 +81,16 @@ class StateMachine {
 		«process»
 		«ENDFOR»
 		«FOR channel : whenChannels»
-		«channel.channeltoUppaal("!")»
+		«channel.channelToUppaal("!")»
 		«ENDFOR»
 		«FOR channel : signalChannels»
-		«channel.channeltoUppaal("?")»
+		«channel.channelToUppaal("?")»
 		«ENDFOR»
 		system «(processes.map[name] + uppaalChannels.map['''gen_sync_«it»''']).join(', ')»;
 		'''
 	}
 	
-	def String channeltoUppaal(String channel, String sign) {
+	def String channelToUppaal(String channel, String sign) {
 		'''
 		process gen_sync_«channel» {
 			state
@@ -93,15 +104,33 @@ class StateMachine {
 		'''
 	}
 	
+		def String channelToXml(String channel, String sign) {
+		'''
+		<template>
+			<name>gen_sync_«channel»</name>
+			<location id="initSync" x="0" y="0">
+				<name x="-30" y="15">initSync</name>
+			</location>
+			<transition>
+				<source ref="initSync"/>
+				<target ref="initSync"/>
+				<label kind="synchronisation" x="-25" y="-55">«channel»«sign»</label>
+			</transition>
+		</template>
+		'''
+	}
+	
 	
 	def processes() {
 		val processes = newArrayList
 		val process = new Uppaal.Process(name)
-		
 		val nestings = newArrayList
+		reset()
 		
-		states.values.sortBy[index].forEach[state |
+		states.values.sortBy[index].forEach[state, index |
 			if (!state.isNested) {
+				state.x = x + increment * index
+				state.y = y
 				process.addState(state)
 			}
 			
@@ -113,17 +142,28 @@ class StateMachine {
 		processes.add(process)
 		
 		nestings.forEach[nesting |
+			reset()
 			processes.add(nesting.toProcess)
 		]
 		
 		processes
 	}
 	
+	def reset() {
+		x = 0
+		y = 0
+	}
+	
 	def toProcess(State nesting) {
 		val nestedProcess = new Uppaal.Process('''«nesting.name»_inner''')
 		var initial = new State(nesting, "gen_init").initial.transition(nesting.nestedStates.get(0).name).when('''gen_«nesting.name»_inner_start''')
+		initial.x = x
+		initial.y = y
 		nestedProcess.addState(initial)
-		nesting.nestedStates.forEach[nestedProcess.addState(it)]
+		nesting.nestedStates.forEach[it, index |
+			//x += increment
+			nestedProcess.addState(it)
+		]
 		nestedProcess
 	}
 	

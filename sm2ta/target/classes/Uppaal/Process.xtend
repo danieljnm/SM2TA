@@ -2,28 +2,36 @@ package Uppaal
 
 import java.util.List
 import danieljnm.sm2ta.StateMachine.State
-import danieljnm.sm2ta.StateMachine.Transition
 
 class Process {
 	public String name
 	public List<State> states = newArrayList
 	State initialState
-	
-	var x = 0
-	var y = 0
-	val increment = 200
-	val spacing = 15
+	int spacing = 15
+	int increment = 150
+	int currentY = 0
 	
 	new(String name) {
 		this.name = name
 	}
 	
 	def addState(State state) {
+		currentY = 0
 		if (state.isInitial) {
 			initialState = state
 		}
 		
 		states.add(state)
+		state.transitions.forEach[transition, index |
+			transition.x = state.x + increment
+			if (index == 0) {
+				transition.y = state.y
+				currentY += spacing * transition.properties
+        		return
+			}
+			transition.y = currentY + spacing
+       		currentY = transition.y + spacing * transition.properties
+		]
 	}
 	
 	def getInitialState() {
@@ -41,8 +49,6 @@ class Process {
 	}
 	
 	def xmlStates() {
-		x = 0
-		y = 0
 		states.flatMap[it.nestedStates.empty ? #[it.xmlFormat] : 
 			#[
 			'''
@@ -50,34 +56,26 @@ class Process {
 				<name x="«x - spacing»" y="«y + spacing»">gen_pre_«it.name»</name>
 			</location>
 			''', it.name
-		].updateCoordinates[]]
+		]]
 		.toSet
 		.join()
-	}
-	
-	def List<String> updateCoordinates(List<String> strings, (Object)=>Object object) {
-		x += increment
-		strings
 	}
 	
 	def String xmlFormat(State state) {
 		var location =
 		'''
-		<location id="«state.name»" x="«x»" y="«y»">
-			<name x="«x - spacing»" y="«y + spacing»">«state.name»</name>
+		<location id="«state.name»" x="«state.x»" y="«state.y»">
+			<name x="«state.x - spacing»" y="«state.y + spacing»">«state.name»</name>
 			«state.labels»
 		</location>
 		'''
-		x += increment
-		y = 0
 		location
 	}
 	
 	def labels(State state) {
-		y += spacing
 		state.transitions.filter[timeout > 0].toList.map[
 			'''
-			<label kind="invariant" x="«x - spacing»" y="«y + spacing»">gen_clock &lt;= «timeout»</label>
+			<label kind="invariant" x="«x - spacing - increment»" y="«y + spacing * 2»">gen_clock &lt;= «timeout»</label>
 			'''
 		]
 		.join()
@@ -158,35 +156,24 @@ class Process {
 			<transition>
 				<source ref="«state.name»"/>
 				<target ref="«transition.targetName(state.isNested)»"/>
-				«IF transition.guard !== null»
-					<label kind="guard">«transition.xmlGuard»</label>
+				«IF transition.hasGuard»
+					<label kind="guard" x="«transition.x»" y="«transition.y»">«transition.xmlGuard»</label>
 				«ENDIF»
-				«IF transition.timeout > 0»
-					<label kind="guard">gen_clock &gt;= «transition.timeout»</label>
+				«IF transition.hasTimeout»
+					<label kind="guard" x="«transition.x»" y="«transition.y»">gen_clock &gt;= «transition.timeout»</label>
 				«ENDIF»
-				«IF transition.signal !== null»
-					<label kind="syncronisation">«transition.signal»!</label>
+				«IF transition.hasSignal»
+					<label kind="synchronisation" x="«transition.x»" y="«transition.y»">«transition.signal»!</label>
 				«ENDIF»
-				«IF transition.when !== null»
-					<label kind="syncronisation">«transition.when»?</label>
+				«IF transition.hasWhen»
+					<label kind="synchronisation" x="«transition.x»" y="«transition.y»">«transition.when»?</label>
 				«ENDIF»
-				«IF !transition.assignments.empty»
-					<label kind="assignment">«transition.assignments.join(', ')»</label>
+				«IF transition.hasAssignment()»
+					<label kind="assignment" x="«transition.x»" y="«transition.y»">«transition.assignments.join(', ')»</label>
 				«ENDIF»
 			</transition>
 			'''
 			]].join()
-	}
-	
-	def assignments(Transition transition) {
-		var assigns = newArrayList
-		if (transition.target.transitions.exists[timeout > 0])
-			assigns.add('gen_clock := 0')
-			
-		if (transition.action !== null)
-			assigns.add(transition.action)
-		
-		assigns
 	}
 	
 	def nestedStateTransitions() {

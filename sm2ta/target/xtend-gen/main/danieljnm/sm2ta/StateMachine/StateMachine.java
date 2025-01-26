@@ -13,6 +13,7 @@ import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure2;
 
 @SuppressWarnings("all")
 public class StateMachine {
@@ -23,6 +24,12 @@ public class StateMachine {
   public HashMap<String, State> states = CollectionLiterals.<String, State>newHashMap();
 
   public List<Variable> variables = CollectionLiterals.<Variable>newArrayList();
+
+  private int x = 0;
+
+  private int y = 0;
+
+  private int increment = 400;
 
   public StateMachine name(final String name) {
     StateMachine _xblockexpression = null;
@@ -65,81 +72,101 @@ public class StateMachine {
   }
 
   public String toXml() {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-    _builder.newLine();
-    _builder.append("<nta>");
-    _builder.newLine();
-    _builder.append("<declaration>");
-    _builder.newLine();
+    String _xblockexpression = null;
     {
-      boolean _isEmpty = this.variables.isEmpty();
-      boolean _not = (!_isEmpty);
-      if (_not) {
-        final Function1<Variable, String> _function = (Variable it) -> {
-          StringConcatenation _builder_1 = new StringConcatenation();
-          _builder_1.append(it.type);
-          _builder_1.append(" ");
-          _builder_1.append(it.name);
-          _builder_1.append(" = ");
-          _builder_1.append(it.value);
-          return _builder_1.toString();
-        };
-        String _join = IterableExtensions.join(ListExtensions.<Variable, String>map(this.variables, _function), ";\n");
-        _builder.append(_join);
-        _builder.newLineIfNotEmpty();
+      ArrayList<Uppaal.Process> xmlProcesses = this.processes();
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+      _builder.newLine();
+      _builder.append("<nta>");
+      _builder.newLine();
+      _builder.append("<declaration>");
+      _builder.newLine();
+      {
+        boolean _isEmpty = this.variables.isEmpty();
+        boolean _not = (!_isEmpty);
+        if (_not) {
+          final Function1<Variable, String> _function = (Variable it) -> {
+            StringConcatenation _builder_1 = new StringConcatenation();
+            _builder_1.append(it.type);
+            _builder_1.append(" ");
+            _builder_1.append(it.name);
+            _builder_1.append(" = ");
+            _builder_1.append(it.value);
+            return _builder_1.toString();
+          };
+          String _join = IterableExtensions.join(ListExtensions.<Variable, String>map(this.variables, _function), ";\n");
+          _builder.append(_join);
+          _builder.newLineIfNotEmpty();
+        }
       }
-    }
-    {
-      boolean _hasClock = this.hasClock();
-      if (_hasClock) {
-        _builder.append("clock gen_clock;");
-        _builder.newLine();
+      {
+        boolean _hasClock = this.hasClock();
+        if (_hasClock) {
+          _builder.append("clock gen_clock;");
+          _builder.newLine();
+        }
       }
-    }
-    {
-      if (((!this.channels().isEmpty()) || (!this.nestings().isEmpty()))) {
-        _builder.append("chan ");
-        Set<String> _channels = this.channels();
-        Set<String> _nestings = this.nestings();
-        String _join_1 = IterableExtensions.join(Iterables.<String>concat(_channels, _nestings), ", ");
-        _builder.append(_join_1);
-        _builder.append(";");
-        _builder.newLineIfNotEmpty();
+      {
+        if (((!this.channels().isEmpty()) || (!this.nestings().isEmpty()))) {
+          _builder.append("chan ");
+          Set<String> _channels = this.channels();
+          Set<String> _nestings = this.nestings();
+          String _join_1 = IterableExtensions.join(Iterables.<String>concat(_channels, _nestings), ", ");
+          _builder.append(_join_1);
+          _builder.append(";");
+          _builder.newLineIfNotEmpty();
+        }
       }
-    }
-    _builder.append("</declaration>");
-    _builder.newLine();
-    {
-      ArrayList<Uppaal.Process> _processes = this.processes();
-      for(final Uppaal.Process process : _processes) {
-        CharSequence _xml = process.toXml();
-        _builder.append(_xml);
-        _builder.newLineIfNotEmpty();
+      _builder.append("</declaration>");
+      _builder.newLine();
+      {
+        for(final Uppaal.Process process : xmlProcesses) {
+          CharSequence _xml = process.toXml();
+          _builder.append(_xml);
+          _builder.newLineIfNotEmpty();
+        }
       }
+      {
+        Set<String> _whenChannels = this.whenChannels();
+        for(final String channel : _whenChannels) {
+          String _channelToXml = this.channelToXml(channel, "!");
+          _builder.append(_channelToXml);
+          _builder.newLineIfNotEmpty();
+        }
+      }
+      {
+        Set<String> _signalChannels = this.signalChannels();
+        for(final String channel_1 : _signalChannels) {
+          String _channelToXml_1 = this.channelToXml(channel_1, "?");
+          _builder.append(_channelToXml_1);
+          _builder.newLineIfNotEmpty();
+        }
+      }
+      _builder.append("<system>");
+      _builder.newLine();
+      _builder.append("\t");
+      final Function1<Uppaal.Process, String> _function_1 = (Uppaal.Process it) -> {
+        return it.name;
+      };
+      List<String> _map = ListExtensions.<Uppaal.Process, String>map(xmlProcesses, _function_1);
+      final Function1<String, String> _function_2 = (String it) -> {
+        StringConcatenation _builder_1 = new StringConcatenation();
+        _builder_1.append("gen_sync_");
+        _builder_1.append(it);
+        return _builder_1.toString();
+      };
+      Iterable<String> _map_1 = IterableExtensions.<String, String>map(this.uppaalChannels(), _function_2);
+      String _join_2 = IterableExtensions.join(Iterables.<String>concat(_map, _map_1), ", ");
+      _builder.append(_join_2, "\t");
+      _builder.newLineIfNotEmpty();
+      _builder.append("</system>");
+      _builder.newLine();
+      _builder.append("</nta>");
+      _builder.newLine();
+      _xblockexpression = _builder.toString();
     }
-    _builder.append("<system>");
-    _builder.newLine();
-    _builder.append("\t");
-    final Function1<Uppaal.Process, String> _function_1 = (Uppaal.Process it) -> {
-      return it.name;
-    };
-    List<String> _map = ListExtensions.<Uppaal.Process, String>map(this.processes(), _function_1);
-    final Function1<String, String> _function_2 = (String it) -> {
-      StringConcatenation _builder_1 = new StringConcatenation();
-      _builder_1.append("gen_sync_");
-      _builder_1.append(it);
-      return _builder_1.toString();
-    };
-    Iterable<String> _map_1 = IterableExtensions.<String, String>map(this.uppaalChannels(), _function_2);
-    String _join_2 = IterableExtensions.join(Iterables.<String>concat(_map, _map_1), ", ");
-    _builder.append(_join_2, "\t");
-    _builder.newLineIfNotEmpty();
-    _builder.append("</system>");
-    _builder.newLine();
-    _builder.append("</nta>");
-    _builder.newLine();
-    return _builder.toString();
+    return _xblockexpression;
   }
 
   public String toXta() {
@@ -191,16 +218,16 @@ public class StateMachine {
     {
       Set<String> _whenChannels = this.whenChannels();
       for(final String channel : _whenChannels) {
-        String _channeltoUppaal = this.channeltoUppaal(channel, "!");
-        _builder.append(_channeltoUppaal);
+        String _channelToUppaal = this.channelToUppaal(channel, "!");
+        _builder.append(_channelToUppaal);
         _builder.newLineIfNotEmpty();
       }
     }
     {
       Set<String> _signalChannels = this.signalChannels();
       for(final String channel_1 : _signalChannels) {
-        String _channeltoUppaal_1 = this.channeltoUppaal(channel_1, "?");
-        _builder.append(_channeltoUppaal_1);
+        String _channelToUppaal_1 = this.channelToUppaal(channel_1, "?");
+        _builder.append(_channelToUppaal_1);
         _builder.newLineIfNotEmpty();
       }
     }
@@ -223,7 +250,7 @@ public class StateMachine {
     return _builder.toString();
   }
 
-  public String channeltoUppaal(final String channel, final String sign) {
+  public String channelToUppaal(final String channel, final String sign) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("process gen_sync_");
     _builder.append(channel);
@@ -258,17 +285,61 @@ public class StateMachine {
     return _builder.toString();
   }
 
+  public String channelToXml(final String channel, final String sign) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("<template>");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("<name>gen_sync_");
+    _builder.append(channel, "\t");
+    _builder.append("</name>");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("<location id=\"initSync\" x=\"0\" y=\"0\">");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("<name x=\"-30\" y=\"15\">initSync</name>");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("</location>");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("<transition>");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("<source ref=\"initSync\"/>");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("<target ref=\"initSync\"/>");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("<label kind=\"synchronisation\" x=\"-25\" y=\"-55\">");
+    _builder.append(channel, "\t\t");
+    _builder.append(sign, "\t\t");
+    _builder.append("</label>");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("</transition>");
+    _builder.newLine();
+    _builder.append("</template>");
+    _builder.newLine();
+    return _builder.toString();
+  }
+
   public ArrayList<Uppaal.Process> processes() {
     ArrayList<Uppaal.Process> _xblockexpression = null;
     {
       final ArrayList<Uppaal.Process> processes = CollectionLiterals.<Uppaal.Process>newArrayList();
       final Uppaal.Process process = new Uppaal.Process(this.name);
       final ArrayList<State> nestings = CollectionLiterals.<State>newArrayList();
+      this.reset();
       final Function1<State, Integer> _function = (State it) -> {
         return Integer.valueOf(it.index);
       };
-      final Consumer<State> _function_1 = (State state) -> {
+      final Procedure2<State, Integer> _function_1 = (State state, Integer index) -> {
         if ((!state.isNested)) {
+          state.x = (this.x + (this.increment * (index).intValue()));
+          state.y = this.y;
           process.addState(state);
         }
         boolean _isEmpty = state.nestedStates.isEmpty();
@@ -277,13 +348,23 @@ public class StateMachine {
           nestings.add(state);
         }
       };
-      IterableExtensions.<State, Integer>sortBy(this.states.values(), _function).forEach(_function_1);
+      IterableExtensions.<State>forEach(IterableExtensions.<State, Integer>sortBy(this.states.values(), _function), _function_1);
       processes.add(process);
       final Consumer<State> _function_2 = (State nesting) -> {
+        this.reset();
         processes.add(this.toProcess(nesting));
       };
       nestings.forEach(_function_2);
       _xblockexpression = processes;
+    }
+    return _xblockexpression;
+  }
+
+  public int reset() {
+    int _xblockexpression = (int) 0;
+    {
+      this.x = 0;
+      _xblockexpression = this.y = 0;
     }
     return _xblockexpression;
   }
@@ -301,11 +382,13 @@ public class StateMachine {
       _builder_1.append(nesting.name);
       _builder_1.append("_inner_start");
       State initial = _transition.when(_builder_1.toString());
+      initial.x = this.x;
+      initial.y = this.y;
       nestedProcess.addState(initial);
-      final Consumer<State> _function = (State it) -> {
+      final Procedure2<State, Integer> _function = (State it, Integer index) -> {
         nestedProcess.addState(it);
       };
-      nesting.nestedStates.forEach(_function);
+      IterableExtensions.<State>forEach(nesting.nestedStates, _function);
       _xblockexpression = nestedProcess;
     }
     return _xblockexpression;

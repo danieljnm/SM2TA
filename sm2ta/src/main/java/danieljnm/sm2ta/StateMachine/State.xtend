@@ -11,6 +11,8 @@ class State {
 	public List<State> nestedStates = newArrayList
 	public boolean isInitial
 	public boolean isNested
+	public int x
+	public int y
 	
 	new(State parent, String name) {
 		this.parent = parent
