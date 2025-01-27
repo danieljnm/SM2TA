@@ -35,35 +35,36 @@ class StateMachine {
 	}
 	
 	def String toXml() {
-		var xmlProcesses = processes
-		'''
-		<?xml version="1.0" encoding="utf-8"?>
-		<nta>
-		<declaration>
-		«IF !variables.empty»
-		«variables.map['''«type» «name» = «value»'''].join(';\n')»;
-		«ENDIF»
-		«IF hasClock»
-		clock gen_clock;
-		«ENDIF»
-		«IF !channels.empty || !nestings.empty»
-		chan «(channels + nestings).join(', ')»;
-		«ENDIF»
-		</declaration>
-		«FOR process : xmlProcesses»
-		«process.toXml»
-		«ENDFOR»
-		«FOR channel : whenChannels»
-		«channel.channelToXml("!")»
-		«ENDFOR»
-		«FOR channel : signalChannels»
-		«channel.channelToXml("?")»
-		«ENDFOR»
-		<system>
-			«(xmlProcesses.map[name] + uppaalChannels.map['''gen_sync_«it»''']).join(', ')»
-		</system>
-		</nta>
-		'''
+//		var xmlProcesses = processes
+//		'''
+//		<?xml version="1.0" encoding="utf-8"?>
+//		<nta>
+//		<declaration>
+//		«IF !variables.empty»
+//		«variables.map['''«type» «name» = «value»'''].join(';\n')»;
+//		«ENDIF»
+//		«IF hasClock»
+//		clock gen_clock;
+//		«ENDIF»
+//		«IF !channels.empty || !nestings.empty»
+//		chan «(channels + nestings).join(', ')»;
+//		«ENDIF»
+//		</declaration>
+//		«FOR process : xmlProcesses»
+//		«process.toXml»
+//		«ENDFOR»
+//		«FOR channel : whenChannels»
+//		«channel.channelToXml("!")»
+//		«ENDFOR»
+//		«FOR channel : signalChannels»
+//		«channel.channelToXml("?")»
+//		«ENDFOR»
+//		<system>
+//			«(xmlProcesses.map[name] + uppaalChannels.map['''gen_sync_«it»''']).join(', ')»
+//		</system>
+//		</nta>
+//		'''
+		new Uppaal.Xml(this).toString
 	}
 	
 	def String toXta() {
