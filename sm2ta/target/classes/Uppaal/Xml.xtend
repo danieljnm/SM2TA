@@ -13,6 +13,8 @@ class Xml {
 	
 	new(StateMachine stateMachine) {
 		declaration = new Declaration(stateMachine)
+		// set templates
+		// set transitions
 		system = new System(templates)
 	}
 	
