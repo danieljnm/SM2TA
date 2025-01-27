@@ -4,7 +4,6 @@ import danieljnm.sm2ta.StateMachine.StateMachine;
 import java.util.List;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
-import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 @SuppressWarnings("all")
 public class Xml {
@@ -14,11 +13,13 @@ public class Xml {
 
   public List<Transition> transitions = CollectionLiterals.<Transition>newArrayList();
 
-  public List<String> systems = CollectionLiterals.<String>newArrayList();
+  public Uppaal.System system;
 
   public Xml(final StateMachine stateMachine) {
     Declaration _declaration = new Declaration(stateMachine);
     this.declaration = _declaration;
+    Uppaal.System _system = new Uppaal.System(this.templates);
+    this.system = _system;
   }
 
   @Override
@@ -38,23 +39,9 @@ public class Xml {
         _builder.newLineIfNotEmpty();
       }
     }
-    {
-      boolean _isEmpty = this.systems.isEmpty();
-      boolean _not = (!_isEmpty);
-      if (_not) {
-        _builder.append("\t");
-        _builder.append("<system>");
-        _builder.newLine();
-        _builder.append("\t");
-        _builder.append("\t");
-        String _join = IterableExtensions.join(this.systems, ", ");
-        _builder.append(_join, "\t\t");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.append("</system>");
-        _builder.newLine();
-      }
-    }
+    _builder.append("\t");
+    _builder.append(this.system, "\t");
+    _builder.newLineIfNotEmpty();
     _builder.append("</nta>");
     _builder.newLine();
     return _builder.toString();

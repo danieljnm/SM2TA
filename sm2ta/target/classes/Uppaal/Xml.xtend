@@ -9,10 +9,11 @@ class Xml {
 	public Declaration declaration
 	public List<Template> templates = newArrayList
 	public List<Transition> transitions = newArrayList
-	public List<String> systems = newArrayList
+	public System system
 	
 	new(StateMachine stateMachine) {
 		declaration = new Declaration(stateMachine)
+		system = new System(templates)
 	}
 	
 	override toString() {
@@ -23,11 +24,7 @@ class Xml {
 			«FOR template : templates»
 			«template»
 			«ENDFOR»
-			«IF !systems.empty»
-			<system>
-				«systems.join(', ')»
-			</system>
-			«ENDIF»
+			«system»
 		</nta>
 		'''
 	}
