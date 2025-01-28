@@ -2,6 +2,7 @@ package Uppaal;
 
 import danieljnm.sm2ta.StateMachine.State;
 import java.util.List;
+import java.util.function.Consumer;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 
@@ -29,6 +30,15 @@ public class Template {
       _xblockexpression = this.locations.add(location);
     }
     return _xblockexpression;
+  }
+
+  public void transitions(final State state) {
+    final Consumer<danieljnm.sm2ta.StateMachine.Transition> _function = (danieljnm.sm2ta.StateMachine.Transition it) -> {
+      final Transition transition = new Transition(state.name, it.target.name);
+      transition.labels(it);
+      this.transitions.add(transition);
+    };
+    state.transitions.forEach(_function);
   }
 
   @Override

@@ -41,6 +41,7 @@ public class Xml {
       final Procedure2<State, Integer> _function_1 = (State state, Integer index) -> {
         if ((!state.isNested)) {
           template.location(state);
+          template.transitions(state);
         }
         boolean _isEmpty = state.nestedStates.isEmpty();
         boolean _not = (!_isEmpty);
@@ -76,8 +77,10 @@ public class Xml {
       _builder_1.append("_inner_start");
       State initial = _transition.when(_builder_1.toString());
       template.location(initial);
+      template.transitions(initial);
       final Procedure2<State, Integer> _function = (State it, Integer index) -> {
         template.location(it);
+        template.transitions(it);
       };
       IterableExtensions.<State>forEach(nesting.nestedStates, _function);
       _xblockexpression = template;

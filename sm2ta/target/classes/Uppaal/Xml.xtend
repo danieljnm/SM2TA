@@ -23,6 +23,7 @@ class Xml {
 		stateMachine.states.values.sortBy[index].forEach[state, index |
 			if (!state.isNested) {
 				template.location(state)
+				template.transitions(state)
 			}
 			
 			if (!state.nestedStates.empty) {
@@ -45,8 +46,10 @@ class Xml {
 		val template = new Template('''«nesting.name»_inner''')
 		var initial = new State(nesting, "gen_init").initial.transition(nesting.nestedStates.get(0).name).when('''gen_«nesting.name»_inner_start''')
 		template.location(initial)
+		template.transitions(initial)
 		nesting.nestedStates.forEach[it, index |
 			template.location(it)
+			template.transitions(it)
 		]
 		template
 	}

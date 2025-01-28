@@ -12,10 +12,8 @@ public class Label {
 
   public String value;
 
-  public Label(final String kind, final int x, final int y, final String value) {
+  public Label(final String kind, final String value) {
     this.kind = kind;
-    this.x = x;
-    this.y = y;
     this.value = value;
   }
 

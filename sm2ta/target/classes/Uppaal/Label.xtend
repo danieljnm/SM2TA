@@ -6,10 +6,8 @@ class Label {
 	public int y
 	public String value
 	
-	new(String kind, int x, int y, String value) {
+	new(String kind, String value) {
 		this.kind = kind
-		this.x = x
-		this.y = y
 		this.value = value
 	}
 	

@@ -22,6 +22,14 @@ class Template {
 		locations.add(location)
 	}
 	
+	def transitions(State state) {
+		state.transitions.forEach[it |
+			val transition = new Transition(state.name, it.target.name)
+			transition.labels(it)
+			transitions.add(transition)
+		]
+	}
+	
 	override toString() {
 		'''
 		<template>

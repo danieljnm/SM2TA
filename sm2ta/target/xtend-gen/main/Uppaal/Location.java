@@ -32,7 +32,7 @@ public class Location {
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("gen_clock <= ");
       _builder.append(transition.timeout);
-      Label _label = new Label("invariant", 0, 0, _builder.toString());
+      Label _label = new Label("invariant", _builder.toString());
       this.label = _label;
     }
   }
