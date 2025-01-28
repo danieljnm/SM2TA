@@ -27,8 +27,9 @@ public class System {
       boolean _isEmpty = this.systems.isEmpty();
       boolean _not = (!_isEmpty);
       if (_not) {
+        _builder.append("\t");
         String _join = IterableExtensions.join(this.systems, ", ");
-        _builder.append(_join);
+        _builder.append(_join, "\t");
         _builder.newLineIfNotEmpty();
       }
     }

@@ -130,8 +130,8 @@ class StateMachine {
 		
 		states.values.sortBy[index].forEach[state, index |
 			if (!state.isNested) {
-				state.x = x + increment * index
-				state.y = y
+//				state.x = x + increment * index
+//				state.y = y
 				process.addState(state)
 			}
 			
@@ -158,11 +158,11 @@ class StateMachine {
 	def toProcess(State nesting) {
 		val nestedProcess = new Uppaal.Process('''«nesting.name»_inner''')
 		var initial = new State(nesting, "gen_init").initial.transition(nesting.nestedStates.get(0).name).when('''gen_«nesting.name»_inner_start''')
-		initial.x = x
-		initial.y = y
+//		initial.x = x
+//		initial.y = y
 		nestedProcess.addState(initial)
 		nesting.nestedStates.forEach[it, index |
-			it.x = x + increment * (index + 1)
+//			it.x = x + increment * (index + 1)
 			nestedProcess.addState(it)
 		]
 		nestedProcess

@@ -22,6 +22,9 @@ public class Template {
   public boolean location(final State state) {
     boolean _xblockexpression = false;
     {
+      if (state.isInitial) {
+        this.initial = state.name;
+      }
       Location location = new Location(state);
       _xblockexpression = this.locations.add(location);
     }

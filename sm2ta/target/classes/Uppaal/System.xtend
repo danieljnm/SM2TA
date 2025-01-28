@@ -12,9 +12,9 @@ class System {
 	override toString() {
 		'''
 		<system>
-		«IF !systems.empty»
-			«systems.join(', ')»
-		«ENDIF»
+			«IF !systems.empty»
+				«systems.join(', ')»
+			«ENDIF»
 		</system>
 		'''
 	}

@@ -12,8 +12,6 @@ class Location {
 	
 	new(State state) {
 		id = state.name
-		x = state.x
-		y = state.y
 		name = new Name(state.name)
 		var transition = state.transitions.findFirst[timeout > 0]
 		if (transition !== null) {

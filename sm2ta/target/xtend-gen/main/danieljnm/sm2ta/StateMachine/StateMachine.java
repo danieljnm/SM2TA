@@ -245,8 +245,6 @@ public class StateMachine {
       };
       final Procedure2<State, Integer> _function_1 = (State state, Integer index) -> {
         if ((!state.isNested)) {
-          state.x = (this.x + (this.increment * (index).intValue()));
-          state.y = this.y;
           process.addState(state);
         }
         boolean _isEmpty = state.nestedStates.isEmpty();
@@ -289,11 +287,8 @@ public class StateMachine {
       _builder_1.append(nesting.name);
       _builder_1.append("_inner_start");
       State initial = _transition.when(_builder_1.toString());
-      initial.x = this.x;
-      initial.y = this.y;
       nestedProcess.addState(initial);
       final Procedure2<State, Integer> _function = (State it, Integer index) -> {
-        it.x = (it.x + (this.increment * ((index).intValue() + 1)));
         nestedProcess.addState(it);
       };
       IterableExtensions.<State>forEach(nesting.nestedStates, _function);

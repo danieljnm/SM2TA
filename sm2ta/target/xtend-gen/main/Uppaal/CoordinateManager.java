@@ -25,13 +25,7 @@ public class CoordinateManager {
   }
 
   public static Coordinate next(final State state) {
-    Coordinate _xblockexpression = null;
-    {
-      int _x = CoordinateManager.x;
-      CoordinateManager.x = (_x + (state.x + CoordinateManager.increment));
-      _xblockexpression = new Coordinate(CoordinateManager.x, CoordinateManager.y);
-    }
-    return _xblockexpression;
+    return new Coordinate(CoordinateManager.x, CoordinateManager.y);
   }
 
   public static int reset() {

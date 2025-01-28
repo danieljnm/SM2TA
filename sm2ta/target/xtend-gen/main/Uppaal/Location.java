@@ -22,8 +22,6 @@ public class Location {
 
   public Location(final State state) {
     this.id = state.name;
-    this.x = state.x;
-    this.y = state.y;
     Name _name = new Name(state.name);
     this.name = _name;
     final Function1<Transition, Boolean> _function = (Transition it) -> {

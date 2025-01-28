@@ -14,6 +14,10 @@ class Template {
 	}
 	
 	def location(State state) {
+		if (state.isInitial) {
+			initial = state.name
+		}
+		
 		var location = new Location(state)
 		locations.add(location)
 	}

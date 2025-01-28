@@ -34,9 +34,7 @@ public class Process {
     }
     this.states.add(state);
     final Procedure2<Transition, Integer> _function = (Transition transition, Integer index) -> {
-      transition.x = (state.x + CoordinateManager.increment);
       if (((index).intValue() == 0)) {
-        transition.y = state.y;
         int _currentY = this.currentY;
         Integer _properties = transition.properties();
         int _multiply = (CoordinateManager.spacing * (_properties).intValue());
@@ -82,96 +80,6 @@ public class Process {
       return _xifexpression;
     };
     return IterableExtensions.join(IterableExtensions.<String>toSet(IterableExtensions.<State, String>flatMap(this.states, _function)), ",\n");
-  }
-
-  public String xmlStates() {
-    final Function1<State, List<String>> _function = (State it) -> {
-      List<String> _xblockexpression = null;
-      {
-        boolean _isEmpty = it.nestedStates.isEmpty();
-        if (_isEmpty) {
-          String _xmlFormat = this.xmlFormat(it);
-          return Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList(_xmlFormat));
-        }
-        final Coordinate coordinates = CoordinateManager.next(it);
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append("<location id=\"gen_pre_");
-        _builder.append(it.name);
-        _builder.append("\" x=\"");
-        _builder.append(it.x);
-        _builder.append("\" y=\"");
-        _builder.append(it.y);
-        _builder.append("\" committed=\"true\">");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.append("<name x=\"");
-        _builder.append((it.x - CoordinateManager.spacing), "\t");
-        _builder.append("\" y=\"");
-        _builder.append((it.y + CoordinateManager.spacing), "\t");
-        _builder.append("\">gen_pre_");
-        _builder.append(it.name, "\t");
-        _builder.append("</name>");
-        _builder.newLineIfNotEmpty();
-        _builder.append("</location>");
-        _builder.newLine();
-        StringConcatenation _builder_1 = new StringConcatenation();
-        _builder_1.append("<location id=\"");
-        _builder_1.append(it.name);
-        _builder_1.append("\" x=\"");
-        _builder_1.append(coordinates.x);
-        _builder_1.append("\" y=\"");
-        _builder_1.append(coordinates.y);
-        _builder_1.append("\">");
-        _builder_1.newLineIfNotEmpty();
-        _builder_1.append("\t");
-        _builder_1.append("<name x=\"");
-        _builder_1.append((coordinates.x - CoordinateManager.spacing), "\t");
-        _builder_1.append("\" y=\"");
-        _builder_1.append((coordinates.y + CoordinateManager.spacing), "\t");
-        _builder_1.append("\">");
-        _builder_1.append(it.name, "\t");
-        _builder_1.append("</name>");
-        _builder_1.newLineIfNotEmpty();
-        _builder_1.append("</location>");
-        _builder_1.newLine();
-        _xblockexpression = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList(_builder.toString(), _builder_1.toString()));
-      }
-      return _xblockexpression;
-    };
-    return IterableExtensions.join(IterableExtensions.<String>toSet(IterableExtensions.<State, String>flatMap(this.states, _function)));
-  }
-
-  public String xmlFormat(final State state) {
-    String _xblockexpression = null;
-    {
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.append("<location id=\"");
-      _builder.append(state.name);
-      _builder.append("\" x=\"");
-      _builder.append(state.x);
-      _builder.append("\" y=\"");
-      _builder.append(state.y);
-      _builder.append("\">");
-      _builder.newLineIfNotEmpty();
-      _builder.append("\t");
-      _builder.append("<name x=\"");
-      _builder.append((state.x - CoordinateManager.spacing), "\t");
-      _builder.append("\" y=\"");
-      _builder.append((state.y + CoordinateManager.spacing), "\t");
-      _builder.append("\">");
-      _builder.append(state.name, "\t");
-      _builder.append("</name>");
-      _builder.newLineIfNotEmpty();
-      _builder.append("\t");
-      String _labels = this.labels(state);
-      _builder.append(_labels, "\t");
-      _builder.newLineIfNotEmpty();
-      _builder.append("</location>");
-      _builder.newLine();
-      String location = _builder.toString();
-      _xblockexpression = location;
-    }
-    return _xblockexpression;
   }
 
   public String labels(final State state) {
@@ -579,49 +487,5 @@ public class Process {
     _builder.append("}");
     _builder.newLine();
     return _builder.toString();
-  }
-
-  public CharSequence toXml() {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("<template>");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("<name>");
-    _builder.append(this.name, "\t");
-    _builder.append("</name>");
-    _builder.newLineIfNotEmpty();
-    {
-      int _length = this.xmlStates().length();
-      boolean _greaterThan = (_length > 0);
-      if (_greaterThan) {
-        _builder.append("\t");
-        String _xmlStates = this.xmlStates();
-        _builder.append(_xmlStates, "\t");
-        _builder.newLineIfNotEmpty();
-      }
-    }
-    {
-      if ((this.initialState != null)) {
-        _builder.append("\t");
-        _builder.append("<init ref=\"");
-        _builder.append(this.initialState.name, "\t");
-        _builder.append("\"/>");
-        _builder.newLineIfNotEmpty();
-      }
-    }
-    {
-      if ((IterableExtensions.<State>exists(this.states, ((Function1<State, Boolean>) (State it) -> {
-        boolean _isEmpty = it.transitions.isEmpty();
-        return Boolean.valueOf((!_isEmpty));
-      })) || (!this.nestedStateNames().isEmpty()))) {
-        _builder.append("\t");
-        String _xmlTransitions = this.xmlTransitions();
-        _builder.append(_xmlTransitions, "\t");
-        _builder.newLineIfNotEmpty();
-      }
-    }
-    _builder.append("</template>");
-    _builder.newLine();
-    return _builder;
   }
 }

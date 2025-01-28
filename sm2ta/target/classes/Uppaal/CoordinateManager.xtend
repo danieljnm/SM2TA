@@ -15,7 +15,7 @@ class CoordinateManager {
 	}
 	
 	static def next(State state) {
-		x += state.x + increment
+//		x += state.x + increment
 		new Coordinate(x, y)
 	}
 	

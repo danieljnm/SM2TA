@@ -4,6 +4,7 @@ import danieljnm.sm2ta.StateMachine.State;
 import danieljnm.sm2ta.StateMachine.StateMachine;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -18,6 +19,8 @@ public class Xml {
 
   public Uppaal.System system;
 
+  private GridLayout layout = new GridLayout();
+
   public Xml(final StateMachine stateMachine) {
     Declaration _declaration = new Declaration(stateMachine);
     this.declaration = _declaration;
@@ -31,20 +34,53 @@ public class Xml {
     {
       final ArrayList<Template> templates = CollectionLiterals.<Template>newArrayList();
       final Template template = new Template(stateMachine.name);
+      final ArrayList<State> nestings = CollectionLiterals.<State>newArrayList();
       final Function1<State, Integer> _function = (State it) -> {
         return Integer.valueOf(it.index);
       };
       final Procedure2<State, Integer> _function_1 = (State state, Integer index) -> {
-        if (state.isInitial) {
-          template.initial = state.name;
-        }
         if ((!state.isNested)) {
           template.location(state);
         }
-        templates.add(template);
+        boolean _isEmpty = state.nestedStates.isEmpty();
+        boolean _not = (!_isEmpty);
+        if (_not) {
+          nestings.add(state);
+        }
       };
       IterableExtensions.<State>forEach(IterableExtensions.<State, Integer>sortBy(stateMachine.states.values(), _function), _function_1);
+      this.layout.applyLayout(template);
+      templates.add(template);
+      final Consumer<State> _function_2 = (State nesting) -> {
+        Template nestingTemplate = this.toTemplate(nesting);
+        this.layout.applyLayout(nestingTemplate);
+        templates.add(nestingTemplate);
+      };
+      nestings.forEach(_function_2);
       _xblockexpression = templates;
+    }
+    return _xblockexpression;
+  }
+
+  public Template toTemplate(final State nesting) {
+    Template _xblockexpression = null;
+    {
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append(nesting.name);
+      _builder.append("_inner");
+      final Template template = new Template(_builder.toString());
+      State _transition = new State(nesting, "gen_init").initial().transition(nesting.nestedStates.get(0).name);
+      StringConcatenation _builder_1 = new StringConcatenation();
+      _builder_1.append("gen_");
+      _builder_1.append(nesting.name);
+      _builder_1.append("_inner_start");
+      State initial = _transition.when(_builder_1.toString());
+      template.location(initial);
+      final Procedure2<State, Integer> _function = (State it, Integer index) -> {
+        template.location(it);
+      };
+      IterableExtensions.<State>forEach(nesting.nestedStates, _function);
+      _xblockexpression = template;
     }
     return _xblockexpression;
   }

@@ -27,10 +27,6 @@ public class State {
 
   public boolean isNested;
 
-  public int x;
-
-  public int y;
-
   public State(final State parent, final String name) {
     this.parent = parent;
     this.name = name;

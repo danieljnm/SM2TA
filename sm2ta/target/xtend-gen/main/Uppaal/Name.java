@@ -14,12 +14,6 @@ public class Name {
     this.name = name;
   }
 
-  public Name(final String name, final int x, final int y) {
-    this.name = name;
-    this.x = x;
-    this.y = y;
-  }
-
   @Override
   public String toString() {
     StringConcatenation _builder = new StringConcatenation();
