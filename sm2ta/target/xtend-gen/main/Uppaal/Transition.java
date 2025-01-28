@@ -29,7 +29,7 @@ public class Transition {
       boolean _hasTimeout = transition.hasTimeout();
       if (_hasTimeout) {
         StringConcatenation _builder = new StringConcatenation();
-        _builder.append("gen_clock <= ");
+        _builder.append("gen_clock >= ");
         _builder.append(transition.timeout);
         Label _label_1 = new Label("guard", _builder.toString());
         this.labels.add(_label_1);

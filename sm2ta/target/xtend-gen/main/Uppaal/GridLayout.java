@@ -14,7 +14,7 @@ public class GridLayout {
 
   private int horizontalSpacing = 400;
 
-  private int verticalSpacing = 200;
+  private int verticalSpacing = 150;
 
   private int maxPerRow = 4;
 
@@ -53,7 +53,7 @@ public class GridLayout {
       final int midX = ((source.x + target.x) / 2);
       final int midY = ((source.y + target.y) / 2);
       final Procedure2<Label, Integer> _function_3 = (Label label, Integer index) -> {
-        label.x = (midX + ((index).intValue() * 15));
+        label.x = midX;
         label.y = (midY + ((index).intValue() * 15));
       };
       IterableExtensions.<Label>forEach(transition.labels, _function_3);

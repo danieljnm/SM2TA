@@ -17,7 +17,7 @@ class Transition {
 			labels.add(new Label("guard", transition.guard))
 		}
 		if (transition.hasTimeout) {
-			labels.add(new Label("guard", '''gen_clock <= «transition.timeout»'''))
+			labels.add(new Label("guard", '''gen_clock >= «transition.timeout»'''))
 		}
 		if (transition.hasSignal) {
 			labels.add(new Label("synchronisation", '''«transition.signal»!'''))

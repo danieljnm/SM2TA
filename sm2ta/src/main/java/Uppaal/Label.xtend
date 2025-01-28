@@ -18,6 +18,6 @@ class Label {
 	}
 	
 	def String format(String value) {
-		value.replace('>', '&gt;').replace('<', '&lt;')
+		value.replace('>', '&gt;').replace('<', '&lt;').replace("false", "0").replace("true", "1")
 	}
 }

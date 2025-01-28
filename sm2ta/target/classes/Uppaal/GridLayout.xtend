@@ -4,7 +4,7 @@ class GridLayout {
 	int startX = 0
 	int startY = 0
 	int horizontalSpacing = 400
-	int verticalSpacing = 200
+	int verticalSpacing = 150
 	int maxPerRow = 4
 	
 	def applyLayout(Template template) {
@@ -41,7 +41,7 @@ class GridLayout {
             val midX = (source.x + target.x) / 2
             val midY = (source.y + target.y) / 2
             transition.labels.forEach [ label, index |
-                label.x = midX + (index * 15)
+                label.x = midX
                 label.y = midY + (index * 15)
             ]
 		]
