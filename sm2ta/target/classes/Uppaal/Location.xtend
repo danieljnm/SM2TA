@@ -1,12 +1,25 @@
 package Uppaal
 
+import danieljnm.sm2ta.StateMachine.State
+
 class Location {
 	public String id
 	public int x
 	public int y
-	public Boolean committed
+	public Boolean committed = false
 	public Name name
 	public Label label
+	
+	new(State state) {
+		id = state.name
+		x = state.x
+		y = state.y
+		name = new Name(state.name)
+		var transition = state.transitions.findFirst[timeout > 0]
+		if (transition !== null) {
+			label = new Label("invariant", 0, 0, '''gen_clock <= «transition.timeout»''')
+		}
+	}
 	
 	override toString() {
 		'''

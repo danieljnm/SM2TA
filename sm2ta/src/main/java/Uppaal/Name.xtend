@@ -17,7 +17,7 @@ class Name {
 	
 	override toString() {
 		'''
-		<name id="«name»" x="«x»" y="«y»">«name»</name>
+		<name x="«x»" y="«y»">«name»</name>
 		'''
 	}
 }

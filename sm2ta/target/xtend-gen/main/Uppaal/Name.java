@@ -23,9 +23,7 @@ public class Name {
   @Override
   public String toString() {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("<name id=\"");
-    _builder.append(this.name);
-    _builder.append("\" x=\"");
+    _builder.append("<name x=\"");
     _builder.append(this.x);
     _builder.append("\" y=\"");
     _builder.append(this.y);

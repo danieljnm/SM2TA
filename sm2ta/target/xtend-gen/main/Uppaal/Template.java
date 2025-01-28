@@ -1,20 +1,31 @@
 package Uppaal;
 
+import danieljnm.sm2ta.StateMachine.State;
 import java.util.List;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 
 @SuppressWarnings("all")
 public class Template {
   public String name;
 
-  public List<Location> locations;
+  public List<Location> locations = CollectionLiterals.<Location>newArrayList();
 
   public String initial;
 
-  public List<Transition> transitions;
+  public List<Transition> transitions = CollectionLiterals.<Transition>newArrayList();
 
   public Template(final String name) {
     this.name = name;
+  }
+
+  public boolean location(final State state) {
+    boolean _xblockexpression = false;
+    {
+      Location location = new Location(state);
+      _xblockexpression = this.locations.add(location);
+    }
+    return _xblockexpression;
   }
 
   @Override
@@ -43,7 +54,7 @@ public class Template {
         _builder.append("\t");
         _builder.append("<init ref=\"");
         _builder.append(this.initial, "\t");
-        _builder.append("\"");
+        _builder.append("\"/>");
         _builder.newLineIfNotEmpty();
       }
     }
