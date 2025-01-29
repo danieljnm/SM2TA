@@ -8,6 +8,9 @@ class GridLayout {
 	int maxPerRow = 4
 	
 	def applyLayout(Template template) {
+		// the template with the most incoming transitions should be positioned like
+		// location.x = col * horizontalSpacing * 1.5
+		// location.y = row * verticalSpacing * 1.5
 		template.locations.forEach[location, index |
 			val row = index / maxPerRow
 			val col = index % maxPerRow
