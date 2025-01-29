@@ -8,6 +8,7 @@ class Template {
 	public List<Location> locations = newArrayList
 	public String initial
 	public List<Transition> transitions = newArrayList
+	public Boolean exclude = false
 	
 	new(String name) {
 		this.name = name
@@ -25,10 +26,15 @@ class Template {
 	
 	def transitions(State state) {
 		state.transitions.forEach[it |
-			val transition = new Transition(state.name, it.target.name)
+			val transition = new Transition(state.name, state.name.startsWith("gen_pre_") || it.target.nestedStates.empty ?  it.target.name : '''gen_pre_«it.target.name»''')
 			transition.labels(it)
 			transitions.add(transition)
 		]
+	}
+	
+	def exclude() {
+		this.exclude = true
+		this
 	}
 	
 	override toString() {

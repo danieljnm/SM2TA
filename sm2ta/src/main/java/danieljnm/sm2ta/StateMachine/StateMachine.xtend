@@ -72,29 +72,14 @@ class StateMachine {
 		'''
 	}
 	
-		def String channelToXml(String channel, String sign) {
-		'''
-		<template>
-			<name>gen_sync_«channel»</name>
-			<location id="initSync" x="0" y="0">
-				<name x="-30" y="15">initSync</name>
-			</location>
-			<transition>
-				<source ref="initSync"/>
-				<target ref="initSync"/>
-				<label kind="synchronisation" x="-25" y="-55">«channel»«sign»</label>
-			</transition>
-		</template>
-		'''
-	}
-	
 	
 	def processes() {
 		val processes = newArrayList
 		val process = new Uppaal.Process(name)
+		
 		val nestings = newArrayList
 		
-		states.values.sortBy[index].forEach[state, index |
+		states.values.sortBy[index].forEach[state |
 			if (!state.isNested) {
 				process.addState(state)
 			}
@@ -112,14 +97,12 @@ class StateMachine {
 		
 		processes
 	}
-
+	
 	def toProcess(State nesting) {
 		val nestedProcess = new Uppaal.Process('''«nesting.name»_inner''')
 		var initial = new State(nesting, "gen_init").initial.transition(nesting.nestedStates.get(0).name).when('''gen_«nesting.name»_inner_start''')
 		nestedProcess.addState(initial)
-		nesting.nestedStates.forEach[it, index |
-			nestedProcess.addState(it)
-		]
+		nesting.nestedStates.forEach[nestedProcess.addState(it)]
 		nestedProcess
 	}
 	
@@ -208,4 +191,5 @@ class StateMachine {
 		variables.lastOrNull.value = value
 		this
 	}
+	
 }

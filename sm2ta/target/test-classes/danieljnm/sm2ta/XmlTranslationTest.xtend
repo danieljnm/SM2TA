@@ -284,11 +284,10 @@ class XmlTranslationTest {
 			</system>
 		</nta>
 		'''
-		println(stateMachine.toXml)
 		assertEquals(xml, stateMachine.toXml)
 	}
 	
-		@Test
+	@Test
 	def nestedMachineWithTransitions() {
 		stateMachine.name("test")
 			.state("one").initial
@@ -303,59 +302,89 @@ class XmlTranslationTest {
 			.state("three")
 		val xml = 
 		'''
-		clock gen_clock;
-		chan ready, finish, gen_two_inner_start;
-		process test {
-			state
-				one,
-				gen_pre_two,
-				two,
-				three;
-			commit gen_pre_two;
-			init one;
-			trans
-				one -> gen_pre_two {
-					sync ready?;
-				},
-				two -> three {
-					sync finish?;
-				},
-				gen_pre_two -> two {
-					sync gen_two_inner_start!;
-				};
-		}
-		process two_inner {
-			state
-				gen_init,
-				innerOne {
-					gen_clock <= 5
-				},
-				innerTwo;
-			commit innerTwo;
-			init gen_init;
-			trans
-				gen_init -> innerOne {
-					sync gen_two_inner_start?;
-					assign gen_clock := 0;
-				},
-				innerOne -> innerTwo {
-					guard gen_clock >= 5;
-					sync finish!;
-				},
-				innerTwo -> gen_init {
-				};
-		}
-		process gen_sync_ready {
-			state
-				initSync;
-			init initSync;
-			trans
-				initSync -> initSync {
-					sync ready!;
-				};
-		}
-		system test, two_inner, gen_sync_ready;
+		<?xml version="1.0" encoding="utf-8"?>
+		<nta>
+			<declaration>
+				clock gen_clock;
+				chan ready, finish, gen_two_inner_start;
+			</declaration>
+			<template>
+				<name>test</name>
+				<location id="one" x="0" y="0">
+					<name x="-15" y="15">one</name>
+				</location>
+				<location id="gen_pre_two" x="400" y="0">
+					<name x="385" y="15">gen_pre_two</name>
+					<committed/>
+				</location>
+				<location id="two" x="800" y="0">
+					<name x="785" y="15">two</name>
+				</location>
+				<location id="three" x="1200" y="0">
+					<name x="1185" y="15">three</name>
+				</location>
+				<init ref="one"/>
+				<transition>
+					<source ref="one"/>
+					<target ref="gen_pre_two"/>
+					<label kind="synchronisation" x="150" y="15">ready?</label>
+				</transition>
+				<transition>
+					<source ref="gen_pre_two"/>
+					<target ref="two"/>
+					<label kind="synchronisation" x="550" y="15">gen_two_inner_start!</label>
+				</transition>
+				<transition>
+					<source ref="two"/>
+					<target ref="three"/>
+					<label kind="synchronisation" x="950" y="15">finish?</label>
+				</transition>
+			</template>
+			<template>
+				<name>two_inner</name>
+				<location id="gen_init" x="0" y="0">
+					<name x="-15" y="15">gen_init</name>
+				</location>
+				<location id="innerOne" x="400" y="0">
+					<name x="385" y="15">innerOne</name>
+					<label kind="invariant" x="385" y="30">gen_clock &lt;= 5</label>
+				</location>
+				<location id="innerTwo" x="800" y="0">
+					<name x="785" y="15">innerTwo</name>
+				</location>
+				<init ref="gen_init"/>
+				<transition>
+					<source ref="gen_init"/>
+					<target ref="innerOne"/>
+					<label kind="synchronisation" x="150" y="15">gen_two_inner_start?</label>
+					<label kind="assignment" x="150" y="30">gen_clock := 0</label>
+				</transition>
+				<transition>
+					<source ref="innerOne"/>
+					<target ref="innerTwo"/>
+					<label kind="guard" x="550" y="15">gen_clock &gt;= 5</label>
+					<label kind="synchronisation" x="550" y="30">finish!</label>
+				</transition>
+			</template>
+			<template>
+				<name>gen_sync_ready</name>
+				<location id="initSync" x="0" y="0">
+					<name x="-15" y="15">initSync</name>
+				</location>
+				<transition>
+					<source ref="initSync"/>
+					<target ref="initSync"/>
+					<label kind="synchronisation" x="-15" y="-55">ready!</label>
+				</transition>
+			</template>
+			<system>
+				test, two_inner, gen_sync_ready
+			</system>
+		</nta>
 		'''
+		// signals from nested machines should be omitted in system
+		// transitions to a nested machine to hit the gen_pre state instead of the actual state
+		println(stateMachine.toXml)
 		assertEquals(xml, stateMachine.toXml)
 	}
 }

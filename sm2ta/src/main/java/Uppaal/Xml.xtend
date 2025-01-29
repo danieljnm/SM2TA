@@ -48,8 +48,8 @@ class Xml {
 		]
 		
 		val synchronisations = newHashMap
-		stateMachine.whens.forEach[synchronisations.put(it, new Synchronisation(it, "when", index++))]
-		stateMachine.signals.forEach[synchronisations.put(it, new Synchronisation(it, "signal", index++))]
+		stateMachine.whenChannels.forEach[synchronisations.put(it, new Synchronisation(it, "when", index++))]
+		stateMachine.signalChannels.forEach[synchronisations.put(it, new Synchronisation(it, "signal", index++))]
 		synchronisations.values.sortBy[index].forEach[it |
 			val synchronisationTemplate = it.toTemplate
 			layout.applyLayout(synchronisationTemplate)
@@ -68,20 +68,6 @@ class Xml {
 			template.transitions(it)
 		]
 		template
-	}
-	
-	def whens(StateMachine stateMachine) {
-		stateMachine.transitions.filter[when !== null].map[when].toSet
-	}
-	
-	def transitions(StateMachine stateMachine) {
-		stateMachine.states.values.flatMap[nestedStates].flatMap[transitions]
-		+
-		stateMachine.states.values.flatMap[transitions]
-	}
-	
-	def signals(StateMachine stateMachine) {
-		stateMachine.states.values.flatMap[transitions].filter[signal !== null].map[signal].toSet
 	}
 
 	def toTemplate(Synchronisation synchronisation) {
@@ -102,7 +88,9 @@ class Xml {
 		<nta>
 			«declaration»
 			«FOR template : templates»
+			«IF !template.exclude»
 			«template»
+			«ENDIF»
 			«ENDFOR»
 			«system»
 		</nta>

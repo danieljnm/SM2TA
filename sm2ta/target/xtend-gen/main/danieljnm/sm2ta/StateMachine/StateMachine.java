@@ -14,7 +14,6 @@ import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
-import org.eclipse.xtext.xbase.lib.Procedures.Procedure2;
 
 @SuppressWarnings("all")
 public class StateMachine {
@@ -186,47 +185,6 @@ public class StateMachine {
     return _builder.toString();
   }
 
-  public String channelToXml(final String channel, final String sign) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("<template>");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("<name>gen_sync_");
-    _builder.append(channel, "\t");
-    _builder.append("</name>");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("<location id=\"initSync\" x=\"0\" y=\"0\">");
-    _builder.newLine();
-    _builder.append("\t\t");
-    _builder.append("<name x=\"-30\" y=\"15\">initSync</name>");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("</location>");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("<transition>");
-    _builder.newLine();
-    _builder.append("\t\t");
-    _builder.append("<source ref=\"initSync\"/>");
-    _builder.newLine();
-    _builder.append("\t\t");
-    _builder.append("<target ref=\"initSync\"/>");
-    _builder.newLine();
-    _builder.append("\t\t");
-    _builder.append("<label kind=\"synchronisation\" x=\"-25\" y=\"-55\">");
-    _builder.append(channel, "\t\t");
-    _builder.append(sign, "\t\t");
-    _builder.append("</label>");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("</transition>");
-    _builder.newLine();
-    _builder.append("</template>");
-    _builder.newLine();
-    return _builder.toString();
-  }
-
   public ArrayList<Uppaal.Process> processes() {
     ArrayList<Uppaal.Process> _xblockexpression = null;
     {
@@ -236,7 +194,7 @@ public class StateMachine {
       final Function1<State, Integer> _function = (State it) -> {
         return Integer.valueOf(it.index);
       };
-      final Procedure2<State, Integer> _function_1 = (State state, Integer index) -> {
+      final Consumer<State> _function_1 = (State state) -> {
         if ((!state.isNested)) {
           process.addState(state);
         }
@@ -246,7 +204,7 @@ public class StateMachine {
           nestings.add(state);
         }
       };
-      IterableExtensions.<State>forEach(IterableExtensions.<State, Integer>sortBy(this.states.values(), _function), _function_1);
+      IterableExtensions.<State, Integer>sortBy(this.states.values(), _function).forEach(_function_1);
       processes.add(process);
       final Consumer<State> _function_2 = (State nesting) -> {
         processes.add(this.toProcess(nesting));
@@ -271,10 +229,10 @@ public class StateMachine {
       _builder_1.append("_inner_start");
       State initial = _transition.when(_builder_1.toString());
       nestedProcess.addState(initial);
-      final Procedure2<State, Integer> _function = (State it, Integer index) -> {
+      final Consumer<State> _function = (State it) -> {
         nestedProcess.addState(it);
       };
-      IterableExtensions.<State>forEach(nesting.nestedStates, _function);
+      nesting.nestedStates.forEach(_function);
       _xblockexpression = nestedProcess;
     }
     return _xblockexpression;

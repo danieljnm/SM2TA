@@ -6,7 +6,7 @@ class System {
 	public List<String> systems = newArrayList
 	
 	new(List<Template> templates) {
-		systems = templates.map[name]
+		systems = templates.filter[!exclude].map[name].toList
 	}
 	
 	override toString() {

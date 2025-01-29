@@ -16,6 +16,8 @@ public class Template {
 
   public List<Transition> transitions = CollectionLiterals.<Transition>newArrayList();
 
+  public Boolean exclude = Boolean.valueOf(false);
+
   public Template(final String name) {
     this.name = name;
   }
@@ -35,11 +37,29 @@ public class Template {
 
   public void transitions(final State state) {
     final Consumer<danieljnm.sm2ta.StateMachine.Transition> _function = (danieljnm.sm2ta.StateMachine.Transition it) -> {
-      final Transition transition = new Transition(state.name, it.target.name);
+      String _xifexpression = null;
+      if ((state.name.startsWith("gen_pre_") || it.target.nestedStates.isEmpty())) {
+        _xifexpression = it.target.name;
+      } else {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("gen_pre_");
+        _builder.append(it.target.name);
+        _xifexpression = _builder.toString();
+      }
+      final Transition transition = new Transition(state.name, _xifexpression);
       transition.labels(it);
       this.transitions.add(transition);
     };
     state.transitions.forEach(_function);
+  }
+
+  public Template exclude() {
+    Template _xblockexpression = null;
+    {
+      this.exclude = Boolean.valueOf(true);
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
   }
 
   @Override

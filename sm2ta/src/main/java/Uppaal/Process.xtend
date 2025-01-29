@@ -2,32 +2,23 @@ package Uppaal
 
 import java.util.List
 import danieljnm.sm2ta.StateMachine.State
+import danieljnm.sm2ta.StateMachine.Transition
 
 class Process {
 	public String name
 	public List<State> states = newArrayList
 	State initialState
-	int currentY = 0
 	
 	new(String name) {
 		this.name = name
 	}
 	
 	def addState(State state) {
-		currentY = 0
 		if (state.isInitial) {
 			initialState = state
 		}
 		
 		states.add(state)
-		state.transitions.forEach[transition, index |
-			if (index == 0) {
-				currentY += CoordinateManager.spacing * transition.properties
-        		return
-			}
-			transition.y = currentY + CoordinateManager.spacing
-       		currentY = transition.y + CoordinateManager.spacing * transition.properties
-		]
 	}
 	
 	def getInitialState() {
@@ -42,15 +33,6 @@ class Process {
 		states.flatMap[it.nestedStates.empty ? #[it.format] : #['''gen_pre_«it.name»''', it.name]]
 		.toSet
 		.join(',\n')
-	}
-	
-	def labels(State state) {
-		state.transitions.filter[timeout > 0].toList.map[
-			'''
-			<label kind="invariant" x="«x - CoordinateManager.spacing - CoordinateManager.increment»" y="«y + CoordinateManager.spacing * 2»">gen_clock &lt;= «timeout»</label>
-			'''
-		]
-		.join()
 	}
 	
 	def format(State state) {
@@ -85,8 +67,18 @@ class Process {
 		.toSet
 	}
 	
+	def signalTransitions() {
+		states.flatMap[transitions].filter[signal !== null && target.isNested]
+		.map[
+		'''
+		«target.name» -> gen_init {
+		}'''
+		]
+		.toSet
+	}
+	
 	def transitions() {
-		(actualTransitions + nestedStateTransitions(false) + signalTransitions(false)).join(',\n')
+		(actualTransitions + nestedStateTransitions + signalTransitions).join(',\n')
 	}
 	
 	def actualTransitions() {
@@ -112,66 +104,24 @@ class Process {
 			]]
 	}
 	
-	def nestedStateTransitions(boolean xml) {
+	def assignments(Transition transition) {
+		var assigns = newArrayList
+		if (transition.target.transitions.exists[timeout > 0])
+			assigns.add('gen_clock := 0')
+			
+		if (transition.action !== null)
+			assigns.add(transition.action)
+		
+		assigns
+	}
+	
+	def nestedStateTransitions() {
 		nestedStateNames.map[
-			if (!xml) {
-				return '''
-				gen_pre_«it» -> «it» {
-					sync gen_«it»_inner_start!;
-				}'''
-			}
 			'''
-			<transition>
-				<source ref="gen_pre_«it»"/>
-				<target ref="«it»"/>
-				<label kind="synchronisation">gen_«it»_inner_start!</label>
-			</transition>
-			'''
-		]
-	}
-	
-	def signalTransitions(boolean xml) {
-		states.flatMap[transitions].filter[signal !== null && target.isNested]
-		.map[
-		if (!xml) {
-			return '''
-			«target.name» -> gen_init {
+			gen_pre_«it» -> «it» {
+				sync gen_«it»_inner_start!;
 			}'''
-		}
-		'''
-		<transition>
-			<source ref="«target.name»"/>
-			<target ref="gen_init"/>
-		</transition>
-		'''
 		]
-		.toSet
-	}
-	
-	def xmlTransitions() {
-		(states.flatMap[state | state.transitions.map[transition | 
-			'''
-			<transition>
-				<source ref="«state.name»"/>
-				<target ref="«transition.targetName(state.isNested)»"/>
-				«IF transition.hasGuard»
-					<label kind="guard" x="«transition.x»" y="«transition.y»">«transition.xmlGuard»</label>
-				«ENDIF»
-				«IF transition.hasTimeout»
-					<label kind="guard" x="«transition.x»" y="«transition.y»">gen_clock &gt;= «transition.timeout»</label>
-				«ENDIF»
-				«IF transition.hasSignal»
-					<label kind="synchronisation" x="«transition.x»" y="«transition.y»">«transition.signal»!</label>
-				«ENDIF»
-				«IF transition.hasWhen»
-					<label kind="synchronisation" x="«transition.x»" y="«transition.y»">«transition.when»?</label>
-				«ENDIF»
-				«IF transition.hasAssignment()»
-					<label kind="assignment" x="«transition.x»" y="«transition.y»">«transition.assignments.join(', ')»</label>
-				«ENDIF»
-			</transition>
-			'''
-			]]+nestedStateTransitions(true)+signalTransitions(true)).join()
 	}
 	
 	override toString() {
@@ -192,5 +142,4 @@ class Process {
 		}
 		'''
 	}
-	
 }

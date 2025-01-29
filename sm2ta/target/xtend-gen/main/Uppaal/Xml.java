@@ -1,13 +1,10 @@
 package Uppaal;
 
-import com.google.common.collect.Iterables;
 import danieljnm.sm2ta.StateMachine.State;
 import danieljnm.sm2ta.StateMachine.StateMachine;
-import danieljnm.sm2ta.StateMachine.Transition;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
@@ -84,13 +81,13 @@ public class Xml {
         Synchronisation _synchronisation = new Synchronisation(it, "when", _plusPlus);
         synchronisations.put(it, _synchronisation);
       };
-      stateMachine.whens().forEach(_function_3);
+      stateMachine.whenChannels().forEach(_function_3);
       final Consumer<String> _function_4 = (String it) -> {
         int _plusPlus = this.index++;
         Synchronisation _synchronisation = new Synchronisation(it, "signal", _plusPlus);
         synchronisations.put(it, _synchronisation);
       };
-      stateMachine.signals().forEach(_function_4);
+      stateMachine.signalChannels().forEach(_function_4);
       final Function1<Synchronisation, Integer> _function_5 = (Synchronisation it) -> {
         return Integer.valueOf(it.index);
       };
@@ -128,44 +125,6 @@ public class Xml {
       _xblockexpression = template;
     }
     return _xblockexpression;
-  }
-
-  public Set<String> whens(final StateMachine stateMachine) {
-    final Function1<Transition, Boolean> _function = (Transition it) -> {
-      return Boolean.valueOf((it.when != null));
-    };
-    final Function1<Transition, String> _function_1 = (Transition it) -> {
-      return it.when;
-    };
-    return IterableExtensions.<String>toSet(IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(stateMachine.transitions(), _function), _function_1));
-  }
-
-  public Iterable<Transition> transitions(final StateMachine stateMachine) {
-    final Function1<State, List<State>> _function = (State it) -> {
-      return it.nestedStates;
-    };
-    final Function1<State, List<Transition>> _function_1 = (State it) -> {
-      return it.transitions;
-    };
-    Iterable<Transition> _flatMap = IterableExtensions.<State, Transition>flatMap(IterableExtensions.<State, State>flatMap(stateMachine.states.values(), _function), _function_1);
-    final Function1<State, List<Transition>> _function_2 = (State it) -> {
-      return it.transitions;
-    };
-    Iterable<Transition> _flatMap_1 = IterableExtensions.<State, Transition>flatMap(stateMachine.states.values(), _function_2);
-    return Iterables.<Transition>concat(_flatMap, _flatMap_1);
-  }
-
-  public Set<String> signals(final StateMachine stateMachine) {
-    final Function1<State, List<Transition>> _function = (State it) -> {
-      return it.transitions;
-    };
-    final Function1<Transition, Boolean> _function_1 = (Transition it) -> {
-      return Boolean.valueOf((it.signal != null));
-    };
-    final Function1<Transition, String> _function_2 = (Transition it) -> {
-      return it.signal;
-    };
-    return IterableExtensions.<String>toSet(IterableExtensions.<Transition, String>map(IterableExtensions.<Transition>filter(IterableExtensions.<State, Transition>flatMap(stateMachine.states.values(), _function), _function_1), _function_2));
   }
 
   public Template toTemplate(final Synchronisation synchronisation) {
@@ -212,9 +171,13 @@ public class Xml {
     _builder.newLineIfNotEmpty();
     {
       for(final Template template : this.templates) {
-        _builder.append("\t");
-        _builder.append(template, "\t");
-        _builder.newLineIfNotEmpty();
+        {
+          if ((!(template.exclude).booleanValue())) {
+            _builder.append("\t");
+            _builder.append(template, "\t");
+            _builder.newLineIfNotEmpty();
+          }
+        }
       }
     }
     _builder.append("\t");
