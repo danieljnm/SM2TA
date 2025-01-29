@@ -12,7 +12,7 @@ public class Translator {
 
   public static void main(final String[] args) {
     Translator.stateMachine = Translator.regular();
-    InputOutput.<String>println(Translator.stateMachine.toXta());
+    InputOutput.<String>println(Translator.stateMachine.toXml());
   }
 
   public static StateMachine regular() {

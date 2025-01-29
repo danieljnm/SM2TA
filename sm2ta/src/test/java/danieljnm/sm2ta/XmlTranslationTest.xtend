@@ -382,9 +382,6 @@ class XmlTranslationTest {
 			</system>
 		</nta>
 		'''
-		// signals from nested machines should be omitted in system
-		// transitions to a nested machine to hit the gen_pre state instead of the actual state
-		println(stateMachine.toXml)
 		assertEquals(xml, stateMachine.toXml)
 	}
 }

@@ -7,7 +7,7 @@ class Translator {
 	
 	def static void main(String[] args) {
 		stateMachine = regular
-		println(stateMachine.toXta)
+		println(stateMachine.toXml)
 	}
 	
 	def static regular() {
