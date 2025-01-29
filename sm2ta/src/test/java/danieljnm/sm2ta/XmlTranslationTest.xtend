@@ -20,14 +20,14 @@ class XmlTranslationTest {
 		'''
 		<?xml version="1.0" encoding="utf-8"?>
 		<nta>
-		<declaration>
-		</declaration>
-		<template>
-			<name>test</name>
-		</template>
-		<system>
-			test
-		</system>
+			<declaration>
+			</declaration>
+			<template>
+				<name>test</name>
+			</template>
+			<system>
+				test
+			</system>
 		</nta>
 		'''
 		assertEquals(xml, stateMachine.toXml)
@@ -42,21 +42,21 @@ class XmlTranslationTest {
 		'''
 		<?xml version="1.0" encoding="utf-8"?>
 		<nta>
-		<declaration>
-		</declaration>
-		<template>
-			<name>test</name>
-			<location id="one" x="0" y="0">
-				<name x="-15" y="15">one</name>
-			</location>
-			<location id="two" x="400" y="0">
-				<name x="385" y="15">two</name>
-			</location>
-			<init ref="one"/>
-		</template>
-		<system>
-			test
-		</system>
+			<declaration>
+			</declaration>
+			<template>
+				<name>test</name>
+				<location id="one" x="0" y="0">
+					<name x="-15" y="15">one</name>
+				</location>
+				<location id="two" x="400" y="0">
+					<name x="385" y="15">two</name>
+				</location>
+				<init ref="one"/>
+			</template>
+			<system>
+				test
+			</system>
 		</nta>
 		'''
 		assertEquals(xml, stateMachine.toXml)
@@ -115,23 +115,23 @@ class XmlTranslationTest {
 				<template>
 					<name>gen_sync_test</name>
 					<location id="initSync" x="0" y="0">
-						<name x="-30" y="15">initSync</name>
+						<name x="-15" y="15">initSync</name>
 					</location>
 					<transition>
 						<source ref="initSync"/>
 						<target ref="initSync"/>
-						<label kind="synchronisation" x="-25" y="-55">test!</label>
+						<label kind="synchronisation" x="-15" y="-55">test!</label>
 					</transition>
 				</template>
 				<template>
 					<name>gen_sync_finish</name>
 					<location id="initSync" x="0" y="0">
-						<name x="-30" y="15">initSync</name>
+						<name x="-15" y="15">initSync</name>
 					</location>
 					<transition>
 						<source ref="initSync"/>
 						<target ref="initSync"/>
-						<label kind="synchronisation" x="-25" y="-55">finish?</label>
+						<label kind="synchronisation" x="-15" y="-55">finish?</label>
 					</transition>
 				</template>
 				<system>
@@ -199,23 +199,23 @@ class XmlTranslationTest {
 				<template>
 					<name>gen_sync_test</name>
 					<location id="initSync" x="0" y="0">
-						<name x="-30" y="15">initSync</name>
+						<name x="-15" y="15">initSync</name>
 					</location>
 					<transition>
 						<source ref="initSync"/>
 						<target ref="initSync"/>
-						<label kind="synchronisation" x="-25" y="-55">test!</label>
+						<label kind="synchronisation" x="-15" y="-55">test!</label>
 					</transition>
 				</template>
 				<template>
 					<name>gen_sync_finish</name>
 					<location id="initSync" x="0" y="0">
-						<name x="-30" y="15">initSync</name>
+						<name x="-15" y="15">initSync</name>
 					</location>
 					<transition>
 						<source ref="initSync"/>
 						<target ref="initSync"/>
-						<label kind="synchronisation" x="-25" y="-55">finish?</label>
+						<label kind="synchronisation" x="-15" y="-55">finish?</label>
 					</transition>
 				</template>
 				<system>
@@ -239,48 +239,48 @@ class XmlTranslationTest {
 		'''
 		<?xml version="1.0" encoding="utf-8"?>
 		<nta>
-		<declaration>
-		chan gen_two_inner_start;
-		</declaration>
-		<template>
-			<name>test</name>
-			<location id="one" x="0" y="0">
-				<name x="-15" y="15">one</name>
-			</location>
-			<location id="gen_pre_two" x="400" y="0" committed="true">
-				<name x="385" y="15">gen_pre_two</name>
-			</location>
-			<location id="two" x="800" y="0">
-				<name x="785" y="15">two</name>
-			</location>
-			<init ref="one"/>
-			<transition>
-				<source ref="gen_pre_two"/>
-				<target ref="two"/>
-				<label kind="synchronisation">gen_two_inner_start!</label>
-			</transition>
-		</template>
-		<template>
-			<name>two_inner</name>
-			<location id="gen_init" x="0" y="0">
-				<name x="-15" y="15">gen_init</name>
-			</location>
-			<location id="three" x="400" y="0">
-				<name x="385" y="15">three</name>
-			</location>
-			<location id="four" x="800" y="0">
-				<name x="785" y="15">four</name>
-			</location>
-			<init ref="gen_init"/>
-			<transition>
-				<source ref="gen_init"/>
-				<target ref="three"/>
-				<label kind="synchronisation" x="150" y="15">gen_two_inner_start?</label>
-			</transition>
-		</template>
-		<system>
-			test, two_inner
-		</system>
+			<declaration>
+				chan gen_two_inner_start;
+			</declaration>
+			<template>
+				<name>test</name>
+				<location id="one" x="0" y="0">
+					<name x="-15" y="15">one</name>
+				</location>
+				<location id="gen_pre_two" x="400" y="0" committed="true">
+					<name x="385" y="15">gen_pre_two</name>
+				</location>
+				<location id="two" x="800" y="0">
+					<name x="785" y="15">two</name>
+				</location>
+				<init ref="one"/>
+				<transition>
+					<source ref="gen_pre_two"/>
+					<target ref="two"/>
+					<label kind="synchronisation">gen_two_inner_start!</label>
+				</transition>
+			</template>
+			<template>
+				<name>two_inner</name>
+				<location id="gen_init" x="0" y="0">
+					<name x="-15" y="15">gen_init</name>
+				</location>
+				<location id="three" x="400" y="0">
+					<name x="385" y="15">three</name>
+				</location>
+				<location id="four" x="800" y="0">
+					<name x="785" y="15">four</name>
+				</location>
+				<init ref="gen_init"/>
+				<transition>
+					<source ref="gen_init"/>
+					<target ref="three"/>
+					<label kind="synchronisation" x="150" y="15">gen_two_inner_start?</label>
+				</transition>
+			</template>
+			<system>
+				test, two_inner
+			</system>
 		</nta>
 		'''
 		assertEquals(xml, stateMachine.toXml)

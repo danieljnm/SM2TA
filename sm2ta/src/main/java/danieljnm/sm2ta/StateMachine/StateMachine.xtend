@@ -9,10 +9,6 @@ class StateMachine {
 	public HashMap<String, State> states = newHashMap
 	public List<Variable> variables = newArrayList
 	
-	int x = 0
-	int y = 0
-	int increment = 400
-	
 	def name(String name) {
 		this.name = name
 		this
@@ -35,35 +31,6 @@ class StateMachine {
 	}
 	
 	def String toXml() {
-//		var xmlProcesses = processes
-//		'''
-//		<?xml version="1.0" encoding="utf-8"?>
-//		<nta>
-//		<declaration>
-//		«IF !variables.empty»
-//		«variables.map['''«type» «name» = «value»'''].join(';\n')»;
-//		«ENDIF»
-//		«IF hasClock»
-//		clock gen_clock;
-//		«ENDIF»
-//		«IF !channels.empty || !nestings.empty»
-//		chan «(channels + nestings).join(', ')»;
-//		«ENDIF»
-//		</declaration>
-//		«FOR process : xmlProcesses»
-//		«process.toXml»
-//		«ENDFOR»
-//		«FOR channel : whenChannels»
-//		«channel.channelToXml("!")»
-//		«ENDFOR»
-//		«FOR channel : signalChannels»
-//		«channel.channelToXml("?")»
-//		«ENDFOR»
-//		<system>
-//			«(xmlProcesses.map[name] + uppaalChannels.map['''gen_sync_«it»''']).join(', ')»
-//		</system>
-//		</nta>
-//		'''
 		new Uppaal.Xml(this).toString
 	}
 	
@@ -126,12 +93,9 @@ class StateMachine {
 		val processes = newArrayList
 		val process = new Uppaal.Process(name)
 		val nestings = newArrayList
-		reset()
 		
 		states.values.sortBy[index].forEach[state, index |
 			if (!state.isNested) {
-//				state.x = x + increment * index
-//				state.y = y
 				process.addState(state)
 			}
 			
@@ -143,26 +107,17 @@ class StateMachine {
 		processes.add(process)
 		
 		nestings.forEach[nesting |
-			reset()
 			processes.add(nesting.toProcess)
 		]
 		
 		processes
 	}
-	
-	def reset() {
-		x = 0
-		y = 0
-	}
-	
+
 	def toProcess(State nesting) {
 		val nestedProcess = new Uppaal.Process('''«nesting.name»_inner''')
 		var initial = new State(nesting, "gen_init").initial.transition(nesting.nestedStates.get(0).name).when('''gen_«nesting.name»_inner_start''')
-//		initial.x = x
-//		initial.y = y
 		nestedProcess.addState(initial)
 		nesting.nestedStates.forEach[it, index |
-//			it.x = x + increment * (index + 1)
 			nestedProcess.addState(it)
 		]
 		nestedProcess

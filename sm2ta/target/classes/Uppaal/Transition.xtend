@@ -14,7 +14,7 @@ class Transition {
 	
 	def labels(danieljnm.sm2ta.StateMachine.Transition transition) {
 		if (transition.hasGuard) {
-			labels.add(new Label("guard", transition.guard))
+			labels.add(new Label("guard", transition.guard.replace('false', '0').replace('true', '1')))
 		}
 		if (transition.hasTimeout) {
 			labels.add(new Label("guard", '''gen_clock >= «transition.timeout»'''))

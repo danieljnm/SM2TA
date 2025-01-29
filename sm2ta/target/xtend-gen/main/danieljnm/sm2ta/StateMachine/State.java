@@ -30,7 +30,7 @@ public class State {
   public State(final State parent, final String name) {
     this.parent = parent;
     this.name = name;
-    this.isNested = true;
+    this.isNested = (parent != null);
   }
 
   public State(final StateMachine stateMachine, final String name) {
@@ -90,6 +90,16 @@ public class State {
       State targetState_1 = this.stateMachine.state(target);
       Transition _transition_1 = new Transition(targetState_1);
       this.transitions.add(_transition_1);
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+
+  public State transition(final State target) {
+    State _xblockexpression = null;
+    {
+      Transition _transition = new Transition(target);
+      this.transitions.add(_transition);
       _xblockexpression = this;
     }
     return _xblockexpression;

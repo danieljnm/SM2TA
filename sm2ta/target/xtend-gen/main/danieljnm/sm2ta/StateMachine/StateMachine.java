@@ -26,12 +26,6 @@ public class StateMachine {
 
   public List<Variable> variables = CollectionLiterals.<Variable>newArrayList();
 
-  private int x = 0;
-
-  private int y = 0;
-
-  private int increment = 400;
-
   public StateMachine name(final String name) {
     StateMachine _xblockexpression = null;
     {
@@ -239,7 +233,6 @@ public class StateMachine {
       final ArrayList<Uppaal.Process> processes = CollectionLiterals.<Uppaal.Process>newArrayList();
       final Uppaal.Process process = new Uppaal.Process(this.name);
       final ArrayList<State> nestings = CollectionLiterals.<State>newArrayList();
-      this.reset();
       final Function1<State, Integer> _function = (State it) -> {
         return Integer.valueOf(it.index);
       };
@@ -256,20 +249,10 @@ public class StateMachine {
       IterableExtensions.<State>forEach(IterableExtensions.<State, Integer>sortBy(this.states.values(), _function), _function_1);
       processes.add(process);
       final Consumer<State> _function_2 = (State nesting) -> {
-        this.reset();
         processes.add(this.toProcess(nesting));
       };
       nestings.forEach(_function_2);
       _xblockexpression = processes;
-    }
-    return _xblockexpression;
-  }
-
-  public int reset() {
-    int _xblockexpression = (int) 0;
-    {
-      this.x = 0;
-      _xblockexpression = this.y = 0;
     }
     return _xblockexpression;
   }

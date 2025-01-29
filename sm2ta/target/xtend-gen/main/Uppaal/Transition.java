@@ -23,7 +23,8 @@ public class Transition {
     {
       boolean _hasGuard = transition.hasGuard();
       if (_hasGuard) {
-        Label _label = new Label("guard", transition.guard);
+        String _replace = transition.guard.replace("false", "0").replace("true", "1");
+        Label _label = new Label("guard", _replace);
         this.labels.add(_label);
       }
       boolean _hasTimeout = transition.hasTimeout();

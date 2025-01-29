@@ -21,9 +21,7 @@ class Process {
 		
 		states.add(state)
 		state.transitions.forEach[transition, index |
-//			transition.x = state.x + CoordinateManager.increment
 			if (index == 0) {
-//				transition.y = state.y
 				currentY += CoordinateManager.spacing * transition.properties
         		return
 			}
@@ -45,40 +43,6 @@ class Process {
 		.toSet
 		.join(',\n')
 	}
-	
-//	def xmlStates() {
-//		states.flatMap[it |
-//			if (it.nestedStates.empty) {
-//				return #[it.xmlFormat]
-//			}
-//			
-//			val coordinates = CoordinateManager.next(it)	
-//			#[
-//			'''
-//			<location id="gen_pre_«it.name»" x="«it.x»" y="«it.y»" committed="true">
-//				<name x="«it.x - CoordinateManager.spacing»" y="«it.y + CoordinateManager.spacing»">gen_pre_«it.name»</name>
-//			</location>
-//			''',
-//			'''
-//			<location id="«it.name»" x="«coordinates.x»" y="«coordinates.y»">
-//				<name x="«coordinates.x - CoordinateManager.spacing»" y="«coordinates.y + CoordinateManager.spacing»">«it.name»</name>
-//			</location>
-//			'''
-//		]]
-//		.toSet
-//		.join()
-//	}
-//	
-//	def String xmlFormat(State state) {
-//		var location =
-//		'''
-//		<location id="«state.name»" x="«state.x»" y="«state.y»">
-//			<name x="«state.x - CoordinateManager.spacing»" y="«state.y + CoordinateManager.spacing»">«state.name»</name>
-//			«state.labels»
-//		</location>
-//		'''
-//		location
-//	}
 	
 	def labels(State state) {
 		state.transitions.filter[timeout > 0].toList.map[
@@ -228,22 +192,5 @@ class Process {
 		}
 		'''
 	}
-	
-//	def toXml() {
-//		'''
-//		<template>
-//			<name>«name»</name>
-//			«IF xmlStates.length > 0»
-//			«xmlStates»
-//			«ENDIF»
-//			«IF initialState !== null»
-//			<init ref="«initialState.name»"/>
-//			«ENDIF»
-//			«IF states.exists[!transitions.empty] || !nestedStateNames.empty»
-//			«xmlTransitions»
-//			«ENDIF»
-//		</template>
-//		'''
-//	}
 	
 }

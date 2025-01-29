@@ -35,6 +35,6 @@ public class Label {
   }
 
   public String format(final String value) {
-    return value.replace(">", "&gt;").replace("<", "&lt;").replace("false", "0").replace("true", "1");
+    return value.replace(">", "&gt;").replace("<", "&lt;");
   }
 }
