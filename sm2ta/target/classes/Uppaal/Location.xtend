@@ -19,14 +19,22 @@ class Location {
 		}
 	}
 	
+	def isCommitted() {
+		committed = true
+		this
+	}
+	
 	override toString() {
 		'''
-		<location id="«id»" x="«x»" y="«y»"«IF committed» committed="true"«ENDIF»>
+		<location id="«id»" x="«x»" y="«y»">
 			«IF name !== null»
 			«name»
 			«ENDIF»
 			«IF label !== null»
 			«label»
+			«ENDIF»
+			«IF committed»
+			<committed/>
 			«ENDIF»
 		</location>
 		'''

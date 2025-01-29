@@ -20,6 +20,7 @@ class Template {
 		
 		var location = new Location(state)
 		locations.add(location)
+		location
 	}
 	
 	def transitions(State state) {

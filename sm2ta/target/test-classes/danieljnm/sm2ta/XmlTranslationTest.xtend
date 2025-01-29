@@ -247,8 +247,9 @@ class XmlTranslationTest {
 				<location id="one" x="0" y="0">
 					<name x="-15" y="15">one</name>
 				</location>
-				<location id="gen_pre_two" x="400" y="0" committed="true">
+				<location id="gen_pre_two" x="400" y="0">
 					<name x="385" y="15">gen_pre_two</name>
+					<committed/>
 				</location>
 				<location id="two" x="800" y="0">
 					<name x="785" y="15">two</name>
@@ -257,7 +258,7 @@ class XmlTranslationTest {
 				<transition>
 					<source ref="gen_pre_two"/>
 					<target ref="two"/>
-					<label kind="synchronisation">gen_two_inner_start!</label>
+					<label kind="synchronisation" x="550" y="15">gen_two_inner_start!</label>
 				</transition>
 			</template>
 			<template>
@@ -283,6 +284,7 @@ class XmlTranslationTest {
 			</system>
 		</nta>
 		'''
+		println(stateMachine.toXml)
 		assertEquals(xml, stateMachine.toXml)
 	}
 	
@@ -354,7 +356,6 @@ class XmlTranslationTest {
 		}
 		system test, two_inner, gen_sync_ready;
 		'''
-		println(stateMachine.toXml)
 		assertEquals(xml, stateMachine.toXml)
 	}
 }

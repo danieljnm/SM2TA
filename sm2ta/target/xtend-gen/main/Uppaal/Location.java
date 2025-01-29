@@ -37,6 +37,15 @@ public class Location {
     }
   }
 
+  public Location isCommitted() {
+    Location _xblockexpression = null;
+    {
+      this.committed = Boolean.valueOf(true);
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+
   @Override
   public String toString() {
     StringConcatenation _builder = new StringConcatenation();
@@ -46,13 +55,7 @@ public class Location {
     _builder.append(this.x);
     _builder.append("\" y=\"");
     _builder.append(this.y);
-    _builder.append("\"");
-    {
-      if ((this.committed).booleanValue()) {
-        _builder.append(" committed=\"true\"");
-      }
-    }
-    _builder.append(">");
+    _builder.append("\">");
     _builder.newLineIfNotEmpty();
     {
       if ((this.name != null)) {
@@ -66,6 +69,13 @@ public class Location {
         _builder.append("\t");
         _builder.append(this.label, "\t");
         _builder.newLineIfNotEmpty();
+      }
+    }
+    {
+      if ((this.committed).booleanValue()) {
+        _builder.append("\t");
+        _builder.append("<committed/>");
+        _builder.newLine();
       }
     }
     _builder.append("</location>");

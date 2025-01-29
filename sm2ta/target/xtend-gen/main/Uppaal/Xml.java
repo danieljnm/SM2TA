@@ -46,15 +46,28 @@ public class Xml {
         return Integer.valueOf(it.index);
       };
       final Procedure2<State, Integer> _function_1 = (State state, Integer index) -> {
-        if ((!state.isNested)) {
-          template.location(state);
-          template.transitions(state);
+        if (state.isNested) {
+          return;
         }
         boolean _isEmpty = state.nestedStates.isEmpty();
         boolean _not = (!_isEmpty);
         if (_not) {
+          StringConcatenation _builder = new StringConcatenation();
+          _builder.append("gen_pre_");
+          _builder.append(state.name);
+          State preState = new State(((State) null), _builder.toString());
+          State _transition = preState.transition(state);
+          StringConcatenation _builder_1 = new StringConcatenation();
+          _builder_1.append("gen_");
+          _builder_1.append(state.name);
+          _builder_1.append("_inner_start");
+          _transition.signal(_builder_1.toString());
+          template.location(preState).isCommitted();
+          template.transitions(preState);
           nestings.add(state);
         }
+        template.location(state);
+        template.transitions(state);
       };
       IterableExtensions.<State>forEach(IterableExtensions.<State, Integer>sortBy(stateMachine.states.values(), _function), _function_1);
       this.layout.applyLayout(template);

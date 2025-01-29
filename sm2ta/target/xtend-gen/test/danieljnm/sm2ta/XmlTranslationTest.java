@@ -565,10 +565,13 @@ public class XmlTranslationTest {
     _builder.append("</location>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("<location id=\"gen_pre_two\" x=\"400\" y=\"0\" committed=\"true\">");
+    _builder.append("<location id=\"gen_pre_two\" x=\"400\" y=\"0\">");
     _builder.newLine();
     _builder.append("\t\t\t");
     _builder.append("<name x=\"385\" y=\"15\">gen_pre_two</name>");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("<committed/>");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("</location>");
@@ -595,7 +598,7 @@ public class XmlTranslationTest {
     _builder.append("<target ref=\"two\"/>");
     _builder.newLine();
     _builder.append("\t\t\t");
-    _builder.append("<label kind=\"synchronisation\">gen_two_inner_start!</label>");
+    _builder.append("<label kind=\"synchronisation\" x=\"550\" y=\"15\">gen_two_inner_start!</label>");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("</transition>");
@@ -669,6 +672,7 @@ public class XmlTranslationTest {
     _builder.append("</nta>");
     _builder.newLine();
     final String xml = _builder.toString();
+    InputOutput.<String>println(this.stateMachine.toXml());
     Assertions.assertEquals(xml, this.stateMachine.toXml());
   }
 
@@ -828,7 +832,6 @@ public class XmlTranslationTest {
     _builder.append("system test, two_inner, gen_sync_ready;");
     _builder.newLine();
     final String xml = _builder.toString();
-    InputOutput.<String>println(this.stateMachine.toXml());
     Assertions.assertEquals(xml, this.stateMachine.toXml());
   }
 }

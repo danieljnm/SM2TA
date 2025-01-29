@@ -20,14 +20,15 @@ public class Template {
     this.name = name;
   }
 
-  public boolean location(final State state) {
-    boolean _xblockexpression = false;
+  public Location location(final State state) {
+    Location _xblockexpression = null;
     {
       if (state.isInitial) {
         this.initial = state.name;
       }
       Location location = new Location(state);
-      _xblockexpression = this.locations.add(location);
+      this.locations.add(location);
+      _xblockexpression = location;
     }
     return _xblockexpression;
   }

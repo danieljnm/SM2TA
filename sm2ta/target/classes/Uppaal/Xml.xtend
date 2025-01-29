@@ -23,14 +23,20 @@ class Xml {
 		val template = new Template(stateMachine.name)
 		val nestings = newArrayList
 		stateMachine.states.values.sortBy[index].forEach[state, index |
-			if (!state.isNested) {
-				template.location(state)
-				template.transitions(state)
+			if (state.isNested) {
+				return
 			}
 			
 			if (!state.nestedStates.empty) {
+				var preState = new State(null as State, '''gen_pre_«state.name»''')
+				preState.transition(state).signal('''gen_«state.name»_inner_start''')
+				template.location(preState).isCommitted
+				template.transitions(preState)
 				nestings.add(state)
-			}				
+			}
+			
+			template.location(state)
+			template.transitions(state)		
 		]
 		layout.applyLayout(template)
 		templates.add(template)
