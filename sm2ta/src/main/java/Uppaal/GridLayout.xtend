@@ -2,7 +2,7 @@ package Uppaal
 
 class GridLayout {
 	int horizontalSpacing = 400
-	int verticalSpacing = 150
+	int verticalSpacing = 300
 	int labelOffset = 50
 	int spacing = 15
 	int maxPerRow = 4

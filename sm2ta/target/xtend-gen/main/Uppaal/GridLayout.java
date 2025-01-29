@@ -13,7 +13,7 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure2;
 public class GridLayout {
   private int horizontalSpacing = 400;
 
-  private int verticalSpacing = 150;
+  private int verticalSpacing = 300;
 
   private int labelOffset = 50;
 
