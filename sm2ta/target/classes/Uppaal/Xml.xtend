@@ -72,7 +72,7 @@ class Xml {
 
 	def toTemplate(Synchronisation synchronisation) {
 		val template = new Template('''gen_sync_«synchronisation.name»''')
-		var initial = new State(null as State, "initSync")
+		var initial = new State(null as State, "initSync").initial
 		switch synchronisation.type {
 			case "when": initial.transition(initial).signal('''«synchronisation.name»''')
 			case "signal": initial.transition(initial).when('''«synchronisation.name»''')

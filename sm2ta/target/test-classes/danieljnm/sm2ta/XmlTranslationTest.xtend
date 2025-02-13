@@ -26,7 +26,7 @@ class XmlTranslationTest {
 				<name>test</name>
 			</template>
 			<system>
-				test
+				system test;
 			</system>
 		</nta>
 		'''
@@ -55,7 +55,7 @@ class XmlTranslationTest {
 				<init ref="one"/>
 			</template>
 			<system>
-				test
+				system test;
 			</system>
 		</nta>
 		'''
@@ -117,6 +117,7 @@ class XmlTranslationTest {
 					<location id="initSync" x="0" y="0">
 						<name x="-15" y="15">initSync</name>
 					</location>
+					<init ref="initSync"/>
 					<transition>
 						<source ref="initSync"/>
 						<target ref="initSync"/>
@@ -128,6 +129,7 @@ class XmlTranslationTest {
 					<location id="initSync" x="0" y="0">
 						<name x="-15" y="15">initSync</name>
 					</location>
+					<init ref="initSync"/>
 					<transition>
 						<source ref="initSync"/>
 						<target ref="initSync"/>
@@ -135,7 +137,7 @@ class XmlTranslationTest {
 					</transition>
 				</template>
 				<system>
-					test, gen_sync_test, gen_sync_finish
+					system test, gen_sync_test, gen_sync_finish;
 				</system>
 			</nta>
 			'''
@@ -201,6 +203,7 @@ class XmlTranslationTest {
 					<location id="initSync" x="0" y="0">
 						<name x="-15" y="15">initSync</name>
 					</location>
+					<init ref="initSync"/>
 					<transition>
 						<source ref="initSync"/>
 						<target ref="initSync"/>
@@ -212,6 +215,7 @@ class XmlTranslationTest {
 					<location id="initSync" x="0" y="0">
 						<name x="-15" y="15">initSync</name>
 					</location>
+					<init ref="initSync"/>
 					<transition>
 						<source ref="initSync"/>
 						<target ref="initSync"/>
@@ -219,7 +223,7 @@ class XmlTranslationTest {
 					</transition>
 				</template>
 				<system>
-					test, gen_sync_test, gen_sync_finish
+					system test, gen_sync_test, gen_sync_finish;
 				</system>
 			</nta>
 			'''
@@ -280,7 +284,7 @@ class XmlTranslationTest {
 				</transition>
 			</template>
 			<system>
-				test, two_inner
+				system test, two_inner;
 			</system>
 		</nta>
 		'''
@@ -371,6 +375,7 @@ class XmlTranslationTest {
 				<location id="initSync" x="0" y="0">
 					<name x="-15" y="15">initSync</name>
 				</location>
+				<init ref="initSync"/>
 				<transition>
 					<source ref="initSync"/>
 					<target ref="initSync"/>
@@ -378,10 +383,11 @@ class XmlTranslationTest {
 				</transition>
 			</template>
 			<system>
-				test, two_inner, gen_sync_ready
+				system test, two_inner, gen_sync_ready;
 			</system>
 		</nta>
 		'''
+		println(stateMachine.toXml)
 		assertEquals(xml, stateMachine.toXml)
 	}
 }

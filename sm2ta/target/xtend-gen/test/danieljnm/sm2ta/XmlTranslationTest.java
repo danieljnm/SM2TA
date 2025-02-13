@@ -3,6 +3,7 @@ package danieljnm.sm2ta;
 import danieljnm.sm2ta.StateMachine.State;
 import danieljnm.sm2ta.StateMachine.StateMachine;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,7 @@ public class XmlTranslationTest {
     _builder.append("<system>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("test");
+    _builder.append("system test;");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</system>");
@@ -104,7 +105,7 @@ public class XmlTranslationTest {
     _builder.append("<system>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("test");
+    _builder.append("system test;");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</system>");
@@ -253,6 +254,9 @@ public class XmlTranslationTest {
     _builder.append("</location>");
     _builder.newLine();
     _builder.append("\t\t");
+    _builder.append("<init ref=\"initSync\"/>");
+    _builder.newLine();
+    _builder.append("\t\t");
     _builder.append("<transition>");
     _builder.newLine();
     _builder.append("\t\t\t");
@@ -286,6 +290,9 @@ public class XmlTranslationTest {
     _builder.append("</location>");
     _builder.newLine();
     _builder.append("\t\t");
+    _builder.append("<init ref=\"initSync\"/>");
+    _builder.newLine();
+    _builder.append("\t\t");
     _builder.append("<transition>");
     _builder.newLine();
     _builder.append("\t\t\t");
@@ -307,7 +314,7 @@ public class XmlTranslationTest {
     _builder.append("<system>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("test, gen_sync_test, gen_sync_finish");
+    _builder.append("system test, gen_sync_test, gen_sync_finish;");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</system>");
@@ -462,6 +469,9 @@ public class XmlTranslationTest {
     _builder.append("</location>");
     _builder.newLine();
     _builder.append("\t\t");
+    _builder.append("<init ref=\"initSync\"/>");
+    _builder.newLine();
+    _builder.append("\t\t");
     _builder.append("<transition>");
     _builder.newLine();
     _builder.append("\t\t\t");
@@ -495,6 +505,9 @@ public class XmlTranslationTest {
     _builder.append("</location>");
     _builder.newLine();
     _builder.append("\t\t");
+    _builder.append("<init ref=\"initSync\"/>");
+    _builder.newLine();
+    _builder.append("\t\t");
     _builder.append("<transition>");
     _builder.newLine();
     _builder.append("\t\t\t");
@@ -516,7 +529,7 @@ public class XmlTranslationTest {
     _builder.append("<system>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("test, gen_sync_test, gen_sync_finish");
+    _builder.append("system test, gen_sync_test, gen_sync_finish;");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</system>");
@@ -663,7 +676,7 @@ public class XmlTranslationTest {
     _builder.append("<system>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("test, two_inner");
+    _builder.append("system test, two_inner;");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</system>");
@@ -888,6 +901,9 @@ public class XmlTranslationTest {
     _builder.append("</location>");
     _builder.newLine();
     _builder.append("\t\t");
+    _builder.append("<init ref=\"initSync\"/>");
+    _builder.newLine();
+    _builder.append("\t\t");
     _builder.append("<transition>");
     _builder.newLine();
     _builder.append("\t\t\t");
@@ -909,7 +925,7 @@ public class XmlTranslationTest {
     _builder.append("<system>");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("test, two_inner, gen_sync_ready");
+    _builder.append("system test, two_inner, gen_sync_ready;");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("</system>");
@@ -917,6 +933,7 @@ public class XmlTranslationTest {
     _builder.append("</nta>");
     _builder.newLine();
     final String xml = _builder.toString();
+    InputOutput.<String>println(this.stateMachine.toXml());
     Assertions.assertEquals(xml, this.stateMachine.toXml());
   }
 }

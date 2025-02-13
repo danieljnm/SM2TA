@@ -30,8 +30,10 @@ public class System {
       boolean _not = (!_isEmpty);
       if (_not) {
         _builder.append("\t");
+        _builder.append("system ");
         String _join = IterableExtensions.join(this.systems, ", ");
         _builder.append(_join, "\t");
+        _builder.append(";");
         _builder.newLineIfNotEmpty();
       }
     }

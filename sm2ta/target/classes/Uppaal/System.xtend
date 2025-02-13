@@ -13,7 +13,7 @@ class System {
 		'''
 		<system>
 			«IF !systems.empty»
-				«systems.join(', ')»
+				system «systems.join(', ')»;
 			«ENDIF»
 		</system>
 		'''

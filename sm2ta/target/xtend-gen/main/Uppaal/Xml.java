@@ -134,7 +134,7 @@ public class Xml {
       _builder.append("gen_sync_");
       _builder.append(synchronisation.name);
       final Template template = new Template(_builder.toString());
-      State initial = new State(((State) null), "initSync");
+      State initial = new State(((State) null), "initSync").initial();
       final String _switchValue = synchronisation.type;
       if (_switchValue != null) {
         switch (_switchValue) {
