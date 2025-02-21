@@ -5,19 +5,17 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
 public class System {
   public List<String> systems = CollectionLiterals.<String>newArrayList();
 
   public System(final List<Template> templates) {
-    final Function1<Template, Boolean> _function = (Template it) -> {
-      return Boolean.valueOf((!(it.exclude).booleanValue()));
-    };
-    final Function1<Template, String> _function_1 = (Template it) -> {
+    final Function1<Template, String> _function = (Template it) -> {
       return it.name;
     };
-    this.systems = IterableExtensions.<String>toList(IterableExtensions.<Template, String>map(IterableExtensions.<Template>filter(templates, _function), _function_1));
+    this.systems = IterableExtensions.<String>toList(ListExtensions.<Template, String>map(templates, _function));
   }
 
   @Override

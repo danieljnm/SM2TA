@@ -8,7 +8,6 @@ class Template {
 	public List<Location> locations = newArrayList
 	public String initial
 	public List<Transition> transitions = newArrayList
-	public Boolean exclude = false
 	
 	new(String name) {
 		this.name = name
@@ -30,11 +29,6 @@ class Template {
 			transition.labels(it)
 			transitions.add(transition)
 		]
-	}
-	
-	def exclude() {
-		this.exclude = true
-		this
 	}
 	
 	override toString() {

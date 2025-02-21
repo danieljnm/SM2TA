@@ -3,7 +3,6 @@ package danieljnm.sm2ta;
 import danieljnm.sm2ta.StateMachine.State;
 import danieljnm.sm2ta.StateMachine.StateMachine;
 import org.eclipse.xtend2.lib.StringConcatenation;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -933,7 +932,6 @@ public class XmlTranslationTest {
     _builder.append("</nta>");
     _builder.newLine();
     final String xml = _builder.toString();
-    InputOutput.<String>println(this.stateMachine.toXml());
     Assertions.assertEquals(xml, this.stateMachine.toXml());
   }
 }

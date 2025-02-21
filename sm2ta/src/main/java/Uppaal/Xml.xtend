@@ -88,9 +88,7 @@ class Xml {
 		<nta>
 			«declaration»
 			«FOR template : templates»
-			«IF !template.exclude»
 			«template»
-			«ENDIF»
 			«ENDFOR»
 			«system»
 		</nta>

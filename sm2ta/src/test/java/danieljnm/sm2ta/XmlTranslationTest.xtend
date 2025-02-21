@@ -387,7 +387,6 @@ class XmlTranslationTest {
 			</system>
 		</nta>
 		'''
-		println(stateMachine.toXml)
 		assertEquals(xml, stateMachine.toXml)
 	}
 }

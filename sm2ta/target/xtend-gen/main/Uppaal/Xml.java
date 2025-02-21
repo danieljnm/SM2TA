@@ -171,13 +171,9 @@ public class Xml {
     _builder.newLineIfNotEmpty();
     {
       for(final Template template : this.templates) {
-        {
-          if ((!(template.exclude).booleanValue())) {
-            _builder.append("\t");
-            _builder.append(template, "\t");
-            _builder.newLineIfNotEmpty();
-          }
-        }
+        _builder.append("\t");
+        _builder.append(template, "\t");
+        _builder.newLineIfNotEmpty();
       }
     }
     _builder.append("\t");

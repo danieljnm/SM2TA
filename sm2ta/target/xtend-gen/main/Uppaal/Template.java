@@ -16,8 +16,6 @@ public class Template {
 
   public List<Transition> transitions = CollectionLiterals.<Transition>newArrayList();
 
-  public Boolean exclude = Boolean.valueOf(false);
-
   public Template(final String name) {
     this.name = name;
   }
@@ -51,15 +49,6 @@ public class Template {
       this.transitions.add(transition);
     };
     state.transitions.forEach(_function);
-  }
-
-  public Template exclude() {
-    Template _xblockexpression = null;
-    {
-      this.exclude = Boolean.valueOf(true);
-      _xblockexpression = this;
-    }
-    return _xblockexpression;
   }
 
   @Override
