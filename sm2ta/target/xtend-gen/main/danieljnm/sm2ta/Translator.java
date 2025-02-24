@@ -5,7 +5,9 @@ import danieljnm.sm2ta.StateMachine.State;
 import danieljnm.sm2ta.StateMachine.StateMachine;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.function.Consumer;
+import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
@@ -23,8 +25,14 @@ public class Translator {
     try {
       byte[] _readAllBytes = Files.readAllBytes(Paths.get("src/main/java/Data/transitions.json"));
       String json = new String(_readAllBytes);
-      final Transition[] data = new Gson().<Transition[]>fromJson(json, Transition[].class);
-      InputOutput.<Transition[]>println(data);
+      final Transition[] transitions = new Gson().<Transition[]>fromJson(json, Transition[].class);
+      Translator.reset();
+      Translator.stateMachine.name("test");
+      final Consumer<Transition> _function = (Transition it) -> {
+        Translator.stateMachine.state(it.state).transition(it.target).when(it.message());
+      };
+      ((List<Transition>)Conversions.doWrapArray(transitions)).forEach(_function);
+      InputOutput.<String>println(Translator.stateMachine.toXml());
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }

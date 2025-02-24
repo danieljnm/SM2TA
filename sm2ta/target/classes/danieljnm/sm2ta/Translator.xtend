@@ -16,8 +16,15 @@ class Translator {
 	
 	def static void translateTransitions() {
 		var json = new String(Files.readAllBytes(Paths.get("src/main/java/Data/transitions.json")))
-		val data = new Gson().fromJson(json, typeof(Transition[]))
-		println(data)
+		val transitions = new Gson().fromJson(json, typeof(Transition[]))
+		reset()
+		stateMachine.name("test")
+		transitions.forEach[it |
+			stateMachine
+				.state(it.state)
+					.transition(it.target).when(it.message)
+		]
+		println(stateMachine.toXml)
 	}
 	
 	def static regular() {

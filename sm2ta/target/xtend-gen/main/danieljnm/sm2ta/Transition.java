@@ -7,4 +7,22 @@ public class Transition {
   public String event;
 
   public String target;
+
+  public String message() {
+    String _lowerCase = this.target.toLowerCase();
+    boolean _matched = false;
+    boolean _contains = this.target.toLowerCase().contains("success");
+    if (_contains) {
+      _matched=true;
+      return "success";
+    }
+    if (!_matched) {
+      boolean _contains_1 = this.target.toLowerCase().contains("failure");
+      if (_contains_1) {
+        _matched=true;
+        return "error";
+      }
+    }
+    return "default";
+  }
 }
