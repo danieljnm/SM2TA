@@ -1,0 +1,20 @@
+[
+  {
+    "client": "CbAskDirections",
+    "method": "onMessageReceived",
+    "event": "postSuccessEvent",
+    "value": "coordinate",
+    "isInCatch": false,
+    "startLine": 37,
+    "eventLine": 41
+  },
+  {
+    "client": "CbAskDirections",
+    "method": "onMessageReceived",
+    "event": "postFailureEvent",
+    "value": "coordinate",
+    "isInCatch": true,
+    "startLine": 37,
+    "eventLine": 43
+  }
+]

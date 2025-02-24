@@ -1,13 +1,23 @@
 package danieljnm.sm2ta
 
 import danieljnm.sm2ta.StateMachine.StateMachine
+import com.google.gson.Gson
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class Translator {
 	static StateMachine stateMachine = new StateMachine()
 	
 	def static void main(String[] args) {
 		stateMachine = regular
-		println(stateMachine.toXml)
+		//println(stateMachine.toXml)
+		translateTransitions()
+	}
+	
+	def static void translateTransitions() {
+		var json = new String(Files.readAllBytes(Paths.get("src/main/java/Data/transitions.json")))
+		val data = new Gson().fromJson(json, typeof(Transition[]))
+		println(data)
 	}
 	
 	def static regular() {

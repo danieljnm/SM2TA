@@ -1,0 +1,27 @@
+[
+  {
+    "state": "IdleState",
+    "event": "EvCbSuccess<CbWaitPose, OrNavigation>",
+    "target": "AwaitUserState"
+  },
+  {
+    "state": "AwaitUserState",
+    "event": "EvCbSuccess<CbAskDirections, OrAskDirections>",
+    "target": "NavigateState"
+  },
+  {
+    "state": "AwaitUserState",
+    "event": "EvCbFailure<CbAskDirections, OrAskDirections>",
+    "target": "IdleState"
+  },
+  {
+    "state": "NavigateState",
+    "event": "EvCbSuccess<CbNavigateGlobalPosition, OrNavigation>",
+    "target": "AwaitUserState"
+  },
+  {
+    "state": "NavigateState",
+    "event": "EvCbFailure<CbNavigateGlobalPosition, OrNavigation>",
+    "target": "AwaitUserState"
+  }
+]

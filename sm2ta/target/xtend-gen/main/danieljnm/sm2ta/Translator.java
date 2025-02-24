@@ -1,8 +1,12 @@
 package danieljnm.sm2ta;
 
+import com.google.gson.Gson;
 import danieljnm.sm2ta.StateMachine.State;
 import danieljnm.sm2ta.StateMachine.StateMachine;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.function.Consumer;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
@@ -12,7 +16,18 @@ public class Translator {
 
   public static void main(final String[] args) {
     Translator.stateMachine = Translator.regular();
-    InputOutput.<String>println(Translator.stateMachine.toXml());
+    Translator.translateTransitions();
+  }
+
+  public static void translateTransitions() {
+    try {
+      byte[] _readAllBytes = Files.readAllBytes(Paths.get("src/main/java/Data/transitions.json"));
+      String json = new String(_readAllBytes);
+      final Transition[] data = new Gson().<Transition[]>fromJson(json, Transition[].class);
+      InputOutput.<Transition[]>println(data);
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
   }
 
   public static StateMachine regular() {
