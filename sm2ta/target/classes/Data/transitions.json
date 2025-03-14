@@ -1,27 +1,57 @@
 [
   {
-    "state": "IdleState",
+    "stateName": "StStartup",
     "event": "EvCbSuccess<CbWaitPose, OrNavigation>",
-    "target": "AwaitUserState"
+    "target": "StQueue"
   },
   {
-    "state": "AwaitUserState",
-    "event": "EvCbSuccess<CbAskDirections, OrAskDirections>",
-    "target": "NavigateState"
+    "stateName": "StQueue",
+    "event": "EvCbFailure<CbCanOperate, OrBatteryManager>",
+    "target": "StBatteryDepleted"
   },
   {
-    "state": "AwaitUserState",
-    "event": "EvCbFailure<CbAskDirections, OrAskDirections>",
-    "target": "IdleState"
+    "stateName": "StQueue",
+    "event": "EvCbFailure<CbIsAtBase, OrNavigation>",
+    "target": "StNavigateToBase"
   },
   {
-    "state": "NavigateState",
+    "stateName": "StQueue",
+    "event": "EvAllGo<SrAllEventsGo, SrReadyToCharge>",
+    "target": "StRecharge"
+  },
+  {
+    "stateName": "StQueue",
+    "event": "EvCbSuccess<CbRechargeRequired, OrBatteryManager>",
+    "target": "StNavigateToBase"
+  },
+  {
+    "stateName": "StQueue",
+    "event": "EvAllGo<SrAllEventsGo, SrReadyToProcessOrder>",
+    "target": "SsProcessOrder"
+  },
+  {
+    "stateName": "StNavigateToBase",
     "event": "EvCbSuccess<CbNavigateGlobalPosition, OrNavigation>",
-    "target": "AwaitUserState"
+    "target": "StQueue"
   },
   {
-    "state": "NavigateState",
-    "event": "EvCbFailure<CbNavigateGlobalPosition, OrNavigation>",
-    "target": "AwaitUserState"
+    "stateName": "StRecharge",
+    "event": "EvTimer<CbTimerCountdownOnce, OrTimer>",
+    "target": "StQueue"
+  },
+  {
+    "stateName": "StiNavigateToCoffeeMachine<SsProcessOrder>",
+    "event": "EvCbSuccess<CbNavigateGlobalPosition, OrNavigation>",
+    "target": "StiWaitForOrder"
+  },
+  {
+    "stateName": "StiWaitForOrder<SsProcessOrder>",
+    "event": "EvTimer<CbTimerCountdownOnce, OrTimer>",
+    "target": "StiDeliverOrder"
+  },
+  {
+    "stateName": "StiDeliverOrder<SsProcessOrder>",
+    "event": "EvCbSuccess<CbNavigateGlobalPosition, OrNavigation>",
+    "target": "StQueue"
   }
 ]

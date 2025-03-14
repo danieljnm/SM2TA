@@ -1,0 +1,8 @@
+[
+  {
+    "clientName": "ClBatteryManager",
+    "variable": "battery_level_",
+    "type": "float",
+    "value": 15
+  }
+]

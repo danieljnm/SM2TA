@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<nta>
+	<declaration>
+		 bool hasControl = false = ;
+		chan NestedLostControl, NestedAbort, NestedSuccess, Ready, LostControl, gen_GlobalPlanning_inner_start;
+	</declaration>
+	<template>
+		<name>FOD</name>
+		<location id="Idle" x="0" y="0">
+			<name x="-15" y="15">Idle</name>
+		</location>
+		<location id="PositionAcquisition" x="400" y="0">
+			<name x="385" y="15">PositionAcquisition</name>
+		</location>
+		<location id="gen_pre_GlobalPlanning" x="800" y="0">
+			<name x="785" y="15">gen_pre_GlobalPlanning</name>
+			<committed/>
+		</location>
+		<location id="GlobalPlanning" x="1200" y="0">
+			<name x="1185" y="15">GlobalPlanning</name>
+		</location>
+		<init ref="Idle"/>
+		<transition>
+			<source ref="Idle"/>
+			<target ref="PositionAcquisition"/>
+			<label kind="synchronisation" x="150" y="15">Ready?</label>
+			<label kind="assignment" x="150" y="30">hasControl := true</label>
+		</transition>
+		<transition>
+			<source ref="PositionAcquisition"/>
+			<target ref="gen_pre_GlobalPlanning"/>
+		</transition>
+		<transition>
+			<source ref="PositionAcquisition"/>
+			<target ref="Idle"/>
+			<label kind="synchronisation" x="150" y="15">LostControl?</label>
+		</transition>
+		<transition>
+			<source ref="gen_pre_GlobalPlanning"/>
+			<target ref="GlobalPlanning"/>
+			<label kind="synchronisation" x="950" y="15">gen_GlobalPlanning_inner_start!</label>
+		</transition>
+		<transition>
+			<source ref="GlobalPlanning"/>
+			<target ref="Idle"/>
+			<label kind="synchronisation" x="550" y="15">NestedLostControl?</label>
+		</transition>
+		<transition>
+			<source ref="GlobalPlanning"/>
+			<target ref="Idle"/>
+			<label kind="synchronisation" x="550" y="30">NestedAbort?</label>
+		</transition>
+		<transition>
+			<source ref="GlobalPlanning"/>
+			<target ref="Idle"/>
+			<label kind="synchronisation" x="550" y="45">NestedSuccess?</label>
+		</transition>
+	</template>
+	<template>
+		<name>GlobalPlanning_inner</name>
+		<location id="gen_init" x="0" y="0">
+			<name x="-15" y="15">gen_init</name>
+		</location>
+		<location id="NextPosition" x="400" y="0">
+			<name x="385" y="15">NextPosition</name>
+		</location>
+		<location id="MissionCompleted" x="800" y="0">
+			<name x="785" y="15">MissionCompleted</name>
+		</location>
+		<location id="LostControl" x="1200" y="0">
+			<name x="1185" y="15">LostControl</name>
+		</location>
+		<location id="Abort" x="0" y="300">
+			<name x="-15" y="315">Abort</name>
+		</location>
+		<location id="Success" x="400" y="300">
+			<name x="385" y="315">Success</name>
+		</location>
+		<init ref="gen_init"/>
+		<transition>
+			<source ref="gen_init"/>
+			<target ref="NextPosition"/>
+			<label kind="synchronisation" x="150" y="15">gen_GlobalPlanning_inner_start?</label>
+		</transition>
+		<transition>
+			<source ref="NextPosition"/>
+			<target ref="MissionCompleted"/>
+		</transition>
+		<transition>
+			<source ref="MissionCompleted"/>
+			<target ref="LostControl"/>
+			<label kind="synchronisation" x="950" y="15">NestedLostControl!</label>
+		</transition>
+		<transition>
+			<source ref="MissionCompleted"/>
+			<target ref="Abort"/>
+			<label kind="synchronisation" x="350" y="165">NestedAbort!</label>
+		</transition>
+		<transition>
+			<source ref="MissionCompleted"/>
+			<target ref="Success"/>
+			<label kind="synchronisation" x="550" y="165">NestedSuccess!</label>
+		</transition>
+	</template>
+	<template>
+		<name>gen_sync_Ready</name>
+		<location id="initSync" x="0" y="0">
+			<name x="-15" y="15">initSync</name>
+		</location>
+		<init ref="initSync"/>
+		<transition>
+			<source ref="initSync"/>
+			<target ref="initSync"/>
+			<label kind="synchronisation" x="-15" y="-55">Ready!</label>
+		</transition>
+	</template>
+	<template>
+		<name>gen_sync_LostControl</name>
+		<location id="initSync" x="0" y="0">
+			<name x="-15" y="15">initSync</name>
+		</location>
+		<init ref="initSync"/>
+		<transition>
+			<source ref="initSync"/>
+			<target ref="initSync"/>
+			<label kind="synchronisation" x="-15" y="-55">LostControl!</label>
+		</transition>
+	</template>
+	<system>
+		system FOD, GlobalPlanning_inner, gen_sync_Ready, gen_sync_LostControl;
+	</system>
+</nta>

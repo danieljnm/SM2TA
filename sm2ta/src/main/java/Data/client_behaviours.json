@@ -1,0 +1,44 @@
+[
+  {
+    "name": "CbRechargeRequired",
+    "methodName": "recharge_required",
+    "event": "postFailureEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbRechargeRequired",
+    "methodName": "recharge_required",
+    "event": "postSuccessEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbCanOperate",
+    "methodName": "is_critical",
+    "event": "postFailureEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbCanOperate",
+    "methodName": "is_critical",
+    "event": "postSuccessEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbHasNextOrder",
+    "methodName": "has_next_order",
+    "event": "postFailureEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbHasNextOrder",
+    "methodName": "has_next_order",
+    "event": "postSuccessEvent",
+    "inIf": true,
+    "isNegated": false
+  }
+]

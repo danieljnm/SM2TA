@@ -1,0 +1,23 @@
+[
+  {
+    "clientName": "ClBatteryManager",
+    "function": "recharge",
+    "calledFunction": "set_battery_level",
+    "expression": "amount",
+    "defaultValue": 100
+  },
+  {
+    "clientName": "ClBatteryManager",
+    "function": "deplete",
+    "calledFunction": "set_battery_level",
+    "expression": "battery_level_ - 10.0",
+    "defaultValue": ""
+  },
+  {
+    "clientName": "ClOrderManager",
+    "function": "onInitialize",
+    "calledFunction": "generate_random_orders",
+    "expression": 10,
+    "defaultValue": ""
+  }
+]

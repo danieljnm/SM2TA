@@ -1,0 +1,22 @@
+[
+  {
+    "name": "SrReadyToCharge",
+    "stateName": "StQueue",
+    "event": "EvCbSuccess<CbRechargeRequired, OrBatteryManager>"
+  },
+  {
+    "name": "SrReadyToCharge",
+    "stateName": "StQueue",
+    "event": "EvCbSuccess<CbIsAtBase, OrNavigation>"
+  },
+  {
+    "name": "SrReadyToProcessOrder",
+    "stateName": "StQueue",
+    "event": "EvCbFailure<CbRechargeRequired, OrBatteryManager>"
+  },
+  {
+    "name": "SrReadyToProcessOrder",
+    "stateName": "StQueue",
+    "event": "EvCbSuccess<CbHasNextOrder, OrOrderManager>"
+  }
+]
