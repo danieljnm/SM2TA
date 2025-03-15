@@ -1,6 +1,6 @@
 package danieljnm.sm2ta.Model
 
-class ClientBehavior {
+class ClientBehaviour {
 	public String name
 	public String methodName
 	public String eventName

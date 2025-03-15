@@ -25,4 +25,25 @@ public class Transition {
     }
     return "default";
   }
+
+  public void convert() {
+    this.convertStateName();
+    this.convertTargetName();
+  }
+
+  public void convertStateName() {
+    final int index = this.stateName.indexOf("<");
+    if ((index == (-1))) {
+      return;
+    }
+    this.stateName = this.stateName.substring(0, index);
+  }
+
+  public void convertTargetName() {
+    final int index = this.target.indexOf("<");
+    if ((index == (-1))) {
+      return;
+    }
+    this.target = this.target.substring(0, index);
+  }
 }

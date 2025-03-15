@@ -1,7 +1,7 @@
 package danieljnm.sm2ta.Model;
 
 @SuppressWarnings("all")
-public class ClientBehavior {
+public class ClientBehaviour {
   public String name;
 
   public String methodName;

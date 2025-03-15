@@ -28,11 +28,64 @@
 		<location id="StBatteryDepleted" x="800" y="300">
 			<name x="785" y="315">StBatteryDepleted</name>
 		</location>
+		<location id="StiNavigateToCoffeeMachine" x="1200" y="300">
+			<name x="1185" y="315">StiNavigateToCoffeeMachine</name>
+		</location>
+		<location id="StiWaitForOrder" x="0" y="600">
+			<name x="-15" y="615">StiWaitForOrder</name>
+		</location>
+		<location id="StiDeliverOrder" x="400" y="600">
+			<name x="385" y="615">StiDeliverOrder</name>
+		</location>
 		<init ref="StStartup"/>
+		<transition>
+			<source ref="StStartup"/>
+			<target ref="StQueue"/>
+		</transition>
 		<transition>
 			<source ref="gen_pre_SsProcessOrder"/>
 			<target ref="SsProcessOrder"/>
 			<label kind="synchronisation" x="550" y="15">gen_SsProcessOrder_inner_start!</label>
+		</transition>
+		<transition>
+			<source ref="StQueue"/>
+			<target ref="StBatteryDepleted"/>
+		</transition>
+		<transition>
+			<source ref="StQueue"/>
+			<target ref="StNavigateToBase"/>
+		</transition>
+		<transition>
+			<source ref="StQueue"/>
+			<target ref="StRecharge"/>
+		</transition>
+		<transition>
+			<source ref="StQueue"/>
+			<target ref="StNavigateToBase"/>
+		</transition>
+		<transition>
+			<source ref="StQueue"/>
+			<target ref="gen_pre_SsProcessOrder"/>
+		</transition>
+		<transition>
+			<source ref="StNavigateToBase"/>
+			<target ref="StQueue"/>
+		</transition>
+		<transition>
+			<source ref="StRecharge"/>
+			<target ref="StQueue"/>
+		</transition>
+		<transition>
+			<source ref="StiNavigateToCoffeeMachine"/>
+			<target ref="StiWaitForOrder"/>
+		</transition>
+		<transition>
+			<source ref="StiWaitForOrder"/>
+			<target ref="StiDeliverOrder"/>
+		</transition>
+		<transition>
+			<source ref="StiDeliverOrder"/>
+			<target ref="StQueue"/>
 		</transition>
 	</template>
 	<template>
@@ -60,3 +113,4 @@
 		system Tbot, SsProcessOrder_inner;
 	</system>
 </nta>
+

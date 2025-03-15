@@ -1,7 +1,10 @@
 package danieljnm.sm2ta;
 
 import com.google.gson.Gson;
+import danieljnm.sm2ta.Model.ClientBehaviour;
+import danieljnm.sm2ta.Model.Function;
 import danieljnm.sm2ta.Model.StateDefinition;
+import danieljnm.sm2ta.Model.StateReactor;
 import danieljnm.sm2ta.Model.Transition;
 import danieljnm.sm2ta.Model.Variable;
 import danieljnm.sm2ta.StateMachine.State;
@@ -9,6 +12,7 @@ import danieljnm.sm2ta.StateMachine.StateMachine;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -17,6 +21,8 @@ import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.MapExtensions;
+import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 @SuppressWarnings("all")
@@ -37,6 +43,15 @@ public class Translator {
     Translator.stateMachine.name(initial.namespace).state(initial.stateName).initial();
     Translator.setVariables(((List<Variable>)Conversions.doWrapArray(Translator.getVariables())));
     Translator.setStates(((List<StateDefinition>)Conversions.doWrapArray(states)), initial.namespace);
+    Translator.setTransitions(((List<Transition>)Conversions.doWrapArray(Translator.getTransitions())));
+    final StateReactor[] reactors = Translator.getReactors();
+    final Function1<ClientBehaviour, String> _function_1 = (ClientBehaviour it) -> {
+      return it.name;
+    };
+    final Function1<List<ClientBehaviour>, List<ClientBehaviour>> _function_2 = (List<ClientBehaviour> it) -> {
+      return IterableExtensions.<ClientBehaviour>toList(it);
+    };
+    final Map<String, List<ClientBehaviour>> behaviours = MapExtensions.<String, List<ClientBehaviour>, List<ClientBehaviour>>mapValues(IterableExtensions.<String, ClientBehaviour>groupBy(((Iterable<? extends ClientBehaviour>)Conversions.doWrapArray(Translator.getBehaviours())), _function_1), _function_2);
   }
 
   public static StateDefinition[] getStates() {
@@ -94,6 +109,62 @@ public class Translator {
       Translator.stateMachine.variables(_function_1);
     };
     variables.forEach(_function);
+  }
+
+  public static StateReactor[] getReactors() {
+    return new Gson().<StateReactor[]>fromJson(Translator.getJson("state_reactors"), StateReactor[].class);
+  }
+
+  public static ClientBehaviour[] getBehaviours() {
+    return new Gson().<ClientBehaviour[]>fromJson(Translator.getJson("client_behaviours"), ClientBehaviour[].class);
+  }
+
+  public static Function[] getFunctions() {
+    return new Gson().<Function[]>fromJson(Translator.getJson("functions"), Function[].class);
+  }
+
+  public static Transition[] getTransitions() {
+    return new Gson().<Transition[]>fromJson(Translator.getJson("transitions"), Transition[].class);
+  }
+
+  public static StateMachine setTransitions(final List<Transition> transitions) {
+    StateMachine _xblockexpression = null;
+    {
+      final Function1<StateReactor, String> _function = (StateReactor it) -> {
+        return it.stateName;
+      };
+      final Function1<List<StateReactor>, Map<String, List<StateReactor>>> _function_1 = (List<StateReactor> it) -> {
+        final Function1<StateReactor, String> _function_2 = (StateReactor it_1) -> {
+          return it_1.name;
+        };
+        final Function1<List<StateReactor>, List<StateReactor>> _function_3 = (List<StateReactor> it_1) -> {
+          return IterableExtensions.<StateReactor>toList(it_1);
+        };
+        return MapExtensions.<String, List<StateReactor>, List<StateReactor>>mapValues(IterableExtensions.<String, StateReactor>groupBy(it, _function_2), _function_3);
+      };
+      final Map<String, Map<String, List<StateReactor>>> reactorMap = MapExtensions.<String, List<StateReactor>, Map<String, List<StateReactor>>>mapValues(IterableExtensions.<String, StateReactor>groupBy(((Iterable<? extends StateReactor>)Conversions.doWrapArray(Translator.getReactors())), _function), _function_1);
+      final Function1<ClientBehaviour, String> _function_2 = (ClientBehaviour it) -> {
+        return it.name;
+      };
+      final Function1<List<ClientBehaviour>, List<ClientBehaviour>> _function_3 = (List<ClientBehaviour> it) -> {
+        return IterableExtensions.<ClientBehaviour>toList(it);
+      };
+      final Map<String, List<ClientBehaviour>> behaviourMap = MapExtensions.<String, List<ClientBehaviour>, List<ClientBehaviour>>mapValues(IterableExtensions.<String, ClientBehaviour>groupBy(((Iterable<? extends ClientBehaviour>)Conversions.doWrapArray(Translator.getBehaviours())), _function_2), _function_3);
+      final Function1<Transition, String> _function_4 = (Transition it) -> {
+        return it.stateName;
+      };
+      final Map<String, List<Transition>> transitionMap = IterableExtensions.<String, Transition>groupBy(transitions, _function_4);
+      final Procedure1<StateMachine> _function_5 = (StateMachine it) -> {
+        final Consumer<Transition> _function_6 = (Transition it_1) -> {
+          it_1.convert();
+          Translator.stateMachine.state(it_1.stateName).transition(it_1.target);
+        };
+        transitions.forEach(_function_6);
+      };
+      _xblockexpression = ObjectExtensions.<StateMachine>operator_doubleArrow(
+        Translator.stateMachine, _function_5);
+    }
+    return _xblockexpression;
   }
 
   public static String getJson(final String file) {

@@ -12,4 +12,29 @@ class Transition {
 			default: return "default"
 		}
 	}
+	
+	def void convert() {
+		convertStateName()
+		convertTargetName()
+	}
+	
+	def void convertStateName() {
+		val index = stateName.indexOf("<")
+		if (index == -1)
+		{
+			return
+		}
+		
+		stateName = stateName.substring(0, index)
+	}
+	
+	def void convertTargetName() {
+		val index = target.indexOf("<")
+		if (index == -1)
+		{
+			return
+		}
+		
+		target = target.substring(0, index)
+	}
 }

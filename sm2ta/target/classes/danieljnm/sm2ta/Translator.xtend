@@ -4,6 +4,9 @@ import com.google.gson.Gson
 import danieljnm.sm2ta.Model.StateDefinition
 import danieljnm.sm2ta.Model.Variable
 import danieljnm.sm2ta.Model.Transition
+import danieljnm.sm2ta.Model.ClientBehaviour
+import danieljnm.sm2ta.Model.Function
+import danieljnm.sm2ta.Model.StateReactor
 import danieljnm.sm2ta.StateMachine.StateMachine
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -27,6 +30,9 @@ class Translator {
 			.state(initial.stateName).initial
 		variables.setVariables
 		states.setStates(initial.namespace)
+		transitions.setTransitions
+		val reactors = reactors
+		val behaviours = behaviours.groupBy[name].mapValues[toList]
 	}
 	
 	def static getStates() {
@@ -63,6 +69,36 @@ class Translator {
 			]
 		]
 
+	}
+	
+	def static getReactors() {
+		new Gson().fromJson(getJson("state_reactors"), typeof(StateReactor[]))
+	}
+	
+	def static getBehaviours() {
+		new Gson().fromJson(getJson("client_behaviours"), typeof(ClientBehaviour[]))
+	}
+	
+	def static getFunctions() {
+		new Gson().fromJson(getJson("functions"), typeof(Function[]))
+	}
+	
+	def static getTransitions() {
+		new Gson().fromJson(getJson("transitions"), typeof(Transition[]))
+	}
+	
+	def static setTransitions(List<Transition> transitions) {
+		val reactorMap = reactors.groupBy[stateName].mapValues[it.groupBy[name].mapValues[toList]]
+		val behaviourMap = behaviours.groupBy[name].mapValues[toList]
+		val transitionMap = transitions.groupBy[stateName]
+		
+		stateMachine => [
+			transitions.forEach[it |
+				it.convert
+				stateMachine.state(it.stateName)
+					.transition(it.target)
+			]
+		]
 	}
 	
 	def static getJson(String file) {

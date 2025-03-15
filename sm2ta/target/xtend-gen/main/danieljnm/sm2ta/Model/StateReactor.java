@@ -4,7 +4,7 @@ package danieljnm.sm2ta.Model;
 public class StateReactor {
   public String name;
 
-  public String StateName;
+  public String stateName;
 
   public String event;
 }
