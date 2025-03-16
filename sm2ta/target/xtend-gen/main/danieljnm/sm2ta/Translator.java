@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -43,15 +44,6 @@ public class Translator {
     Translator.stateMachine.name(initial.namespace).state(initial.stateName).initial();
     Translator.setVariables(((List<Variable>)Conversions.doWrapArray(Translator.getVariables())));
     Translator.setStates(((List<StateDefinition>)Conversions.doWrapArray(states)), initial.namespace);
-    Translator.setTransitions(((List<Transition>)Conversions.doWrapArray(Translator.getTransitions())));
-    final StateReactor[] reactors = Translator.getReactors();
-    final Function1<ClientBehaviour, String> _function_1 = (ClientBehaviour it) -> {
-      return it.name;
-    };
-    final Function1<List<ClientBehaviour>, List<ClientBehaviour>> _function_2 = (List<ClientBehaviour> it) -> {
-      return IterableExtensions.<ClientBehaviour>toList(it);
-    };
-    final Map<String, List<ClientBehaviour>> behaviours = MapExtensions.<String, List<ClientBehaviour>, List<ClientBehaviour>>mapValues(IterableExtensions.<String, ClientBehaviour>groupBy(((Iterable<? extends ClientBehaviour>)Conversions.doWrapArray(Translator.getBehaviours())), _function_1), _function_2);
   }
 
   public static StateDefinition[] getStates() {
@@ -68,33 +60,67 @@ public class Translator {
   }
 
   public static void setStates(final List<StateDefinition> states, final String namespace) {
-    final Function1<StateDefinition, Boolean> _function = (StateDefinition it) -> {
+    final Function1<Transition, String> _function = (Transition it) -> {
+      return it.stateName;
+    };
+    final Map<String, List<Transition>> transitions = IterableExtensions.<String, Transition>groupBy(((Iterable<? extends Transition>)Conversions.doWrapArray(Translator.getTransitions())), _function);
+    final Function1<StateDefinition, Boolean> _function_1 = (StateDefinition it) -> {
       return Boolean.valueOf(Objects.equals(it.namespace, namespace));
     };
-    final Iterable<StateDefinition> topLevelStates = IterableExtensions.<StateDefinition>filter(states, _function);
-    final Consumer<StateDefinition> _function_1 = (StateDefinition state) -> {
+    final Iterable<StateDefinition> topLevelStates = IterableExtensions.<StateDefinition>filter(states, _function_1);
+    final Consumer<StateDefinition> _function_2 = (StateDefinition state) -> {
       Translator.stateMachine.state(state.stateName);
+      final List<Transition> stateTransitions = transitions.getOrDefault(state.stateName, CollectionLiterals.<Transition>newArrayList());
+      final Consumer<Transition> _function_3 = (Transition transition) -> {
+        Translator.stateMachine.state(state.stateName).transition(transition.target);
+      };
+      stateTransitions.forEach(_function_3);
       final String nestedNamespace = state.stateName;
-      final Function1<StateDefinition, Boolean> _function_2 = (StateDefinition it) -> {
+      final Function1<StateDefinition, Boolean> _function_4 = (StateDefinition it) -> {
         return Boolean.valueOf(Objects.equals(it.namespace, nestedNamespace));
       };
-      final Function1<StateDefinition, Boolean> _function_3 = (StateDefinition it) -> {
+      final Function1<StateDefinition, Boolean> _function_5 = (StateDefinition it) -> {
         return Boolean.valueOf((!it.nestedInitial));
       };
-      final List<StateDefinition> childStates = IterableExtensions.<StateDefinition, Boolean>sortBy(IterableExtensions.<StateDefinition>filter(states, _function_2), _function_3);
+      final List<StateDefinition> childStates = IterableExtensions.<StateDefinition, Boolean>sortBy(IterableExtensions.<StateDefinition>filter(states, _function_4), _function_5);
       boolean _isEmpty = childStates.isEmpty();
       boolean _not = (!_isEmpty);
       if (_not) {
-        final Procedure1<State> _function_4 = (State it) -> {
-          final Consumer<StateDefinition> _function_5 = (StateDefinition nested) -> {
+        final Procedure1<State> _function_6 = (State it) -> {
+          final Consumer<StateDefinition> _function_7 = (StateDefinition nested) -> {
+            final List<Transition> nestedTransitions = transitions.getOrDefault(nested.stateName, CollectionLiterals.<Transition>newArrayList());
             it.nestedState(nested.stateName);
+            final Consumer<Transition> _function_8 = (Transition transition) -> {
+              final Function1<StateDefinition, Boolean> _function_9 = (StateDefinition it_1) -> {
+                return Boolean.valueOf(Objects.equals(it_1.stateName, transition.target));
+              };
+              final StateDefinition target = IterableExtensions.<StateDefinition>findFirst(states, _function_9);
+              boolean _equals = Objects.equals(target.namespace, nested.namespace);
+              if (_equals) {
+                it.nestedState(nested.stateName).transition(transition.target);
+                return;
+              }
+              State _nestedState = it.nestedState(nested.stateName);
+              StringConcatenation _builder = new StringConcatenation();
+              _builder.append(nested.namespace);
+              String _message = transition.message();
+              _builder.append(_message);
+              _nestedState.transition(_builder.toString()).signal(transition.message());
+              StringConcatenation _builder_1 = new StringConcatenation();
+              _builder_1.append(nested.namespace);
+              String _message_1 = transition.message();
+              _builder_1.append(_message_1);
+              it.nestedState(_builder_1.toString()).committed();
+              Translator.stateMachine.state(nested.namespace).transition(transition.target).when(transition.message());
+            };
+            nestedTransitions.forEach(_function_8);
           };
-          childStates.forEach(_function_5);
+          childStates.forEach(_function_7);
         };
-        Translator.stateMachine.state(state.stateName).nesting(_function_4);
+        Translator.stateMachine.state(state.stateName).nesting(_function_6);
       }
     };
-    topLevelStates.forEach(_function_1);
+    topLevelStates.forEach(_function_2);
   }
 
   public static Variable[] getVariables() {
@@ -104,7 +130,7 @@ public class Translator {
   public static void setVariables(final List<Variable> variables) {
     final Consumer<Variable> _function = (Variable variableDefinition) -> {
       final Procedure1<StateMachine> _function_1 = (StateMachine it) -> {
-        it.variable(variableDefinition.variable).type(variableDefinition.convertedType()).value(variableDefinition.value);
+        it.variable(variableDefinition.variable).type(variableDefinition.convertedType()).value(variableDefinition.initializedValue());
       };
       Translator.stateMachine.variables(_function_1);
     };
@@ -124,7 +150,17 @@ public class Translator {
   }
 
   public static Transition[] getTransitions() {
-    return new Gson().<Transition[]>fromJson(Translator.getJson("transitions"), Transition[].class);
+    Transition[] _xblockexpression = null;
+    {
+      Transition[] transitions = new Gson().<Transition[]>fromJson(Translator.getJson("transitions"), Transition[].class);
+      final Transition[] _converted_transitions = (Transition[])transitions;
+      final Consumer<Transition> _function = (Transition it) -> {
+        it.convert();
+      };
+      ((List<Transition>)Conversions.doWrapArray(_converted_transitions)).forEach(_function);
+      _xblockexpression = transitions;
+    }
+    return _xblockexpression;
   }
 
   public static StateMachine setTransitions(final List<Transition> transitions) {
@@ -156,7 +192,6 @@ public class Translator {
       final Map<String, List<Transition>> transitionMap = IterableExtensions.<String, Transition>groupBy(transitions, _function_4);
       final Procedure1<StateMachine> _function_5 = (StateMachine it) -> {
         final Consumer<Transition> _function_6 = (Transition it_1) -> {
-          it_1.convert();
           Translator.stateMachine.state(it_1.stateName).transition(it_1.target);
         };
         transitions.forEach(_function_6);
@@ -179,23 +214,6 @@ public class Translator {
         _xblockexpression = new String(bytes);
       }
       return _xblockexpression;
-    } catch (Throwable _e) {
-      throw Exceptions.sneakyThrow(_e);
-    }
-  }
-
-  public static void translateTransitions() {
-    try {
-      byte[] _readAllBytes = Files.readAllBytes(Paths.get("src/main/java/Data/transitions.json"));
-      String json = new String(_readAllBytes);
-      final Transition[] transitions = new Gson().<Transition[]>fromJson(json, Transition[].class);
-      Translator.reset();
-      Translator.stateMachine.name("test");
-      final Consumer<Transition> _function = (Transition it) -> {
-        Translator.stateMachine.state(it.stateName).transition(it.target).when(it.message());
-      };
-      ((List<Transition>)Conversions.doWrapArray(transitions)).forEach(_function);
-      InputOutput.<String>println(Translator.stateMachine.toXml());
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }

@@ -11,6 +11,7 @@ class State {
 	public List<State> nestedStates = newArrayList
 	public boolean isInitial
 	public boolean isNested
+	public boolean isCommitted
 
 	new(State parent, String name) {
 		this.parent = parent
@@ -117,6 +118,11 @@ class State {
 	
 	def initial() {
 		isInitial = true
+		this
+	}
+	
+	def committed() {
+		isCommitted = true
 		this
 	}
 	

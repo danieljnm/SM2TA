@@ -1,23 +1,44 @@
 [
   {
     "clientName": "ClBatteryManager",
+    "function": "is_critical",
+    "expression": "battery_level_ <= 0",
+    "defaultValue": ""
+  },
+  {
+    "clientName": "ClBatteryManager",
+    "function": "recharge_required",
+    "expression": "battery_level_ <= 20",
+    "defaultValue": ""
+  },
+  {
+    "clientName": "ClBatteryManager",
     "function": "recharge",
-    "calledFunction": "set_battery_level",
     "expression": "amount",
     "defaultValue": 100
   },
   {
     "clientName": "ClBatteryManager",
     "function": "deplete",
-    "calledFunction": "set_battery_level",
-    "expression": "battery_level_ - 10.0",
+    "expression": "battery_level_ - 10",
+    "defaultValue": ""
+  },
+  {
+    "clientName": "ClBatteryManager",
+    "function": "get_battery_level",
+    "expression": "battery_level_",
     "defaultValue": ""
   },
   {
     "clientName": "ClOrderManager",
     "function": "onInitialize",
-    "calledFunction": "generate_random_orders",
     "expression": 10,
+    "defaultValue": ""
+  },
+  {
+    "clientName": "ClOrderManager",
+    "function": "get_next_order",
+    "expression": "delivery_location",
     "defaultValue": ""
   }
 ]

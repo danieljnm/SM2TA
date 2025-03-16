@@ -30,9 +30,9 @@ class Translator {
 			.state(initial.stateName).initial
 		variables.setVariables
 		states.setStates(initial.namespace)
-		transitions.setTransitions
-		val reactors = reactors
-		val behaviours = behaviours.groupBy[name].mapValues[toList]
+		//transitions.setTransitions
+		//val reactors = reactors
+		//val behaviours = behaviours.groupBy[name].mapValues[toList]
 	}
 	
 	def static getStates() {
@@ -42,16 +42,34 @@ class Translator {
 	}
 	
 	def static setStates(List<StateDefinition> states, String namespace) {
+		val transitions = transitions.groupBy[stateName]
 		val topLevelStates = states.filter[it.namespace == namespace]
     	topLevelStates.forEach[state |
 	        stateMachine.state(state.stateName)
+	        val stateTransitions = transitions.getOrDefault(state.stateName, newArrayList)
+        	stateTransitions.forEach[transition |
+        		stateMachine.state(state.stateName)
+        			.transition(transition.target)
+        	]
+
 	        val nestedNamespace = state.stateName
 	        val childStates = states.filter[it.namespace == nestedNamespace].sortBy[!it.nestedInitial]
 	        if (!childStates.empty) {
-	            stateMachine.state(state.stateName)
-	            .nesting[
-	                childStates.forEach[nested |
-	                    nestedState(nested.stateName)
+	        	stateMachine.state(state.stateName)
+	            	.nesting[
+	                	childStates.forEach[nested |
+	                		val nestedTransitions = transitions.getOrDefault(nested.stateName, newArrayList)
+	                    	nestedState(nested.stateName)
+                    		nestedTransitions.forEach[transition |
+                    			val target = states.findFirst[stateName == transition.target]
+                    			if (target.namespace == nested.namespace) {
+                    				nestedState(nested.stateName).transition(transition.target)
+                    				return
+                    			}
+                    			nestedState(nested.stateName).transition('''«nested.namespace»«transition.message»''').signal(transition.message)
+                    			nestedState('''«nested.namespace»«transition.message»''').committed
+                    			stateMachine.state(nested.namespace).transition(transition.target).when(transition.message)
+                    		]
 	            	]
 		    	]
 		    }
@@ -65,7 +83,7 @@ class Translator {
 	def static setVariables(List<Variable> variables) {
 		variables.forEach[variableDefinition |
 			stateMachine.variables[
-				variable(variableDefinition.variable).type(variableDefinition.convertedType).value(variableDefinition.value)
+				variable(variableDefinition.variable).type(variableDefinition.convertedType).value(variableDefinition.initializedValue)
 			]
 		]
 
@@ -84,7 +102,9 @@ class Translator {
 	}
 	
 	def static getTransitions() {
-		new Gson().fromJson(getJson("transitions"), typeof(Transition[]))
+		var transitions = new Gson().fromJson(getJson("transitions"), typeof(Transition[]))
+		transitions.forEach[convert]
+		transitions
 	}
 	
 	def static setTransitions(List<Transition> transitions) {
@@ -94,7 +114,6 @@ class Translator {
 		
 		stateMachine => [
 			transitions.forEach[it |
-				it.convert
 				stateMachine.state(it.stateName)
 					.transition(it.target)
 			]
@@ -104,23 +123,6 @@ class Translator {
 	def static getJson(String file) {
 		val bytes = Files.readAllBytes(Paths.get('''src/main/java/Data/«file».json'''))
 		new String(bytes)
-	}
-	
-	def static void translateTransitions() {
-		// When doing this, get the state reactors too.
-		// If a transition is dependent on multiple conditions
-		// this behaviour can be received from the state reactor
-		// and used as a guard for the transition
-		var json = new String(Files.readAllBytes(Paths.get("src/main/java/Data/transitions.json")))
-		val transitions = new Gson().fromJson(json, typeof(Transition[]))
-		reset()
-		stateMachine.name("test")
-		transitions.forEach[it |
-			stateMachine
-				.state(it.stateName)
-					.transition(it.target).when(it.message)
-		]
-		println(stateMachine.toXml)
 	}
 	
 	def static regular() {

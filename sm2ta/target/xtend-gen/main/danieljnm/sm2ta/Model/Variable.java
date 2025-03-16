@@ -1,5 +1,7 @@
 package danieljnm.sm2ta.Model;
 
+import com.google.common.base.Objects;
+
 @SuppressWarnings("all")
 public class Variable {
   public String clientName;
@@ -12,17 +14,35 @@ public class Variable {
 
   public String convertedType() {
     String _lowerCase = this.type.toLowerCase();
-    if (_lowerCase != null) {
-      switch (_lowerCase) {
-        case "float":
-          return "double";
-        case "boolean":
-          return "bool";
-        default:
-          return this.type.toLowerCase();
-      }
-    } else {
-      return this.type.toLowerCase();
+    boolean _matched = false;
+    if (Objects.equal(_lowerCase, "float")) {
+      _matched=true;
+      return "double";
     }
+    if (!_matched) {
+      if (Objects.equal(_lowerCase, "boolean")) {
+        _matched=true;
+        return "bool";
+      }
+    }
+    if (!_matched) {
+      boolean _startsWith = this.type.startsWith("queue");
+      if (_startsWith) {
+        _matched=true;
+        return "int";
+      }
+    }
+    return this.type.toLowerCase();
+  }
+
+  public String initializedValue() {
+    String _xifexpression = null;
+    boolean _equals = java.util.Objects.equals(this.value, "");
+    if (_equals) {
+      _xifexpression = "10";
+    } else {
+      _xifexpression = this.value;
+    }
+    return _xifexpression;
   }
 }

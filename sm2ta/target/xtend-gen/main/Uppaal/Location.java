@@ -24,6 +24,7 @@ public class Location {
     this.id = state.name;
     Name _name = new Name(state.name);
     this.name = _name;
+    this.committed = Boolean.valueOf(state.isCommitted);
     final Function1<Transition, Boolean> _function = (Transition it) -> {
       return Boolean.valueOf((it.timeout > 0));
     };

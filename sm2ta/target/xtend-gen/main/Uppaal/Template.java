@@ -33,22 +33,36 @@ public class Template {
     return _xblockexpression;
   }
 
-  public void transitions(final State state) {
-    final Consumer<danieljnm.sm2ta.StateMachine.Transition> _function = (danieljnm.sm2ta.StateMachine.Transition it) -> {
-      String _xifexpression = null;
-      if ((state.name.startsWith("gen_pre_") || it.target.nestedStates.isEmpty())) {
-        _xifexpression = it.target.name;
-      } else {
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append("gen_pre_");
-        _builder.append(it.target.name);
-        _xifexpression = _builder.toString();
+  public boolean transitions(final State state) {
+    boolean _xblockexpression = false;
+    {
+      final Consumer<danieljnm.sm2ta.StateMachine.Transition> _function = (danieljnm.sm2ta.StateMachine.Transition it) -> {
+        String _xifexpression = null;
+        if ((state.name.startsWith("gen_pre_") || it.target.nestedStates.isEmpty())) {
+          _xifexpression = it.target.name;
+        } else {
+          StringConcatenation _builder = new StringConcatenation();
+          _builder.append("gen_pre_");
+          _builder.append(it.target.name);
+          _xifexpression = _builder.toString();
+        }
+        final Transition transition = new Transition(state.name, _xifexpression);
+        transition.labels(it);
+        this.transitions.add(transition);
+      };
+      state.transitions.forEach(_function);
+      boolean _xifexpression = false;
+      if ((state.transitions.isEmpty() && state.isCommitted)) {
+        boolean _xblockexpression_1 = false;
+        {
+          final Transition transitionToInitial = new Transition(state.name, "gen_init");
+          _xblockexpression_1 = this.transitions.add(transitionToInitial);
+        }
+        _xifexpression = _xblockexpression_1;
       }
-      final Transition transition = new Transition(state.name, _xifexpression);
-      transition.labels(it);
-      this.transitions.add(transition);
-    };
-    state.transitions.forEach(_function);
+      _xblockexpression = _xifexpression;
+    }
+    return _xblockexpression;
   }
 
   @Override

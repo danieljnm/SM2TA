@@ -13,6 +13,7 @@ class Location {
 	new(State state) {
 		id = state.name
 		name = new Name(state.name)
+		committed = state.isCommitted
 		var transition = state.transitions.findFirst[timeout > 0]
 		if (transition !== null) {
 			label = new Label("invariant", '''gen_clock <= «transition.timeout»''')

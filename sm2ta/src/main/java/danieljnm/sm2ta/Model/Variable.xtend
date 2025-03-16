@@ -10,7 +10,12 @@ class Variable {
 		switch (type.toLowerCase) {
 			case "float": return "double"
 			case "boolean": return "bool"
+			case type.startsWith("queue"): return "int"
 			default: return type.toLowerCase
 		}
+	}
+	
+	def String initializedValue() {
+		value == "" ? "10" : value
 	}
 }

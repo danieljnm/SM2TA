@@ -29,6 +29,10 @@ class Template {
 			transition.labels(it)
 			transitions.add(transition)
 		]
+		if (state.transitions.empty && state.isCommitted) {
+			val transitionToInitial = new Transition(state.name, "gen_init")
+			transitions.add(transitionToInitial)
+		}
 	}
 	
 	override toString() {

@@ -7,8 +7,8 @@ class Transition {
 	
 	def String message() {
 		switch (event.toLowerCase) {
-			case event.toLowerCase.contains("success"): return "success"
-			case event.toLowerCase.contains("failure"): return "error"
+			case event.toLowerCase.contains("success"): return "Success"
+			case event.toLowerCase.contains("failure"): return "Error"
 			default: return "default"
 		}
 	}

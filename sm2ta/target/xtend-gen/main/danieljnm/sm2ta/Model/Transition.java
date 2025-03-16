@@ -14,13 +14,13 @@ public class Transition {
     boolean _contains = this.event.toLowerCase().contains("success");
     if (_contains) {
       _matched=true;
-      return "success";
+      return "Success";
     }
     if (!_matched) {
       boolean _contains_1 = this.event.toLowerCase().contains("failure");
       if (_contains_1) {
         _matched=true;
-        return "error";
+        return "Error";
       }
     }
     return "default";

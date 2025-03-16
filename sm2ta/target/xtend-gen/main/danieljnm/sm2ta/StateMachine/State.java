@@ -27,6 +27,8 @@ public class State {
 
   public boolean isNested;
 
+  public boolean isCommitted;
+
   public State(final State parent, final String name) {
     this.parent = parent;
     this.name = name;
@@ -188,6 +190,15 @@ public class State {
     State _xblockexpression = null;
     {
       this.isInitial = true;
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+
+  public State committed() {
+    State _xblockexpression = null;
+    {
+      this.isCommitted = true;
       _xblockexpression = this;
     }
     return _xblockexpression;
