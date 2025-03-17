@@ -11,6 +11,7 @@ import danieljnm.sm2ta.StateMachine.StateMachine
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.List
+import danieljnm.sm2ta.Model.Condition
 
 class Translator {
 	static StateMachine stateMachine = new StateMachine()
@@ -43,13 +44,30 @@ class Translator {
 	
 	def static setStates(List<StateDefinition> states, String namespace) {
 		val transitions = transitions.groupBy[stateName]
+		val reactors = reactors
+		val behaviours = behaviours.groupBy[name].mapValues[toList]
+		val functions = functions
 		val topLevelStates = states.filter[it.namespace == namespace]
     	topLevelStates.forEach[state |
 	        stateMachine.state(state.stateName)
 	        val stateTransitions = transitions.getOrDefault(state.stateName, newArrayList)
         	stateTransitions.forEach[transition |
+        		if (transition.event.startsWith("EvAll")) {
+        			val conditions = reactors.filter[name == transition.reactor].map[new Condition(it)]
+        			val guards = conditions.flatMap[condition | behaviours.getOrDefault(condition.clientBehaviour, newArrayList)
+        				.filter[condition.requiresSuccess == (event == "postSuccessEvent")]
+        				.map[behaviour | functions.findFirst[function | function.function == behaviour.methodName].convertedExpression(condition.requiresSuccess)]
+        			]
+        			stateMachine.state(state.stateName)
+        				.transition(transition.target).guard(guards.join(' &amp;&amp; '))
+        			return
+        		}
+        		val conditions = behaviours.getOrDefault(transition.clientBehaviour, newArrayList)
+        				.filter[transition.event.startsWith("EvCbSuccess") == (event == "postSuccessEvent")]
+        				.map[behaviour | functions.findFirst[function == behaviour.methodName].convertedExpression(behaviour.inIf)]
+        		
         		stateMachine.state(state.stateName)
-        			.transition(transition.target)
+        			.transition(transition.target).guard(conditions.join(' &amp;&amp; '))
         	]
 
 	        val nestedNamespace = state.stateName

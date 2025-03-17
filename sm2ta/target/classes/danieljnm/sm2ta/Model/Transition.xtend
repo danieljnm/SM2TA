@@ -8,7 +8,7 @@ class Transition {
 	def String message() {
 		switch (event.toLowerCase) {
 			case event.toLowerCase.contains("success"): return "Success"
-			case event.toLowerCase.contains("failure"): return "Error"
+			case event.toLowerCase.contains("failure"): return "Failure"
 			default: return "default"
 		}
 	}
@@ -36,5 +36,13 @@ class Transition {
 		}
 		
 		target = target.substring(0, index)
+	}
+	
+	def String getClientBehaviour() {
+		event.substring(event.indexOf('<') + 1, event.indexOf(','))
+	}
+	
+	def String getReactor() {
+		event.startsWith("EvAll") ? event.substring(event.indexOf(',') + 2, event.indexOf('>')) : ""
 	}
 }

@@ -16,6 +16,6 @@ class Variable {
 	}
 	
 	def String initializedValue() {
-		value == "" ? "10" : value
+		value == "" && (type.startsWith("queue") || type.startsWith("list")) ? "10" : value
 	}
 }

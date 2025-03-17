@@ -6,7 +6,7 @@ public class ClientBehaviour {
 
   public String methodName;
 
-  public String eventName;
+  public String event;
 
   public boolean inIf;
 

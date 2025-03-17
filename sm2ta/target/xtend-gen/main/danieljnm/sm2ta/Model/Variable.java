@@ -37,8 +37,7 @@ public class Variable {
 
   public String initializedValue() {
     String _xifexpression = null;
-    boolean _equals = java.util.Objects.equals(this.value, "");
-    if (_equals) {
+    if ((java.util.Objects.equals(this.value, "") && (this.type.startsWith("queue") || this.type.startsWith("list")))) {
       _xifexpression = "10";
     } else {
       _xifexpression = this.value;
