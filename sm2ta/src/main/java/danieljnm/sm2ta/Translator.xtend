@@ -31,9 +31,6 @@ class Translator {
 			.state(initial.stateName).initial
 		variables.setVariables
 		states.setStates(initial.namespace)
-		//transitions.setTransitions
-		//val reactors = reactors
-		//val behaviours = behaviours.groupBy[name].mapValues[toList]
 	}
 	
 	def static getStates() {
@@ -145,19 +142,6 @@ class Translator {
 		var transitions = new Gson().fromJson(getJson("transitions"), typeof(Transition[]))
 		transitions.forEach[convert]
 		transitions
-	}
-	
-	def static setTransitions(List<Transition> transitions) {
-		val reactorMap = reactors.groupBy[stateName].mapValues[it.groupBy[name].mapValues[toList]]
-		val behaviourMap = behaviours.groupBy[name].mapValues[toList]
-		val transitionMap = transitions.groupBy[stateName]
-		
-		stateMachine => [
-			transitions.forEach[it |
-				stateMachine.state(it.stateName)
-					.transition(it.target)
-			]
-		]
 	}
 	
 	def static getJson(String file) {

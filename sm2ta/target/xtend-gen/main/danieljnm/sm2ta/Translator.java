@@ -25,7 +25,6 @@ import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 import org.eclipse.xtext.xbase.lib.MapExtensions;
-import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 @SuppressWarnings("all")
@@ -268,45 +267,6 @@ public class Translator {
       };
       ((List<Transition>)Conversions.doWrapArray(_converted_transitions)).forEach(_function);
       _xblockexpression = transitions;
-    }
-    return _xblockexpression;
-  }
-
-  public static StateMachine setTransitions(final List<Transition> transitions) {
-    StateMachine _xblockexpression = null;
-    {
-      final Function1<StateReactor, String> _function = (StateReactor it) -> {
-        return it.stateName;
-      };
-      final Function1<List<StateReactor>, Map<String, List<StateReactor>>> _function_1 = (List<StateReactor> it) -> {
-        final Function1<StateReactor, String> _function_2 = (StateReactor it_1) -> {
-          return it_1.name;
-        };
-        final Function1<List<StateReactor>, List<StateReactor>> _function_3 = (List<StateReactor> it_1) -> {
-          return IterableExtensions.<StateReactor>toList(it_1);
-        };
-        return MapExtensions.<String, List<StateReactor>, List<StateReactor>>mapValues(IterableExtensions.<String, StateReactor>groupBy(it, _function_2), _function_3);
-      };
-      final Map<String, Map<String, List<StateReactor>>> reactorMap = MapExtensions.<String, List<StateReactor>, Map<String, List<StateReactor>>>mapValues(IterableExtensions.<String, StateReactor>groupBy(((Iterable<? extends StateReactor>)Conversions.doWrapArray(Translator.getReactors())), _function), _function_1);
-      final Function1<ClientBehaviour, String> _function_2 = (ClientBehaviour it) -> {
-        return it.name;
-      };
-      final Function1<List<ClientBehaviour>, List<ClientBehaviour>> _function_3 = (List<ClientBehaviour> it) -> {
-        return IterableExtensions.<ClientBehaviour>toList(it);
-      };
-      final Map<String, List<ClientBehaviour>> behaviourMap = MapExtensions.<String, List<ClientBehaviour>, List<ClientBehaviour>>mapValues(IterableExtensions.<String, ClientBehaviour>groupBy(((Iterable<? extends ClientBehaviour>)Conversions.doWrapArray(Translator.getBehaviours())), _function_2), _function_3);
-      final Function1<Transition, String> _function_4 = (Transition it) -> {
-        return it.stateName;
-      };
-      final Map<String, List<Transition>> transitionMap = IterableExtensions.<String, Transition>groupBy(transitions, _function_4);
-      final Procedure1<StateMachine> _function_5 = (StateMachine it) -> {
-        final Consumer<Transition> _function_6 = (Transition it_1) -> {
-          Translator.stateMachine.state(it_1.stateName).transition(it_1.target);
-        };
-        transitions.forEach(_function_6);
-      };
-      _xblockexpression = ObjectExtensions.<StateMachine>operator_doubleArrow(
-        Translator.stateMachine, _function_5);
     }
     return _xblockexpression;
   }
