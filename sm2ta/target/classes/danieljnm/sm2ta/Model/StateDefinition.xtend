@@ -5,6 +5,7 @@ class StateDefinition {
 	public String namespace
 	public boolean initial
 	public boolean nestedInitial
+	public String actions
 	
 	def void convertName() {
 		val index = stateName.indexOf("<")

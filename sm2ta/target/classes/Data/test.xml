@@ -1,132 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
 <nta>
 	<declaration>
-		 bool hasControl = false = ;
-		chan NestedLostControl, NestedAbort, NestedSuccess, Ready, LostControl, gen_GlobalPlanning_inner_start;
+		int battery_level_ = 15;
+		int orders_ = 10;
+		chan Success, gen_SsProcessOrder_inner_start;
 	</declaration>
 	<template>
-		<name>FOD</name>
-		<location id="Idle" x="0" y="0">
-			<name x="-15" y="15">Idle</name>
+		<name>Tbot</name>
+		<location id="StStartup" x="0" y="0">
+			<name x="-15" y="15">StStartup</name>
 		</location>
-		<location id="PositionAcquisition" x="400" y="0">
-			<name x="385" y="15">PositionAcquisition</name>
-		</location>
-		<location id="gen_pre_GlobalPlanning" x="800" y="0">
-			<name x="785" y="15">gen_pre_GlobalPlanning</name>
+		<location id="gen_pre_SsProcessOrder" x="400" y="0">
+			<name x="385" y="15">gen_pre_SsProcessOrder</name>
 			<committed/>
 		</location>
-		<location id="GlobalPlanning" x="1200" y="0">
-			<name x="1185" y="15">GlobalPlanning</name>
+		<location id="SsProcessOrder" x="800" y="0">
+			<name x="785" y="15">SsProcessOrder</name>
 		</location>
-		<init ref="Idle"/>
+		<location id="StQueue" x="1200" y="0">
+			<name x="1185" y="15">StQueue</name>
+		</location>
+		<location id="StBatteryDepleted" x="0" y="300">
+			<name x="-15" y="315">StBatteryDepleted</name>
+		</location>
+		<location id="StNavigateToBase" x="400" y="300">
+			<name x="385" y="315">StNavigateToBase</name>
+		</location>
+		<location id="StRecharge" x="800" y="300">
+			<name x="785" y="315">StRecharge</name>
+		</location>
+		<init ref="StStartup"/>
 		<transition>
-			<source ref="Idle"/>
-			<target ref="PositionAcquisition"/>
-			<label kind="synchronisation" x="150" y="15">Ready?</label>
-			<label kind="assignment" x="150" y="30">hasControl := true</label>
+			<source ref="StStartup"/>
+			<target ref="StQueue"/>
+			<label kind="guard" x="550" y="15"></label>
+			<label kind="assignment" x="550" y="30">null</label>
 		</transition>
 		<transition>
-			<source ref="PositionAcquisition"/>
-			<target ref="gen_pre_GlobalPlanning"/>
+			<source ref="gen_pre_SsProcessOrder"/>
+			<target ref="SsProcessOrder"/>
+			<label kind="synchronisation" x="550" y="15">gen_SsProcessOrder_inner_start!</label>
 		</transition>
 		<transition>
-			<source ref="PositionAcquisition"/>
-			<target ref="Idle"/>
-			<label kind="synchronisation" x="150" y="15">LostControl?</label>
+			<source ref="SsProcessOrder"/>
+			<target ref="StQueue"/>
+			<label kind="synchronisation" x="950" y="15">Success?</label>
 		</transition>
 		<transition>
-			<source ref="gen_pre_GlobalPlanning"/>
-			<target ref="GlobalPlanning"/>
-			<label kind="synchronisation" x="950" y="15">gen_GlobalPlanning_inner_start!</label>
+			<source ref="StQueue"/>
+			<target ref="StBatteryDepleted"/>
+			<label kind="guard" x="550" y="165">battery_level_ &lt;= 0</label>
+			<label kind="assignment" x="550" y="180">null</label>
 		</transition>
 		<transition>
-			<source ref="GlobalPlanning"/>
-			<target ref="Idle"/>
-			<label kind="synchronisation" x="550" y="15">NestedLostControl?</label>
+			<source ref="StQueue"/>
+			<target ref="StNavigateToBase"/>
+			<label kind="guard" x="750" y="165"></label>
+			<label kind="assignment" x="750" y="180">null</label>
 		</transition>
 		<transition>
-			<source ref="GlobalPlanning"/>
-			<target ref="Idle"/>
-			<label kind="synchronisation" x="550" y="30">NestedAbort?</label>
+			<source ref="StQueue"/>
+			<target ref="StRecharge"/>
+			<label kind="guard" x="950" y="165">battery_level_ &lt;= 20</label>
+			<label kind="assignment" x="950" y="180">null</label>
 		</transition>
 		<transition>
-			<source ref="GlobalPlanning"/>
-			<target ref="Idle"/>
-			<label kind="synchronisation" x="550" y="45">NestedSuccess?</label>
+			<source ref="StQueue"/>
+			<target ref="StNavigateToBase"/>
+			<label kind="guard" x="750" y="195">battery_level_ &lt;= 20</label>
+			<label kind="assignment" x="750" y="210">null</label>
+		</transition>
+		<transition>
+			<source ref="StQueue"/>
+			<target ref="gen_pre_SsProcessOrder"/>
+			<label kind="guard" x="750" y="15">!(battery_level_ &lt;= 20) &amp;&amp; !orders_ == 0</label>
+			<label kind="assignment" x="750" y="30">null</label>
+		</transition>
+		<transition>
+			<source ref="StNavigateToBase"/>
+			<target ref="StQueue"/>
+			<label kind="guard" x="750" y="165"></label>
+			<label kind="assignment" x="750" y="180">null</label>
+		</transition>
+		<transition>
+			<source ref="StRecharge"/>
+			<target ref="StQueue"/>
+			<label kind="guard" x="950" y="165"></label>
+			<label kind="assignment" x="950" y="180">amount</label>
 		</transition>
 	</template>
 	<template>
-		<name>GlobalPlanning_inner</name>
+		<name>SsProcessOrder_inner</name>
 		<location id="gen_init" x="0" y="0">
 			<name x="-15" y="15">gen_init</name>
 		</location>
-		<location id="NextPosition" x="400" y="0">
-			<name x="385" y="15">NextPosition</name>
+		<location id="StiNavigateToCoffeeMachine" x="400" y="0">
+			<name x="385" y="15">StiNavigateToCoffeeMachine</name>
 		</location>
-		<location id="MissionCompleted" x="800" y="0">
-			<name x="785" y="15">MissionCompleted</name>
+		<location id="StiWaitForOrder" x="800" y="0">
+			<name x="785" y="15">StiWaitForOrder</name>
 		</location>
-		<location id="LostControl" x="1200" y="0">
-			<name x="1185" y="15">LostControl</name>
+		<location id="StiDeliverOrder" x="1200" y="0">
+			<name x="1185" y="15">StiDeliverOrder</name>
 		</location>
-		<location id="Abort" x="0" y="300">
-			<name x="-15" y="315">Abort</name>
-		</location>
-		<location id="Success" x="400" y="300">
-			<name x="385" y="315">Success</name>
+		<location id="SsProcessOrderSuccess" x="0" y="300">
+			<name x="-15" y="315">SsProcessOrderSuccess</name>
+			<committed/>
 		</location>
 		<init ref="gen_init"/>
 		<transition>
 			<source ref="gen_init"/>
-			<target ref="NextPosition"/>
-			<label kind="synchronisation" x="150" y="15">gen_GlobalPlanning_inner_start?</label>
+			<target ref="StiNavigateToCoffeeMachine"/>
+			<label kind="synchronisation" x="150" y="15">gen_SsProcessOrder_inner_start?</label>
 		</transition>
 		<transition>
-			<source ref="NextPosition"/>
-			<target ref="MissionCompleted"/>
+			<source ref="StiNavigateToCoffeeMachine"/>
+			<target ref="StiWaitForOrder"/>
 		</transition>
 		<transition>
-			<source ref="MissionCompleted"/>
-			<target ref="LostControl"/>
-			<label kind="synchronisation" x="950" y="15">NestedLostControl!</label>
+			<source ref="StiWaitForOrder"/>
+			<target ref="StiDeliverOrder"/>
 		</transition>
 		<transition>
-			<source ref="MissionCompleted"/>
-			<target ref="Abort"/>
-			<label kind="synchronisation" x="350" y="165">NestedAbort!</label>
+			<source ref="StiDeliverOrder"/>
+			<target ref="SsProcessOrderSuccess"/>
+			<label kind="synchronisation" x="550" y="165">Success!</label>
 		</transition>
 		<transition>
-			<source ref="MissionCompleted"/>
-			<target ref="Success"/>
-			<label kind="synchronisation" x="550" y="165">NestedSuccess!</label>
-		</transition>
-	</template>
-	<template>
-		<name>gen_sync_Ready</name>
-		<location id="initSync" x="0" y="0">
-			<name x="-15" y="15">initSync</name>
-		</location>
-		<init ref="initSync"/>
-		<transition>
-			<source ref="initSync"/>
-			<target ref="initSync"/>
-			<label kind="synchronisation" x="-15" y="-55">Ready!</label>
-		</transition>
-	</template>
-	<template>
-		<name>gen_sync_LostControl</name>
-		<location id="initSync" x="0" y="0">
-			<name x="-15" y="15">initSync</name>
-		</location>
-		<init ref="initSync"/>
-		<transition>
-			<source ref="initSync"/>
-			<target ref="initSync"/>
-			<label kind="synchronisation" x="-15" y="-55">LostControl!</label>
+			<source ref="SsProcessOrderSuccess"/>
+			<target ref="gen_init"/>
 		</transition>
 	</template>
 	<system>
-		system FOD, GlobalPlanning_inner, gen_sync_Ready, gen_sync_LostControl;
+		system Tbot, SsProcessOrder_inner;
 	</system>
 </nta>
+

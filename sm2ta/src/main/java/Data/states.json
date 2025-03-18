@@ -3,54 +3,63 @@
     "stateName": "SsProcessOrder",
     "namespace": "Tbot",
     "initial": false,
-    "nestedInitial": false
+    "nestedInitial": false,
+    "actions": ""
   },
   {
     "stateName": "StStartup",
     "namespace": "Tbot",
     "initial": true,
-    "nestedInitial": false
+    "nestedInitial": false,
+    "actions": ""
   },
   {
     "stateName": "StQueue",
     "namespace": "Tbot",
     "initial": false,
-    "nestedInitial": false
+    "nestedInitial": false,
+    "actions": ""
   },
   {
     "stateName": "StNavigateToBase",
     "namespace": "Tbot",
     "initial": false,
-    "nestedInitial": false
+    "nestedInitial": false,
+    "actions": ""
   },
   {
     "stateName": "StRecharge",
     "namespace": "Tbot",
     "initial": false,
-    "nestedInitial": false
+    "nestedInitial": false,
+    "actions": "recharge"
   },
   {
     "stateName": "StBatteryDepleted",
     "namespace": "Tbot",
     "initial": false,
-    "nestedInitial": false
+    "nestedInitial": false,
+    "actions": ""
   },
   {
     "stateName": "StiNavigateToCoffeeMachine<SsProcessOrder>",
     "namespace": "SsProcessOrder",
     "initial": false,
-    "nestedInitial": true
+    "nestedInitial": true,
+    "actions": ""
   },
   {
     "stateName": "StiWaitForOrder<SsProcessOrder>",
     "namespace": "SsProcessOrder",
     "initial": false,
-    "nestedInitial": false
+    "nestedInitial": false,
+    "actions": ""
   },
   {
     "stateName": "StiDeliverOrder<SsProcessOrder>",
     "namespace": "SsProcessOrder",
     "initial": false,
-    "nestedInitial": false
+    "nestedInitial": false,
+    "actions": "deplete"
   }
 ]

@@ -48,7 +48,7 @@
 		<transition>
 			<source ref="StQueue"/>
 			<target ref="StBatteryDepleted"/>
-			<label kind="guard" x="550" y="165">!(battery_level_ &lt;= 0)</label>
+			<label kind="guard" x="550" y="165">battery_level_ &lt;= 0</label>
 		</transition>
 		<transition>
 			<source ref="StQueue"/>

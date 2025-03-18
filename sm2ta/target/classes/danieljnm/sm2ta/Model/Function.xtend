@@ -11,4 +11,8 @@ class Function {
 			'''«IF !requiresSuccess»!(«ENDIF»«expression.replace(".empty()", " == 0")»«IF !requiresSuccess»)«ENDIF»''' 
 			: '''«IF !requiresSuccess»!(«ENDIF»«expression»«IF !requiresSuccess»)«ENDIF»'''
 	}
+	
+	def assignment() {
+		expression.replace("=", ":=")
+	}
 }

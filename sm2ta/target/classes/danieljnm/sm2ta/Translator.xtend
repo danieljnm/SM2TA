@@ -52,22 +52,34 @@ class Translator {
 	        stateMachine.state(state.stateName)
 	        val stateTransitions = transitions.getOrDefault(state.stateName, newArrayList)
         	stateTransitions.forEach[transition |
+        		/*val test = state.actions.split(",")
+        				.map[action | functions.findFirst(function | function.function == action)?.assignment]
+        		val actions = state.actions.split(",")
+        			.map[action | functions.findFirst(function | function.function == action)?.assignment]
+        			.filter[it !== null]*/
+        			if (!state.actions.isNullOrEmpty) {
+        				state.actions.split(",")
+        					.map[action | functions.findFirst(function | function.function == action)?.assignment]
+        					.filter[!it.isNullOrEmpty]
+        					.forEach[println(it)]
+        			}
+        			val actions = newArrayList
         		if (transition.event.startsWith("EvAll")) {
         			val conditions = reactors.filter[name == transition.reactor].map[new Condition(it)]
         			val guards = conditions.flatMap[condition | behaviours.getOrDefault(condition.clientBehaviour, newArrayList)
         				.filter[condition.requiresSuccess == (event == "postSuccessEvent")]
-        				.map[behaviour | functions.findFirst[function | function.function == behaviour.methodName].convertedExpression(condition.requiresSuccess)]
+        				.map[behaviour | functions.findFirst[function | function.function == behaviour.methodName]?.convertedExpression(condition.requiresSuccess)]
         			]
         			stateMachine.state(state.stateName)
-        				.transition(transition.target).guard(guards.join(' &amp;&amp; '))
+        				.transition(transition.target).guard(guards.join(' &amp;&amp; ')).action(actions.join(', '))
         			return
         		}
         		val conditions = behaviours.getOrDefault(transition.clientBehaviour, newArrayList)
         				.filter[transition.event.startsWith("EvCbSuccess") == (event == "postSuccessEvent")]
-        				.map[behaviour | functions.findFirst[function == behaviour.methodName].convertedExpression(behaviour.inIf)]
+        				.map[behaviour | functions.findFirst[function == behaviour.methodName]?.convertedExpression(behaviour.inIf)]
         		
         		stateMachine.state(state.stateName)
-        			.transition(transition.target).guard(conditions.join(' &amp;&amp; '))
+        			.transition(transition.target).guard(conditions.join(' &amp;&amp; ')).action(actions.join(', '))
         	]
 
 	        val nestedNamespace = state.stateName

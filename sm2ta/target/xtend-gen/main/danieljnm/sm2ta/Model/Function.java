@@ -47,4 +47,8 @@ public class Function {
     }
     return _xifexpression;
   }
+
+  public String assignment() {
+    return this.expression.replace("=", ":=");
+  }
 }

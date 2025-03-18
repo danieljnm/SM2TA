@@ -10,6 +10,8 @@ public class StateDefinition {
 
   public boolean nestedInitial;
 
+  public String actions;
+
   public void convertName() {
     final int index = this.stateName.indexOf("<");
     if ((index == (-1))) {
