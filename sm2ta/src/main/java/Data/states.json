@@ -60,6 +60,6 @@
     "namespace": "SsProcessOrder",
     "initial": false,
     "nestedInitial": false,
-    "actions": "deplete"
+    "actions": "deplete,get_next_order"
   }
 ]

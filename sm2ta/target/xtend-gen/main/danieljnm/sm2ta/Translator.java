@@ -194,7 +194,7 @@ public class Translator {
     CharSequence _xblockexpression = null;
     {
       final Function1<Function, Boolean> _function = (Function f) -> {
-        return Boolean.valueOf(Objects.equals(f.function, action));
+        return Boolean.valueOf((Objects.equals(f.function, action) && (!Objects.equals(f.type, "return"))));
       };
       Function current = IterableExtensions.<Function>findFirst(functions, _function);
       Object defaultVal = null;

@@ -98,7 +98,7 @@ class Translator {
 	}
 	
 	def static getAssignment(String action, List<Function> functions) {
-	    var Function current = functions.findFirst[f | f.function == action]
+	    var Function current = functions.findFirst[f | f.function == action && f.type != "return"]
 	    var Object defaultVal = null
 	    
 	    while (current !== null && current.type != "assignment") {

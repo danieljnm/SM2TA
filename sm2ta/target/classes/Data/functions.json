@@ -78,10 +78,24 @@
   },
   {
     "clientName": "ClOrderManager",
+    "function": "add_order",
+    "expression": "orders_",
+    "defaultValue": "orders_ + 1",
+    "type": "assignment"
+  },
+  {
+    "clientName": "ClOrderManager",
     "function": "get_next_order",
     "expression": "delivery_location",
     "defaultValue": "",
     "type": "return"
+  },
+  {
+    "clientName": "ClOrderManager",
+    "function": "get_next_order",
+    "expression": "orders_",
+    "defaultValue": "orders_ - 1",
+    "type": "assignment"
   },
   {
     "clientName": "ClOrderManager",
