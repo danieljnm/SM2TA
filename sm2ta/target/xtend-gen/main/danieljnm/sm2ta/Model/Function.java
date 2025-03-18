@@ -12,6 +12,8 @@ public class Function {
 
   public String defaultValue;
 
+  public String type;
+
   public CharSequence convertedExpression(final boolean requiresSuccess) {
     CharSequence _xifexpression = null;
     boolean _contains = this.expression.contains(".empty()");

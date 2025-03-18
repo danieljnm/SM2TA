@@ -5,6 +5,7 @@ class Function {
 	public String function
 	public String expression
 	public String defaultValue
+	public String type
 	
 	def convertedExpression(boolean requiresSuccess) {
 		expression.contains(".empty()") ? 

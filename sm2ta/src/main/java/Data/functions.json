@@ -3,78 +3,91 @@
     "clientName": "ClRosTimer",
     "function": "onOrthogonalAllocation",
     "expression": "postTimerEvent_",
-    "defaultValue": ""
+    "defaultValue": "[...](...){...}",
+    "type": "assignment"
   },
   {
     "clientName": "ClBatteryManager",
     "function": "publish_battery_level",
     "expression": "data",
-    "defaultValue": ""
+    "defaultValue": "battery_level_",
+    "type": "assignment"
   },
   {
     "clientName": "ClBatteryManager",
     "function": "is_critical",
     "expression": "battery_level_ <= 0",
-    "defaultValue": ""
+    "defaultValue": "",
+    "type": "return"
   },
   {
     "clientName": "ClBatteryManager",
     "function": "recharge_required",
     "expression": "battery_level_ <= 20",
-    "defaultValue": ""
+    "defaultValue": "",
+    "type": "return"
   },
   {
     "clientName": "ClBatteryManager",
     "function": "recharge",
-    "expression": "amount",
-    "defaultValue": 100
+    "expression": "set_battery_level",
+    "defaultValue": 100,
+    "type": "function"
   },
   {
     "clientName": "ClBatteryManager",
     "function": "deplete",
-    "expression": "battery_level_ - 10",
-    "defaultValue": ""
+    "expression": "set_battery_level",
+    "defaultValue": "battery_level_ - 10",
+    "type": "function"
   },
   {
     "clientName": "ClBatteryManager",
     "function": "set_battery_level",
     "expression": "battery_level_",
-    "defaultValue": ""
+    "defaultValue": "level",
+    "type": "assignment"
   },
   {
     "clientName": "ClBatteryManager",
     "function": "get_battery_level",
     "expression": "battery_level_",
-    "defaultValue": ""
+    "defaultValue": "",
+    "type": "return"
   },
   {
     "clientName": "ClOrderManager",
     "function": "onInitialize",
-    "expression": 10,
-    "defaultValue": ""
+    "expression": "generate_random_orders",
+    "defaultValue": 10,
+    "type": "function"
   },
   {
     "clientName": "ClOrderManager",
     "function": "generate_random_orders",
     "expression": "x",
-    "defaultValue": ""
+    "defaultValue": "call to operator()",
+    "type": "assignment"
   },
   {
     "clientName": "ClOrderManager",
     "function": "generate_random_orders",
-    "expression": "point",
-    "defaultValue": ""
+    "expression": "add_order",
+    "defaultValue": "point",
+    "type": "function"
   },
   {
     "clientName": "ClOrderManager",
     "function": "get_next_order",
     "expression": "delivery_location",
-    "defaultValue": ""
+    "defaultValue": "",
+    "type": "return"
   },
   {
     "clientName": "ClOrderManager",
     "function": "has_next_order",
     "expression": "!orders_.empty()",
-    "defaultValue": ""
+    "defaultValue": "",
+    "type": "return"
   }
 ]
