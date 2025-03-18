@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
 <nta>
 	<declaration>
 		int battery_level_ = 15;
@@ -7,124 +8,126 @@
 	</declaration>
 	<template>
 		<name>Tbot</name>
-		<location id="StStartup" x="0" y="0">
+		<location id="id0" x="0" y="0">
 			<name x="-15" y="15">StStartup</name>
 		</location>
-		<location id="gen_pre_SsProcessOrder" x="400" y="0">
-			<name x="385" y="15">gen_pre_SsProcessOrder</name>
+		<location id="id1" x="400" y="0">
+			<name x="238" y="-34">gen_pre_SsProcessOrder</name>
 			<committed/>
 		</location>
-		<location id="SsProcessOrder" x="800" y="0">
+		<location id="id2" x="800" y="0">
 			<name x="785" y="15">SsProcessOrder</name>
 		</location>
-		<location id="StQueue" x="1200" y="0">
-			<name x="1185" y="15">StQueue</name>
+		<location id="id3" x="799" y="144">
+			<name x="784" y="159">StQueue</name>
 		</location>
-		<location id="StBatteryDepleted" x="0" y="300">
+		<location id="id4" x="0" y="300">
 			<name x="-15" y="315">StBatteryDepleted</name>
 		</location>
-		<location id="StNavigateToBase" x="400" y="300">
+		<location id="id5" x="400" y="300">
 			<name x="385" y="315">StNavigateToBase</name>
 		</location>
-		<location id="StRecharge" x="800" y="300">
+		<location id="id6" x="800" y="300">
 			<name x="785" y="315">StRecharge</name>
 		</location>
-		<init ref="StStartup"/>
-		<transition>
-			<source ref="StStartup"/>
-			<target ref="StQueue"/>
-			<label kind="guard" x="550" y="15"></label>
+		<init ref="id0"/>
+		<transition id="id7">
+			<source ref="id0"/>
+			<target ref="id3"/>
 		</transition>
-		<transition>
-			<source ref="gen_pre_SsProcessOrder"/>
-			<target ref="SsProcessOrder"/>
-			<label kind="synchronisation" x="550" y="15">gen_SsProcessOrder_inner_start!</label>
+		<transition id="id8">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="476" y="-25">gen_SsProcessOrder_inner_start!</label>
 		</transition>
-		<transition>
-			<source ref="SsProcessOrder"/>
-			<target ref="StQueue"/>
-			<label kind="synchronisation" x="950" y="15">Success?</label>
+		<transition id="id9">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="816" y="51">Success?</label>
 		</transition>
-		<transition>
-			<source ref="StQueue"/>
-			<target ref="StBatteryDepleted"/>
-			<label kind="guard" x="550" y="165">battery_level_ &lt;= 0</label>
+		<transition id="id10">
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="272" y="178">battery_level_ &lt;= 0</label>
 		</transition>
-		<transition>
-			<source ref="StQueue"/>
-			<target ref="StNavigateToBase"/>
-			<label kind="guard" x="750" y="165"></label>
+		<transition id="id11">
+			<source ref="id3"/>
+			<target ref="id5"/>
 		</transition>
-		<transition>
-			<source ref="StQueue"/>
-			<target ref="StRecharge"/>
-			<label kind="guard" x="950" y="165">battery_level_ &lt;= 20</label>
+		<transition id="id12">
+			<source ref="id3"/>
+			<target ref="id6"/>
+			<label kind="guard" x="816" y="195">battery_level_ &lt;= 20</label>
 		</transition>
-		<transition>
-			<source ref="StQueue"/>
-			<target ref="StNavigateToBase"/>
-			<label kind="guard" x="750" y="180">battery_level_ &lt;= 20</label>
+		<transition id="id13">
+			<source ref="id3"/>
+			<target ref="id5"/>
+			<label kind="guard" x="578" y="229">battery_level_ &lt;= 20</label>
 		</transition>
-		<transition>
-			<source ref="StQueue"/>
-			<target ref="gen_pre_SsProcessOrder"/>
-			<label kind="guard" x="750" y="15">!(battery_level_ &lt;= 20) &amp;&amp; !orders_ == 0</label>
+		<transition id="id14">
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="guard" x="425" y="42">!(battery_level_ &lt;= 20) &amp;&amp; !orders_ == 0</label>
 		</transition>
-		<transition>
-			<source ref="StNavigateToBase"/>
-			<target ref="StQueue"/>
-			<label kind="guard" x="750" y="165"></label>
+		<transition id="id15">
+			<source ref="id5"/>
+			<target ref="id3"/>
 		</transition>
-		<transition>
-			<source ref="StRecharge"/>
-			<target ref="StQueue"/>
-			<label kind="guard" x="950" y="165"></label>
+		<transition id="id16">
+			<source ref="id6"/>
+			<target ref="id3"/>
+			<label kind="assignment" x="816" y="221">battery_level_ := 100</label>
 		</transition>
 	</template>
 	<template>
 		<name>SsProcessOrder_inner</name>
-		<location id="gen_init" x="0" y="0">
+		<location id="id17" x="0" y="0">
 			<name x="-15" y="15">gen_init</name>
 		</location>
-		<location id="StiNavigateToCoffeeMachine" x="400" y="0">
+		<location id="id18" x="400" y="0">
 			<name x="385" y="15">StiNavigateToCoffeeMachine</name>
 		</location>
-		<location id="StiWaitForOrder" x="800" y="0">
+		<location id="id19" x="800" y="0">
 			<name x="785" y="15">StiWaitForOrder</name>
 		</location>
-		<location id="StiDeliverOrder" x="1200" y="0">
+		<location id="id20" x="1200" y="0">
 			<name x="1185" y="15">StiDeliverOrder</name>
 		</location>
-		<location id="SsProcessOrderSuccess" x="0" y="300">
+		<location id="id21" x="0" y="300">
 			<name x="-15" y="315">SsProcessOrderSuccess</name>
 			<committed/>
 		</location>
-		<init ref="gen_init"/>
-		<transition>
-			<source ref="gen_init"/>
-			<target ref="StiNavigateToCoffeeMachine"/>
+		<init ref="id17"/>
+		<transition id="id22">
+			<source ref="id17"/>
+			<target ref="id18"/>
 			<label kind="synchronisation" x="150" y="15">gen_SsProcessOrder_inner_start?</label>
 		</transition>
-		<transition>
-			<source ref="StiNavigateToCoffeeMachine"/>
-			<target ref="StiWaitForOrder"/>
+		<transition id="id23">
+			<source ref="id18"/>
+			<target ref="id19"/>
 		</transition>
-		<transition>
-			<source ref="StiWaitForOrder"/>
-			<target ref="StiDeliverOrder"/>
+		<transition id="id24">
+			<source ref="id19"/>
+			<target ref="id20"/>
 		</transition>
-		<transition>
-			<source ref="StiDeliverOrder"/>
-			<target ref="SsProcessOrderSuccess"/>
+		<transition id="id25">
+			<source ref="id20"/>
+			<target ref="id21"/>
 			<label kind="synchronisation" x="550" y="165">Success!</label>
 		</transition>
-		<transition>
-			<source ref="SsProcessOrderSuccess"/>
-			<target ref="gen_init"/>
+		<transition id="id26">
+			<source ref="id21"/>
+			<target ref="id17"/>
 		</transition>
 	</template>
 	<system>
 		system Tbot, SsProcessOrder_inner;
 	</system>
+	<queries>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+	</queries>
 </nta>
-

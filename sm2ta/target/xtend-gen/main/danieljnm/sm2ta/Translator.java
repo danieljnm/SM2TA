@@ -12,7 +12,6 @@ import danieljnm.sm2ta.StateMachine.State;
 import danieljnm.sm2ta.StateMachine.StateMachine;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +27,6 @@ import org.eclipse.xtext.xbase.lib.ListExtensions;
 import org.eclipse.xtext.xbase.lib.MapExtensions;
 import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
-import org.eclipse.xtext.xbase.lib.StringExtensions;
 
 @SuppressWarnings("all")
 public class Translator {
@@ -85,79 +83,59 @@ public class Translator {
       Translator.stateMachine.state(state.stateName);
       final List<Transition> stateTransitions = transitions.getOrDefault(state.stateName, CollectionLiterals.<Transition>newArrayList());
       final Consumer<Transition> _function_5 = (Transition transition) -> {
-        boolean _isNullOrEmpty = StringExtensions.isNullOrEmpty(state.actions);
-        boolean _not = (!_isNullOrEmpty);
-        if (_not) {
-          final Function1<String, String> _function_6 = (String action) -> {
-            final Function1<Function, Boolean> _function_7 = (Function function) -> {
-              return Boolean.valueOf(Objects.equals(function.function, action));
-            };
-            Function _findFirst = IterableExtensions.<Function>findFirst(((Iterable<Function>)Conversions.doWrapArray(functions)), _function_7);
-            String _assignment = null;
-            if (_findFirst!=null) {
-              _assignment=_findFirst.assignment();
-            }
-            return _assignment;
-          };
-          final Function1<String, Boolean> _function_7 = (String it) -> {
-            boolean _isNullOrEmpty_1 = StringExtensions.isNullOrEmpty(it);
-            return Boolean.valueOf((!_isNullOrEmpty_1));
-          };
-          final Consumer<String> _function_8 = (String it) -> {
-            InputOutput.<String>println(it);
-          };
-          IterableExtensions.<String>filter(ListExtensions.<String, String>map(((List<String>)Conversions.doWrapArray(state.actions.split(","))), _function_6), _function_7).forEach(_function_8);
-        }
-        final ArrayList<Object> actions = CollectionLiterals.<Object>newArrayList();
+        final Function1<String, CharSequence> _function_6 = (String action) -> {
+          return Translator.getAssignment(action, ((List<Function>)Conversions.doWrapArray(functions)));
+        };
+        final Iterable<CharSequence> actions = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(state.actions.split(","))), _function_6));
         boolean _startsWith = transition.event.startsWith("EvAll");
         if (_startsWith) {
-          final Function1<StateReactor, Boolean> _function_9 = (StateReactor it) -> {
+          final Function1<StateReactor, Boolean> _function_7 = (StateReactor it) -> {
             String _reactor = transition.getReactor();
             return Boolean.valueOf(Objects.equals(it.name, _reactor));
           };
-          final Function1<StateReactor, Condition> _function_10 = (StateReactor it) -> {
+          final Function1<StateReactor, Condition> _function_8 = (StateReactor it) -> {
             return new Condition(it);
           };
-          final Iterable<Condition> conditions = IterableExtensions.<StateReactor, Condition>map(IterableExtensions.<StateReactor>filter(((Iterable<StateReactor>)Conversions.doWrapArray(reactors)), _function_9), _function_10);
-          final Function1<Condition, Iterable<CharSequence>> _function_11 = (Condition condition) -> {
-            final Function1<ClientBehaviour, Boolean> _function_12 = (ClientBehaviour it) -> {
+          final Iterable<Condition> conditions = IterableExtensions.<StateReactor, Condition>map(IterableExtensions.<StateReactor>filter(((Iterable<StateReactor>)Conversions.doWrapArray(reactors)), _function_7), _function_8);
+          final Function1<Condition, Iterable<CharSequence>> _function_9 = (Condition condition) -> {
+            final Function1<ClientBehaviour, Boolean> _function_10 = (ClientBehaviour it) -> {
               boolean _equals = Objects.equals(it.event, "postSuccessEvent");
               return Boolean.valueOf((condition.requiresSuccess == _equals));
             };
-            final Function1<ClientBehaviour, CharSequence> _function_13 = (ClientBehaviour behaviour) -> {
-              final Function1<Function, Boolean> _function_14 = (Function function) -> {
+            final Function1<ClientBehaviour, CharSequence> _function_11 = (ClientBehaviour behaviour) -> {
+              final Function1<Function, Boolean> _function_12 = (Function function) -> {
                 return Boolean.valueOf(Objects.equals(function.function, behaviour.methodName));
               };
-              Function _findFirst = IterableExtensions.<Function>findFirst(((Iterable<Function>)Conversions.doWrapArray(functions)), _function_14);
+              Function _findFirst = IterableExtensions.<Function>findFirst(((Iterable<Function>)Conversions.doWrapArray(functions)), _function_12);
               CharSequence _convertedExpression = null;
               if (_findFirst!=null) {
                 _convertedExpression=_findFirst.convertedExpression(condition.requiresSuccess);
               }
               return _convertedExpression;
             };
-            return IterableExtensions.<ClientBehaviour, CharSequence>map(IterableExtensions.<ClientBehaviour>filter(behaviours.getOrDefault(condition.clientBehaviour, CollectionLiterals.<ClientBehaviour>newArrayList()), _function_12), _function_13);
+            return IterableExtensions.<ClientBehaviour, CharSequence>map(IterableExtensions.<ClientBehaviour>filter(behaviours.getOrDefault(condition.clientBehaviour, CollectionLiterals.<ClientBehaviour>newArrayList()), _function_10), _function_11);
           };
-          final Iterable<CharSequence> guards = IterableExtensions.<Condition, CharSequence>flatMap(conditions, _function_11);
+          final Iterable<CharSequence> guards = IterableExtensions.<Condition, CharSequence>flatMap(conditions, _function_9);
           Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; ")).action(IterableExtensions.join(actions, ", "));
           return;
         }
-        final Function1<ClientBehaviour, Boolean> _function_12 = (ClientBehaviour it) -> {
+        final Function1<ClientBehaviour, Boolean> _function_10 = (ClientBehaviour it) -> {
           boolean _startsWith_1 = transition.event.startsWith("EvCbSuccess");
           boolean _equals = Objects.equals(it.event, "postSuccessEvent");
           return Boolean.valueOf((_startsWith_1 == _equals));
         };
-        final Function1<ClientBehaviour, CharSequence> _function_13 = (ClientBehaviour behaviour) -> {
-          final Function1<Function, Boolean> _function_14 = (Function it) -> {
+        final Function1<ClientBehaviour, CharSequence> _function_11 = (ClientBehaviour behaviour) -> {
+          final Function1<Function, Boolean> _function_12 = (Function it) -> {
             return Boolean.valueOf(Objects.equals(it.function, behaviour.methodName));
           };
-          Function _findFirst = IterableExtensions.<Function>findFirst(((Iterable<Function>)Conversions.doWrapArray(functions)), _function_14);
+          Function _findFirst = IterableExtensions.<Function>findFirst(((Iterable<Function>)Conversions.doWrapArray(functions)), _function_12);
           CharSequence _convertedExpression = null;
           if (_findFirst!=null) {
             _convertedExpression=_findFirst.convertedExpression(behaviour.inIf);
           }
           return _convertedExpression;
         };
-        final Iterable<CharSequence> conditions_1 = IterableExtensions.<ClientBehaviour, CharSequence>map(IterableExtensions.<ClientBehaviour>filter(behaviours.getOrDefault(transition.getClientBehaviour(), CollectionLiterals.<ClientBehaviour>newArrayList()), _function_12), _function_13);
+        final Iterable<CharSequence> conditions_1 = IterableExtensions.<ClientBehaviour, CharSequence>map(IterableExtensions.<ClientBehaviour>filter(behaviours.getOrDefault(transition.getClientBehaviour(), CollectionLiterals.<ClientBehaviour>newArrayList()), _function_10), _function_11);
         Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(conditions_1, " &amp;&amp; ")).action(IterableExtensions.join(actions, ", "));
       };
       stateTransitions.forEach(_function_5);
@@ -174,16 +152,20 @@ public class Translator {
       if (_not) {
         final Procedure1<State> _function_8 = (State it) -> {
           final Consumer<StateDefinition> _function_9 = (StateDefinition nested) -> {
+            final Function1<String, CharSequence> _function_10 = (String action) -> {
+              return Translator.getAssignment(action, ((List<Function>)Conversions.doWrapArray(functions)));
+            };
+            final Iterable<CharSequence> actions = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(nested.actions.split(","))), _function_10));
             final List<Transition> nestedTransitions = transitions.getOrDefault(nested.stateName, CollectionLiterals.<Transition>newArrayList());
             it.nestedState(nested.stateName);
-            final Consumer<Transition> _function_10 = (Transition transition) -> {
-              final Function1<StateDefinition, Boolean> _function_11 = (StateDefinition it_1) -> {
+            final Consumer<Transition> _function_11 = (Transition transition) -> {
+              final Function1<StateDefinition, Boolean> _function_12 = (StateDefinition it_1) -> {
                 return Boolean.valueOf(Objects.equals(it_1.stateName, transition.target));
               };
-              final StateDefinition target = IterableExtensions.<StateDefinition>findFirst(states, _function_11);
+              final StateDefinition target = IterableExtensions.<StateDefinition>findFirst(states, _function_12);
               boolean _equals = Objects.equals(target.namespace, nested.namespace);
               if (_equals) {
-                it.nestedState(nested.stateName).transition(transition.target);
+                it.nestedState(nested.stateName).transition(transition.target).action(IterableExtensions.join(actions, ", "));
                 return;
               }
               State _nestedState = it.nestedState(nested.stateName);
@@ -197,9 +179,9 @@ public class Translator {
               String _message_1 = transition.message();
               _builder_1.append(_message_1);
               it.nestedState(_builder_1.toString()).committed();
-              Translator.stateMachine.state(nested.namespace).transition(transition.target).when(transition.message());
+              Translator.stateMachine.state(nested.namespace).transition(transition.target).when(transition.message()).action(IterableExtensions.join(actions, ", "));
             };
-            nestedTransitions.forEach(_function_10);
+            nestedTransitions.forEach(_function_11);
           };
           childStates.forEach(_function_9);
         };
@@ -207,6 +189,47 @@ public class Translator {
       }
     };
     topLevelStates.forEach(_function_4);
+  }
+
+  public static CharSequence getAssignment(final String action, final List<Function> functions) {
+    CharSequence _xblockexpression = null;
+    {
+      final Function1<Function, Boolean> _function = (Function f) -> {
+        return Boolean.valueOf(Objects.equals(f.function, action));
+      };
+      Function current = IterableExtensions.<Function>findFirst(functions, _function);
+      Object defaultVal = null;
+      while (((current != null) && (!Objects.equals(current.type, "assignment")))) {
+        {
+          if ((defaultVal == null)) {
+            defaultVal = current.defaultValue;
+          }
+          final String currentExpr = current.expression;
+          final Function1<Function, Boolean> _function_1 = (Function f) -> {
+            return Boolean.valueOf(Objects.equals(f.function, currentExpr));
+          };
+          current = IterableExtensions.<Function>findFirst(functions, _function_1);
+        }
+      }
+      CharSequence _xifexpression = null;
+      if ((current == null)) {
+        _xifexpression = null;
+      } else {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append(current.expression);
+        _builder.append(" := ");
+        Object _elvis = null;
+        if (defaultVal != null) {
+          _elvis = defaultVal;
+        } else {
+          _elvis = current.defaultValue;
+        }
+        _builder.append(_elvis);
+        _xifexpression = _builder;
+      }
+      _xblockexpression = _xifexpression;
+    }
+    return _xblockexpression;
   }
 
   public static Variable[] getVariables() {

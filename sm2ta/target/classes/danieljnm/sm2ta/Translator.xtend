@@ -52,18 +52,9 @@ class Translator {
 	        stateMachine.state(state.stateName)
 	        val stateTransitions = transitions.getOrDefault(state.stateName, newArrayList)
         	stateTransitions.forEach[transition |
-        		/*val test = state.actions.split(",")
-        				.map[action | functions.findFirst(function | function.function == action)?.assignment]
         		val actions = state.actions.split(",")
-        			.map[action | functions.findFirst(function | function.function == action)?.assignment]
-        			.filter[it !== null]*/
-        			if (!state.actions.isNullOrEmpty) {
-        				state.actions.split(",")
-        					.map[action | functions.findFirst(function | function.function == action)?.assignment]
-        					.filter[!it.isNullOrEmpty]
-        					.forEach[println(it)]
-        			}
-        			val actions = newArrayList
+				        .map[action | getAssignment(action, functions)]
+				        .filterNull
         		if (transition.event.startsWith("EvAll")) {
         			val conditions = reactors.filter[name == transition.reactor].map[new Condition(it)]
         			val guards = conditions.flatMap[condition | behaviours.getOrDefault(condition.clientBehaviour, newArrayList)
@@ -88,22 +79,41 @@ class Translator {
 	        	stateMachine.state(state.stateName)
 	            	.nesting[
 	                	childStates.forEach[nested |
+	                		val actions = nested.actions.split(",")
+						        .map[action | getAssignment(action, functions)]
+						        .filterNull
 	                		val nestedTransitions = transitions.getOrDefault(nested.stateName, newArrayList)
 	                    	nestedState(nested.stateName)
                     		nestedTransitions.forEach[transition |
                     			val target = states.findFirst[stateName == transition.target]
                     			if (target.namespace == nested.namespace) {
-                    				nestedState(nested.stateName).transition(transition.target)
+                    				nestedState(nested.stateName).transition(transition.target).action(actions.join(', '))
                     				return
                     			}
                     			nestedState(nested.stateName).transition('''«nested.namespace»«transition.message»''').signal(transition.message)
                     			nestedState('''«nested.namespace»«transition.message»''').committed
-                    			stateMachine.state(nested.namespace).transition(transition.target).when(transition.message)
+                    			stateMachine.state(nested.namespace).transition(transition.target).when(transition.message).action(actions.join(', '))
                     		]
 	            	]
 		    	]
 		    }
 	    ]
+	}
+	
+	def static getAssignment(String action, List<Function> functions) {
+	    var Function current = functions.findFirst[f | f.function == action]
+	    var Object defaultVal = null
+	    
+	    while (current !== null && current.type != "assignment") {
+	        if (defaultVal === null) {
+	            defaultVal = current.defaultValue
+	        }
+	        
+	        val currentExpr = current.expression
+	        current = functions.findFirst[f | f.function == currentExpr]
+	    }
+	    
+	    current === null ? null : '''«current.expression» := «defaultVal ?: current.defaultValue»'''
 	}
 	
 	def static getVariables() {
