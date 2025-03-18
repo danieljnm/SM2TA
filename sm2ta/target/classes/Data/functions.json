@@ -1,5 +1,17 @@
 [
   {
+    "clientName": "ClRosTimer",
+    "function": "onOrthogonalAllocation",
+    "expression": "postTimerEvent_",
+    "defaultValue": ""
+  },
+  {
+    "clientName": "ClBatteryManager",
+    "function": "publish_battery_level",
+    "expression": "data",
+    "defaultValue": ""
+  },
+  {
     "clientName": "ClBatteryManager",
     "function": "is_critical",
     "expression": "battery_level_ <= 0",
@@ -25,6 +37,12 @@
   },
   {
     "clientName": "ClBatteryManager",
+    "function": "set_battery_level",
+    "expression": "battery_level_",
+    "defaultValue": ""
+  },
+  {
+    "clientName": "ClBatteryManager",
     "function": "get_battery_level",
     "expression": "battery_level_",
     "defaultValue": ""
@@ -33,6 +51,18 @@
     "clientName": "ClOrderManager",
     "function": "onInitialize",
     "expression": 10,
+    "defaultValue": ""
+  },
+  {
+    "clientName": "ClOrderManager",
+    "function": "generate_random_orders",
+    "expression": "x",
+    "defaultValue": ""
+  },
+  {
+    "clientName": "ClOrderManager",
+    "function": "generate_random_orders",
+    "expression": "point",
     "defaultValue": ""
   },
   {
