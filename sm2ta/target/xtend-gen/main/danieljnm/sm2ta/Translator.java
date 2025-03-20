@@ -1,13 +1,13 @@
 package danieljnm.sm2ta;
 
 import com.google.gson.Gson;
-import danieljnm.sm2ta.Model.ClientBehaviour;
-import danieljnm.sm2ta.Model.Condition;
-import danieljnm.sm2ta.Model.Function;
-import danieljnm.sm2ta.Model.StateDefinition;
-import danieljnm.sm2ta.Model.StateReactor;
-import danieljnm.sm2ta.Model.Transition;
-import danieljnm.sm2ta.Model.Variable;
+import danieljnm.sm2ta.Dto.ClientBehaviourDto;
+import danieljnm.sm2ta.Dto.ConditionDto;
+import danieljnm.sm2ta.Dto.FunctionDto;
+import danieljnm.sm2ta.Dto.StateDto;
+import danieljnm.sm2ta.Dto.StateReactorDto;
+import danieljnm.sm2ta.Dto.TransitionDto;
+import danieljnm.sm2ta.Dto.VariableDto;
 import danieljnm.sm2ta.StateMachine.State;
 import danieljnm.sm2ta.StateMachine.StateMachine;
 import java.nio.file.Files;
@@ -36,134 +36,64 @@ public class Translator {
     InputOutput.<String>println(Translator.stateMachine.toXml());
   }
 
+  public static State process(final StateDto state) {
+    return Translator.stateMachine.state(state.stateName);
+  }
+
   public static void translate() {
-    final StateDefinition[] states = Translator.getStates();
-    final Function1<StateDefinition, Boolean> _function = (StateDefinition it) -> {
+    final Function1<StateDto, Boolean> _function = (StateDto it) -> {
       return Boolean.valueOf((it.initial && (!it.nestedInitial)));
     };
-    final StateDefinition initial = IterableExtensions.<StateDefinition>findFirst(((Iterable<StateDefinition>)Conversions.doWrapArray(states)), _function);
+    final StateDto initial = IterableExtensions.<StateDto>findFirst(((Iterable<StateDto>)Conversions.doWrapArray(Translator.getStates())), _function);
     Translator.stateMachine.name(initial.namespace).state(initial.stateName).initial();
-    Translator.setVariables(((List<Variable>)Conversions.doWrapArray(Translator.getVariables())));
-    Translator.setStates(((List<StateDefinition>)Conversions.doWrapArray(states)), initial.namespace);
+    Translator.setVariables(((List<VariableDto>)Conversions.doWrapArray(Translator.getVariables())));
+    Translator.setStates(initial.namespace);
   }
 
-  public static StateDefinition[] getStates() {
-    StateDefinition[] _xblockexpression = null;
-    {
-      final StateDefinition[] states = new Gson().<StateDefinition[]>fromJson(Translator.getJson("states"), StateDefinition[].class);
-      final Consumer<StateDefinition> _function = (StateDefinition it) -> {
-        it.convertName();
-      };
-      ((List<StateDefinition>)Conversions.doWrapArray(states)).forEach(_function);
-      _xblockexpression = states;
-    }
-    return _xblockexpression;
-  }
-
-  public static void setStates(final List<StateDefinition> states, final String namespace) {
-    final Function1<Transition, String> _function = (Transition it) -> {
-      return it.stateName;
-    };
-    final Map<String, List<Transition>> transitions = IterableExtensions.<String, Transition>groupBy(((Iterable<? extends Transition>)Conversions.doWrapArray(Translator.getTransitions())), _function);
-    final StateReactor[] reactors = Translator.getReactors();
-    final Function1<ClientBehaviour, String> _function_1 = (ClientBehaviour it) -> {
-      return it.name;
-    };
-    final Function1<List<ClientBehaviour>, List<ClientBehaviour>> _function_2 = (List<ClientBehaviour> it) -> {
-      return IterableExtensions.<ClientBehaviour>toList(it);
-    };
-    final Map<String, List<ClientBehaviour>> behaviours = MapExtensions.<String, List<ClientBehaviour>, List<ClientBehaviour>>mapValues(IterableExtensions.<String, ClientBehaviour>groupBy(((Iterable<? extends ClientBehaviour>)Conversions.doWrapArray(Translator.getBehaviours())), _function_1), _function_2);
-    final Function[] functions = Translator.getFunctions();
-    final Function1<StateDefinition, Boolean> _function_3 = (StateDefinition it) -> {
+  public static void setStates(final String namespace) {
+    final Map<String, List<TransitionDto>> transitions = Translator.getTransitions();
+    final FunctionDto[] functions = Translator.getFunctions();
+    final Function1<StateDto, Boolean> _function = (StateDto it) -> {
       return Boolean.valueOf(Objects.equals(it.namespace, namespace));
     };
-    final Iterable<StateDefinition> topLevelStates = IterableExtensions.<StateDefinition>filter(states, _function_3);
-    final Consumer<StateDefinition> _function_4 = (StateDefinition state) -> {
+    final Iterable<StateDto> topLevelStates = IterableExtensions.<StateDto>filter(((Iterable<StateDto>)Conversions.doWrapArray(Translator.getStates())), _function);
+    final Consumer<StateDto> _function_1 = (StateDto state) -> {
       Translator.stateMachine.state(state.stateName);
-      final List<Transition> stateTransitions = transitions.getOrDefault(state.stateName, CollectionLiterals.<Transition>newArrayList());
-      final Consumer<Transition> _function_5 = (Transition transition) -> {
-        final Function1<String, CharSequence> _function_6 = (String action) -> {
-          return Translator.getAssignment(action, ((List<Function>)Conversions.doWrapArray(functions)));
+      final List<TransitionDto> stateTransitions = transitions.getOrDefault(state.stateName, CollectionLiterals.<TransitionDto>newArrayList());
+      final Consumer<TransitionDto> _function_2 = (TransitionDto transition) -> {
+        final Function1<String, CharSequence> _function_3 = (String action) -> {
+          return Translator.getAssignment(action, ((List<FunctionDto>)Conversions.doWrapArray(functions)));
         };
-        final Iterable<CharSequence> actions = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(state.actions.split(","))), _function_6));
-        boolean _startsWith = transition.event.startsWith("EvAll");
-        if (_startsWith) {
-          final Function1<StateReactor, Boolean> _function_7 = (StateReactor it) -> {
-            String _reactor = transition.getReactor();
-            return Boolean.valueOf(Objects.equals(it.name, _reactor));
-          };
-          final Function1<StateReactor, Condition> _function_8 = (StateReactor it) -> {
-            return new Condition(it);
-          };
-          final Iterable<Condition> conditions = IterableExtensions.<StateReactor, Condition>map(IterableExtensions.<StateReactor>filter(((Iterable<StateReactor>)Conversions.doWrapArray(reactors)), _function_7), _function_8);
-          final Function1<Condition, Iterable<CharSequence>> _function_9 = (Condition condition) -> {
-            final Function1<ClientBehaviour, Boolean> _function_10 = (ClientBehaviour it) -> {
-              boolean _equals = Objects.equals(it.event, "postSuccessEvent");
-              return Boolean.valueOf((condition.requiresSuccess == _equals));
-            };
-            final Function1<ClientBehaviour, CharSequence> _function_11 = (ClientBehaviour behaviour) -> {
-              final Function1<Function, Boolean> _function_12 = (Function function) -> {
-                return Boolean.valueOf(Objects.equals(function.function, behaviour.methodName));
-              };
-              Function _findFirst = IterableExtensions.<Function>findFirst(((Iterable<Function>)Conversions.doWrapArray(functions)), _function_12);
-              CharSequence _convertedExpression = null;
-              if (_findFirst!=null) {
-                _convertedExpression=_findFirst.convertedExpression(condition.requiresSuccess);
-              }
-              return _convertedExpression;
-            };
-            return IterableExtensions.<ClientBehaviour, CharSequence>map(IterableExtensions.<ClientBehaviour>filter(behaviours.getOrDefault(condition.clientBehaviour, CollectionLiterals.<ClientBehaviour>newArrayList()), _function_10), _function_11);
-          };
-          final Iterable<CharSequence> guards = IterableExtensions.<Condition, CharSequence>flatMap(conditions, _function_9);
-          Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; ")).action(IterableExtensions.join(actions, ", "));
-          return;
-        }
-        final Function1<ClientBehaviour, Boolean> _function_10 = (ClientBehaviour it) -> {
-          boolean _startsWith_1 = transition.event.startsWith("EvCbSuccess");
-          boolean _equals = Objects.equals(it.event, "postSuccessEvent");
-          return Boolean.valueOf((_startsWith_1 == _equals));
-        };
-        final Function1<ClientBehaviour, CharSequence> _function_11 = (ClientBehaviour behaviour) -> {
-          final Function1<Function, Boolean> _function_12 = (Function it) -> {
-            return Boolean.valueOf(Objects.equals(it.function, behaviour.methodName));
-          };
-          Function _findFirst = IterableExtensions.<Function>findFirst(((Iterable<Function>)Conversions.doWrapArray(functions)), _function_12);
-          CharSequence _convertedExpression = null;
-          if (_findFirst!=null) {
-            _convertedExpression=_findFirst.convertedExpression(behaviour.inIf);
-          }
-          return _convertedExpression;
-        };
-        final Iterable<CharSequence> conditions_1 = IterableExtensions.<ClientBehaviour, CharSequence>map(IterableExtensions.<ClientBehaviour>filter(behaviours.getOrDefault(transition.getClientBehaviour(), CollectionLiterals.<ClientBehaviour>newArrayList()), _function_10), _function_11);
-        Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(conditions_1, " &amp;&amp; ")).action(IterableExtensions.join(actions, ", "));
+        final Iterable<CharSequence> actions = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(state.actions.split(","))), _function_3));
+        final Iterable<CharSequence> guards = Translator.getGuards(transition);
+        Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; ")).action(IterableExtensions.join(actions, ", "));
       };
-      stateTransitions.forEach(_function_5);
+      stateTransitions.forEach(_function_2);
       final String nestedNamespace = state.stateName;
-      final Function1<StateDefinition, Boolean> _function_6 = (StateDefinition it) -> {
+      final Function1<StateDto, Boolean> _function_3 = (StateDto it) -> {
         return Boolean.valueOf(Objects.equals(it.namespace, nestedNamespace));
       };
-      final Function1<StateDefinition, Boolean> _function_7 = (StateDefinition it) -> {
+      final Function1<StateDto, Boolean> _function_4 = (StateDto it) -> {
         return Boolean.valueOf((!it.nestedInitial));
       };
-      final List<StateDefinition> childStates = IterableExtensions.<StateDefinition, Boolean>sortBy(IterableExtensions.<StateDefinition>filter(states, _function_6), _function_7);
+      final List<StateDto> childStates = IterableExtensions.<StateDto, Boolean>sortBy(IterableExtensions.<StateDto>filter(((Iterable<StateDto>)Conversions.doWrapArray(Translator.getStates())), _function_3), _function_4);
       boolean _isEmpty = childStates.isEmpty();
       boolean _not = (!_isEmpty);
       if (_not) {
-        final Procedure1<State> _function_8 = (State it) -> {
-          final Consumer<StateDefinition> _function_9 = (StateDefinition nested) -> {
-            final Function1<String, CharSequence> _function_10 = (String action) -> {
-              return Translator.getAssignment(action, ((List<Function>)Conversions.doWrapArray(functions)));
+        final Procedure1<State> _function_5 = (State it) -> {
+          final Consumer<StateDto> _function_6 = (StateDto nested) -> {
+            final Function1<String, CharSequence> _function_7 = (String action) -> {
+              return Translator.getAssignment(action, ((List<FunctionDto>)Conversions.doWrapArray(functions)));
             };
-            final Iterable<CharSequence> actions = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(nested.actions.split(","))), _function_10));
-            final List<Transition> nestedTransitions = transitions.getOrDefault(nested.stateName, CollectionLiterals.<Transition>newArrayList());
+            final Iterable<CharSequence> actions = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(nested.actions.split(","))), _function_7));
+            final List<TransitionDto> nestedTransitions = transitions.getOrDefault(nested.stateName, CollectionLiterals.<TransitionDto>newArrayList());
             it.nestedState(nested.stateName);
-            final Consumer<Transition> _function_11 = (Transition transition) -> {
-              final Function1<StateDefinition, Boolean> _function_12 = (StateDefinition it_1) -> {
+            final Consumer<TransitionDto> _function_8 = (TransitionDto transition) -> {
+              final Function1<StateDto, Boolean> _function_9 = (StateDto it_1) -> {
                 return Boolean.valueOf(Objects.equals(it_1.stateName, transition.target));
               };
-              final StateDefinition target = IterableExtensions.<StateDefinition>findFirst(states, _function_12);
-              boolean _equals = Objects.equals(target.namespace, nested.namespace);
-              if (_equals) {
+              final StateDto target = IterableExtensions.<StateDto>findFirst(((Iterable<StateDto>)Conversions.doWrapArray(Translator.getStates())), _function_9);
+              if (((target != null) && Objects.equals(target.namespace, nested.namespace))) {
                 it.nestedState(nested.stateName).transition(transition.target).action(IterableExtensions.join(actions, ", "));
                 return;
               }
@@ -180,23 +110,91 @@ public class Translator {
               it.nestedState(_builder_1.toString()).committed();
               Translator.stateMachine.state(nested.namespace).transition(transition.target).when(transition.message()).action(IterableExtensions.join(actions, ", "));
             };
-            nestedTransitions.forEach(_function_11);
+            nestedTransitions.forEach(_function_8);
           };
-          childStates.forEach(_function_9);
+          childStates.forEach(_function_6);
         };
-        Translator.stateMachine.state(state.stateName).nesting(_function_8);
+        Translator.stateMachine.state(state.stateName).nesting(_function_5);
       }
     };
-    topLevelStates.forEach(_function_4);
+    topLevelStates.forEach(_function_1);
   }
 
-  public static CharSequence getAssignment(final String action, final List<Function> functions) {
+  public static Iterable<CharSequence> getGuards(final TransitionDto transition) {
+    Iterable<CharSequence> _xifexpression = null;
+    boolean _isReactorTransition = transition.isReactorTransition();
+    if (_isReactorTransition) {
+      _xifexpression = Translator.map(Translator.getConditions(transition));
+    } else {
+      _xifexpression = Translator.map(transition);
+    }
+    return _xifexpression;
+  }
+
+  public static Iterable<ConditionDto> getConditions(final TransitionDto transition) {
+    final Function1<StateReactorDto, Boolean> _function = (StateReactorDto it) -> {
+      return Boolean.valueOf(Objects.equals(it.name, transition.reactor));
+    };
+    final Function1<StateReactorDto, ConditionDto> _function_1 = (StateReactorDto it) -> {
+      return new ConditionDto(it);
+    };
+    return IterableExtensions.<StateReactorDto, ConditionDto>map(IterableExtensions.<StateReactorDto>filter(((Iterable<StateReactorDto>)Conversions.doWrapArray(Translator.getReactors())), _function), _function_1);
+  }
+
+  public static Iterable<CharSequence> map(final Iterable<ConditionDto> conditions) {
+    final Function1<ConditionDto, Iterable<CharSequence>> _function = (ConditionDto condition) -> {
+      return Translator.map(Translator.getBehaviours().getOrDefault(condition.clientBehaviour, CollectionLiterals.<ClientBehaviourDto>newArrayList()), condition.requiresSuccess);
+    };
+    return IterableExtensions.<ConditionDto, CharSequence>flatMap(conditions, _function);
+  }
+
+  public static Iterable<CharSequence> map(final TransitionDto transition) {
+    return Translator.map(Translator.getClientBehaviours(transition), transition.requiresSuccess());
+  }
+
+  public static List<ClientBehaviourDto> getClientBehaviours(final TransitionDto transition) {
+    return Translator.getBehaviours().getOrDefault(transition.clientBehaviour, CollectionLiterals.<ClientBehaviourDto>newArrayList());
+  }
+
+  public static Iterable<CharSequence> map(final Iterable<ClientBehaviourDto> clientBehaviours, final boolean requiresSuccess) {
+    final Function1<ClientBehaviourDto, Boolean> _function = (ClientBehaviourDto it) -> {
+      boolean _equals = Objects.equals(it.event, "postSuccessEvent");
+      return Boolean.valueOf((requiresSuccess == _equals));
+    };
+    final Function1<ClientBehaviourDto, CharSequence> _function_1 = (ClientBehaviourDto behaviour) -> {
+      final Function1<FunctionDto, Boolean> _function_2 = (FunctionDto it) -> {
+        return Boolean.valueOf(Objects.equals(it.function, behaviour.methodName));
+      };
+      FunctionDto _findFirst = IterableExtensions.<FunctionDto>findFirst(((Iterable<FunctionDto>)Conversions.doWrapArray(Translator.getFunctions())), _function_2);
+      CharSequence _convertedExpression = null;
+      if (_findFirst!=null) {
+        _convertedExpression=_findFirst.convertedExpression(behaviour.inIf);
+      }
+      return _convertedExpression;
+    };
+    return IterableExtensions.<ClientBehaviourDto, CharSequence>map(IterableExtensions.<ClientBehaviourDto>filter(clientBehaviours, _function), _function_1);
+  }
+
+  public static StateDto[] getStates() {
+    StateDto[] _xblockexpression = null;
+    {
+      final StateDto[] states = new Gson().<StateDto[]>fromJson(Translator.getJson("states"), StateDto[].class);
+      final Consumer<StateDto> _function = (StateDto it) -> {
+        it.stateName = it.convert(it.stateName);
+      };
+      ((List<StateDto>)Conversions.doWrapArray(states)).forEach(_function);
+      _xblockexpression = states;
+    }
+    return _xblockexpression;
+  }
+
+  public static CharSequence getAssignment(final String action, final List<FunctionDto> functions) {
     CharSequence _xblockexpression = null;
     {
-      final Function1<Function, Boolean> _function = (Function f) -> {
+      final Function1<FunctionDto, Boolean> _function = (FunctionDto f) -> {
         return Boolean.valueOf((Objects.equals(f.function, action) && (!Objects.equals(f.type, "return"))));
       };
-      Function current = IterableExtensions.<Function>findFirst(functions, _function);
+      FunctionDto current = IterableExtensions.<FunctionDto>findFirst(functions, _function);
       Object defaultVal = null;
       while (((current != null) && (!Objects.equals(current.type, "assignment")))) {
         {
@@ -204,10 +202,10 @@ public class Translator {
             defaultVal = current.defaultValue;
           }
           final String currentExpr = current.expression;
-          final Function1<Function, Boolean> _function_1 = (Function f) -> {
+          final Function1<FunctionDto, Boolean> _function_1 = (FunctionDto f) -> {
             return Boolean.valueOf(Objects.equals(f.function, currentExpr));
           };
-          current = IterableExtensions.<Function>findFirst(functions, _function_1);
+          current = IterableExtensions.<FunctionDto>findFirst(functions, _function_1);
         }
       }
       CharSequence _xifexpression = null;
@@ -231,12 +229,12 @@ public class Translator {
     return _xblockexpression;
   }
 
-  public static Variable[] getVariables() {
-    return new Gson().<Variable[]>fromJson(Translator.getJson("variables"), Variable[].class);
+  public static VariableDto[] getVariables() {
+    return new Gson().<VariableDto[]>fromJson(Translator.getJson("variables"), VariableDto[].class);
   }
 
-  public static void setVariables(final List<Variable> variables) {
-    final Consumer<Variable> _function = (Variable variableDefinition) -> {
+  public static void setVariables(final List<VariableDto> variables) {
+    final Consumer<VariableDto> _function = (VariableDto variableDefinition) -> {
       final Procedure1<StateMachine> _function_1 = (StateMachine it) -> {
         it.variable(variableDefinition.variable).type(variableDefinition.convertedType()).value(variableDefinition.initializedValue());
       };
@@ -245,28 +243,36 @@ public class Translator {
     variables.forEach(_function);
   }
 
-  public static StateReactor[] getReactors() {
-    return new Gson().<StateReactor[]>fromJson(Translator.getJson("state_reactors"), StateReactor[].class);
+  public static StateReactorDto[] getReactors() {
+    return new Gson().<StateReactorDto[]>fromJson(Translator.getJson("state_reactors"), StateReactorDto[].class);
   }
 
-  public static ClientBehaviour[] getBehaviours() {
-    return new Gson().<ClientBehaviour[]>fromJson(Translator.getJson("client_behaviours"), ClientBehaviour[].class);
+  public static Map<String, List<ClientBehaviourDto>> getBehaviours() {
+    final Function1<ClientBehaviourDto, String> _function = (ClientBehaviourDto it) -> {
+      return it.name;
+    };
+    final Function1<List<ClientBehaviourDto>, List<ClientBehaviourDto>> _function_1 = (List<ClientBehaviourDto> it) -> {
+      return IterableExtensions.<ClientBehaviourDto>toList(it);
+    };
+    return MapExtensions.<String, List<ClientBehaviourDto>, List<ClientBehaviourDto>>mapValues(IterableExtensions.<String, ClientBehaviourDto>groupBy(((Iterable<? extends ClientBehaviourDto>)Conversions.doWrapArray(new Gson().<ClientBehaviourDto[]>fromJson(Translator.getJson("client_behaviours"), ClientBehaviourDto[].class))), _function), _function_1);
   }
 
-  public static Function[] getFunctions() {
-    return new Gson().<Function[]>fromJson(Translator.getJson("functions"), Function[].class);
+  public static FunctionDto[] getFunctions() {
+    return new Gson().<FunctionDto[]>fromJson(Translator.getJson("functions"), FunctionDto[].class);
   }
 
-  public static Transition[] getTransitions() {
-    Transition[] _xblockexpression = null;
+  public static Map<String, List<TransitionDto>> getTransitions() {
+    Map<String, List<TransitionDto>> _xblockexpression = null;
     {
-      Transition[] transitions = new Gson().<Transition[]>fromJson(Translator.getJson("transitions"), Transition[].class);
-      final Transition[] _converted_transitions = (Transition[])transitions;
-      final Consumer<Transition> _function = (Transition it) -> {
+      final TransitionDto[] transitions = new Gson().<TransitionDto[]>fromJson(Translator.getJson("transitions"), TransitionDto[].class);
+      final Consumer<TransitionDto> _function = (TransitionDto it) -> {
         it.convert();
       };
-      ((List<Transition>)Conversions.doWrapArray(_converted_transitions)).forEach(_function);
-      _xblockexpression = transitions;
+      ((List<TransitionDto>)Conversions.doWrapArray(transitions)).forEach(_function);
+      final Function1<TransitionDto, String> _function_1 = (TransitionDto it) -> {
+        return it.stateName;
+      };
+      _xblockexpression = IterableExtensions.<String, TransitionDto>groupBy(((Iterable<? extends TransitionDto>)Conversions.doWrapArray(transitions)), _function_1);
     }
     return _xblockexpression;
   }

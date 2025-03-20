@@ -1,17 +1,17 @@
 package danieljnm.sm2ta
 
 import com.google.gson.Gson
-import danieljnm.sm2ta.Model.StateDefinition
-import danieljnm.sm2ta.Model.Variable
-import danieljnm.sm2ta.Model.Transition
-import danieljnm.sm2ta.Model.ClientBehaviour
-import danieljnm.sm2ta.Model.Function
-import danieljnm.sm2ta.Model.StateReactor
 import danieljnm.sm2ta.StateMachine.StateMachine
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.List
-import danieljnm.sm2ta.Model.Condition
+import danieljnm.sm2ta.Dto.ClientBehaviourDto
+import danieljnm.sm2ta.Dto.ConditionDto
+import danieljnm.sm2ta.Dto.FunctionDto
+import danieljnm.sm2ta.Dto.StateReactorDto
+import danieljnm.sm2ta.Dto.TransitionDto
+import danieljnm.sm2ta.Dto.VariableDto
+import danieljnm.sm2ta.Dto.StateDto
 
 class Translator {
 	static StateMachine stateMachine = new StateMachine()
@@ -24,25 +24,21 @@ class Translator {
 		println(stateMachine.toXml)
 	}
 	
+	def static process(StateDto state) {
+		stateMachine.state(state.stateName)
+	}
+	
 	def static void translate() {
-		val states = states
+		
 		val initial = states.findFirst[initial && !nestedInitial]
 		stateMachine.name(initial.namespace)
 			.state(initial.stateName).initial
 		variables.setVariables
-		states.setStates(initial.namespace)
+		initial.namespace.setStates
 	}
 	
-	def static getStates() {
-		val states = new Gson().fromJson(getJson("states"), typeof(StateDefinition[]))
-		states.forEach[it.convertName]
-		states
-	}
-	
-	def static setStates(List<StateDefinition> states, String namespace) {
-		val transitions = transitions.groupBy[stateName]
-		val reactors = reactors
-		val behaviours = behaviours.groupBy[name].mapValues[toList]
+	def static setStates(String namespace) {
+		val transitions = transitions
 		val functions = functions
 		val topLevelStates = states.filter[it.namespace == namespace]
     	topLevelStates.forEach[state |
@@ -52,22 +48,9 @@ class Translator {
         		val actions = state.actions.split(",")
 				        .map[action | getAssignment(action, functions)]
 				        .filterNull
-        		if (transition.event.startsWith("EvAll")) {
-        			val conditions = reactors.filter[name == transition.reactor].map[new Condition(it)]
-        			val guards = conditions.flatMap[condition | behaviours.getOrDefault(condition.clientBehaviour, newArrayList)
-        				.filter[condition.requiresSuccess == (event == "postSuccessEvent")]
-        				.map[behaviour | functions.findFirst[function | function.function == behaviour.methodName]?.convertedExpression(condition.requiresSuccess)]
-        			]
-        			stateMachine.state(state.stateName)
-        				.transition(transition.target).guard(guards.join(' &amp;&amp; ')).action(actions.join(', '))
-        			return
-        		}
-        		val conditions = behaviours.getOrDefault(transition.clientBehaviour, newArrayList)
-        				.filter[transition.event.startsWith("EvCbSuccess") == (event == "postSuccessEvent")]
-        				.map[behaviour | functions.findFirst[function == behaviour.methodName]?.convertedExpression(behaviour.inIf)]
-        		
+				val guards = transition.guards
         		stateMachine.state(state.stateName)
-        			.transition(transition.target).guard(conditions.join(' &amp;&amp; ')).action(actions.join(', '))
+        			.transition(transition.target).guard(guards.join(' &amp;&amp; ')).action(actions.join(', '))
         	]
 
 	        val nestedNamespace = state.stateName
@@ -83,7 +66,7 @@ class Translator {
 	                    	nestedState(nested.stateName)
                     		nestedTransitions.forEach[transition |
                     			val target = states.findFirst[stateName == transition.target]
-                    			if (target.namespace == nested.namespace) {
+                    			if (target !== null && target.namespace == nested.namespace) {
                     				nestedState(nested.stateName).transition(transition.target).action(actions.join(', '))
                     				return
                     			}
@@ -97,8 +80,43 @@ class Translator {
 	    ]
 	}
 	
-	def static getAssignment(String action, List<Function> functions) {
-	    var Function current = functions.findFirst[f | f.function == action && f.type != "return"]
+	def static getGuards(TransitionDto transition) {
+		transition.isReactorTransition ?
+			transition.conditions.map		
+			: transition.map
+	}
+	
+	def static getConditions(TransitionDto transition) {
+		reactors.filter[name == transition.reactor].map[new ConditionDto(it)]
+	}
+	
+	def static map(Iterable<ConditionDto> conditions) {
+		conditions.flatMap[condition | 
+			behaviours.getOrDefault(condition.clientBehaviour, newArrayList).map(condition.requiresSuccess)
+		]
+	}
+	
+	def static map(TransitionDto transition) {
+		transition.clientBehaviours.map(transition.requiresSuccess)
+	}
+	
+	def static getClientBehaviours(TransitionDto transition) {
+		behaviours.getOrDefault(transition.clientBehaviour, newArrayList)
+	}
+	
+	def static map(Iterable<ClientBehaviourDto> clientBehaviours, boolean requiresSuccess) {
+		clientBehaviours.filter[requiresSuccess == (event == "postSuccessEvent")]
+        		.map[behaviour | functions.findFirst[function == behaviour.methodName]?.convertedExpression(behaviour.inIf)]
+	}
+	
+	def static getStates() {
+		val states = new Gson().fromJson(getJson("states"), typeof(StateDto[]))
+		states.forEach[stateName = convert(stateName)]
+		states
+	}
+		
+	def static getAssignment(String action, List<FunctionDto> functions) {
+	    var FunctionDto current = functions.findFirst[f | f.function == action && f.type != "return"]
 	    var Object defaultVal = null
 	    
 	    while (current !== null && current.type != "assignment") {
@@ -114,10 +132,10 @@ class Translator {
 	}
 	
 	def static getVariables() {
-		new Gson().fromJson(getJson("variables"), typeof(Variable[]))
+		new Gson().fromJson(getJson("variables"), typeof(VariableDto[]))
 	}
 	
-	def static setVariables(List<Variable> variables) {
+	def static setVariables(List<VariableDto> variables) {
 		variables.forEach[variableDefinition |
 			stateMachine.variables[
 				variable(variableDefinition.variable).type(variableDefinition.convertedType).value(variableDefinition.initializedValue)
@@ -127,21 +145,22 @@ class Translator {
 	}
 	
 	def static getReactors() {
-		new Gson().fromJson(getJson("state_reactors"), typeof(StateReactor[]))
+		new Gson().fromJson(getJson("state_reactors"), typeof(StateReactorDto[]))
 	}
 	
 	def static getBehaviours() {
-		new Gson().fromJson(getJson("client_behaviours"), typeof(ClientBehaviour[]))
+		new Gson().fromJson(getJson("client_behaviours"), typeof(ClientBehaviourDto[]))
+			.groupBy[name].mapValues[toList]
 	}
 	
 	def static getFunctions() {
-		new Gson().fromJson(getJson("functions"), typeof(Function[]))
+		new Gson().fromJson(getJson("functions"), typeof(FunctionDto[]))
 	}
 	
 	def static getTransitions() {
-		var transitions = new Gson().fromJson(getJson("transitions"), typeof(Transition[]))
+		val transitions = new Gson().fromJson(getJson("transitions"), typeof(TransitionDto[]))
 		transitions.forEach[convert]
-		transitions
+		transitions.groupBy[stateName]
 	}
 	
 	def static getJson(String file) {
