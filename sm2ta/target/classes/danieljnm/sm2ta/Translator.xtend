@@ -29,7 +29,6 @@ class Translator {
 	}
 	
 	def static void translate() {
-		
 		val initial = states.findFirst[initial && !nestedInitial]
 		stateMachine.name(initial.namespace)
 			.state(initial.stateName).initial
