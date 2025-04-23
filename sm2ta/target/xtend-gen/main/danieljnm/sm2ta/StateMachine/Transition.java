@@ -8,6 +8,7 @@ import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.Functions.Function2;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 
 @SuppressWarnings("all")
 public class Transition {
@@ -50,11 +51,11 @@ public class Transition {
   public boolean hasGuard() {
     boolean _xblockexpression = false;
     {
-      if ((this.guard != null)) {
+      if (((this.guard != null) && (!StringExtensions.isNullOrEmpty(this.guard)))) {
         int _y = this.y;
         this.y = (_y + this.spacing);
       }
-      _xblockexpression = (this.guard != null);
+      _xblockexpression = ((this.guard != null) && (!StringExtensions.isNullOrEmpty(this.guard)));
     }
     return _xblockexpression;
   }
@@ -121,7 +122,7 @@ public class Transition {
       if (_exists) {
         assigns.add("gen_clock := 0");
       }
-      if ((this.action != null)) {
+      if (((this.action != null) && (!StringExtensions.isNullOrEmpty(this.action)))) {
         assigns.add(this.action);
       }
       _xblockexpression = assigns;
@@ -142,7 +143,7 @@ public class Transition {
     final Function2<Integer, Integer, Integer> _function_1 = (Integer value, Integer next) -> {
       return Integer.valueOf(((value).intValue() + (next).intValue()));
     };
-    return IterableExtensions.<Integer>reduce(ListExtensions.<Boolean, Integer>map(Collections.<Boolean>unmodifiableList(CollectionLiterals.<Boolean>newArrayList(Boolean.valueOf((this.guard != null)), Boolean.valueOf((this.timeout > 0)), Boolean.valueOf((this.signal != null)), Boolean.valueOf((this.when != null)))), _function), _function_1);
+    return IterableExtensions.<Integer>reduce(ListExtensions.<Boolean, Integer>map(Collections.<Boolean>unmodifiableList(CollectionLiterals.<Boolean>newArrayList(Boolean.valueOf(((this.guard != null) && (!StringExtensions.isNullOrEmpty(this.guard)))), Boolean.valueOf((this.timeout > 0)), Boolean.valueOf((this.signal != null)), Boolean.valueOf((this.when != null)))), _function), _function_1);
   }
 
   public Object guardValue() {

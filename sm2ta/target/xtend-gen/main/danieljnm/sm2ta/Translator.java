@@ -66,7 +66,16 @@ public class Translator {
         };
         final Iterable<CharSequence> actions = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(state.actions.split(","))), _function_3));
         final Iterable<CharSequence> guards = Translator.getGuards(transition);
-        Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; ")).action(IterableExtensions.join(actions, ", "));
+        State _guard = Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; "));
+        int _xifexpression = (int) 0;
+        int _length = ((Object[])Conversions.unwrapArray(guards, Object.class)).length;
+        boolean _greaterThan = (_length > 0);
+        if (_greaterThan) {
+          _xifexpression = 0;
+        } else {
+          _xifexpression = 1;
+        }
+        _guard.timeout(_xifexpression).action(IterableExtensions.join(actions, ", "));
       };
       stateTransitions.forEach(_function_2);
       final String nestedNamespace = state.stateName;
@@ -94,7 +103,7 @@ public class Translator {
               };
               final StateDto target = IterableExtensions.<StateDto>findFirst(((Iterable<StateDto>)Conversions.doWrapArray(Translator.getStates())), _function_9);
               if (((target != null) && Objects.equals(target.namespace, nested.namespace))) {
-                it.nestedState(nested.stateName).transition(transition.target).action(IterableExtensions.join(actions, ", "));
+                it.nestedState(nested.stateName).transition(transition.target).timeout(1).action(IterableExtensions.join(actions, ", "));
                 return;
               }
               State _nestedState = it.nestedState(nested.stateName);

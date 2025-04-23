@@ -23,10 +23,10 @@ class Transition {
 	}
 	
 	def hasGuard() {
-		if (guard !== null) {
+		if (guard !== null && !guard.nullOrEmpty) {
 			y += spacing
 		}
-		guard !== null
+		guard !== null && !guard.nullOrEmpty
 	}
 	
 	def hasTimeout() {
@@ -66,7 +66,7 @@ class Transition {
 		if (target.transitions.exists[timeout > 0])
 			assigns.add('gen_clock := 0')
 			
-		if (action !== null)
+		if (action !== null && !action.nullOrEmpty)
 			assigns.add(action)
 		
 		assigns
@@ -74,7 +74,7 @@ class Transition {
 	
 	def properties() {
     	#[
-	        guard !== null,
+	        guard !== null && !guard.nullOrEmpty,
 	        timeout > 0,
 	        signal !== null,
 	        when !== null

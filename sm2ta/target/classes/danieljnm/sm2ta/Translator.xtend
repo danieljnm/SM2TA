@@ -49,7 +49,7 @@ class Translator {
 				        .filterNull
 				val guards = transition.guards
         		stateMachine.state(state.stateName)
-        			.transition(transition.target).guard(guards.join(' &amp;&amp; ')).action(actions.join(', '))
+        			.transition(transition.target).guard(guards.join(' &amp;&amp; ')).timeout(guards.length > 0 ? 0 : 1).action(actions.join(', '))
         	]
 
 	        val nestedNamespace = state.stateName
@@ -66,7 +66,7 @@ class Translator {
                     		nestedTransitions.forEach[transition |
                     			val target = states.findFirst[stateName == transition.target]
                     			if (target !== null && target.namespace == nested.namespace) {
-                    				nestedState(nested.stateName).transition(transition.target).action(actions.join(', '))
+                    				nestedState(nested.stateName).transition(transition.target).timeout(1).action(actions.join(', ')) // what about guards?
                     				return
                     			}
                     			nestedState(nested.stateName).transition('''«nested.namespace»«transition.message»''').signal(transition.message)
