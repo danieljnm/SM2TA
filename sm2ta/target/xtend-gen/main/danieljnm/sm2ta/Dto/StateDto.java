@@ -12,6 +12,10 @@ public class StateDto {
 
   public String actions;
 
+  public int timer;
+
+  public boolean committed;
+
   public String convert(final String value) {
     String _xblockexpression = null;
     {

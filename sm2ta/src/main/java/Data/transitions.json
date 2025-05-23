@@ -11,16 +11,6 @@
   },
   {
     "stateName": "StQueue",
-    "event": "EvCbFailure<CbIsAtBase, OrNavigation>",
-    "target": "StNavigateToBase"
-  },
-  {
-    "stateName": "StQueue",
-    "event": "EvAllGo<SrAllEventsGo, SrReadyToCharge>",
-    "target": "StRecharge"
-  },
-  {
-    "stateName": "StQueue",
     "event": "EvCbSuccess<CbRechargeRequired, OrBatteryManager>",
     "target": "StNavigateToBase"
   },
@@ -30,9 +20,24 @@
     "target": "SsProcessOrder"
   },
   {
+    "stateName": "StQueue",
+    "event": "EvAllGo<SrAllEventsGo, SrReadyToTakeOrders>",
+    "target": "StNavigateToBase"
+  },
+  {
     "stateName": "StNavigateToBase",
     "event": "EvCbSuccess<CbNavigateGlobalPosition, OrNavigation>",
+    "target": "StAtBase"
+  },
+  {
+    "stateName": "StAtBase",
+    "event": "EvAllGo<SrAllEventsGo, SrReadyToProcess>",
     "target": "StQueue"
+  },
+  {
+    "stateName": "StAtBase",
+    "event": "EvCbSuccess<CbRechargeRequired, OrBatteryManager>",
+    "target": "StRecharge"
   },
   {
     "stateName": "StRecharge",

@@ -31,6 +31,7 @@ class Template {
 		]
 		if (state.transitions.empty && state.isCommitted) {
 			val transitionToInitial = new Transition(state.name, "gen_init")
+			transitionToInitial.labels.add(new Label("synchronisation", "Success!"))
 			transitions.add(transitionToInitial)
 		}
 	}

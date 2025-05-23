@@ -6,6 +6,8 @@ class StateDto {
 	public boolean initial
 	public boolean nestedInitial
 	public String actions
+	public int timer
+	public boolean committed
 	
 	def convert(String value) {
 		val index = value.indexOf("<")

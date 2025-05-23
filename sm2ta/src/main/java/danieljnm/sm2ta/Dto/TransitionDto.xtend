@@ -15,6 +15,10 @@ class TransitionDto {
 		event.startsWith("EvCbSuccess")
 	}
 	
+	def boolean isTimer() {
+		event.startsWith("EvTimer")
+	}
+	
 	def String message() {
 		switch (event.toLowerCase) {
 			case event.toLowerCase.contains("success"): return "Success"

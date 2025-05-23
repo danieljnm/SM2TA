@@ -18,6 +18,18 @@ class Translator {
 	
 	def static void main(String[] args) {
 		//stateMachine = regular
+/*stateMachine.name("Turtlebot")
+	.variables[
+		variable("is_at_base_").type("bool").value("true")
+	]
+	.state("Idle").initial
+		.transition("Move").when("Ready").action("is_at_base_ := false")
+	.state("Move")
+		.nesting[
+			nestedState("NextPosition").transition("Arrived").guard("is_base_base_ == false").timeout(1)
+			nestedState("Arrived").committed()
+		]
+	.transition("Idle").when("Success")*/
 		translate()
 		//reset()
 		//withBasicNesting()
@@ -41,15 +53,16 @@ class Translator {
 		val functions = functions
 		val topLevelStates = states.filter[it.namespace == namespace]
     	topLevelStates.forEach[state |
-	        stateMachine.state(state.stateName)
+	        stateMachine.state(state.stateName).committed(state.committed)
 	        val stateTransitions = transitions.getOrDefault(state.stateName, newArrayList)
         	stateTransitions.forEach[transition |
         		val actions = state.actions.split(",")
 				        .map[action | getAssignment(action, functions)]
 				        .filterNull
 				val guards = transition.guards
+				val timeout = transition.isTimer ? state.timer : 0
         		stateMachine.state(state.stateName)
-        			.transition(transition.target).guard(guards.join(' &amp;&amp; ')).timeout(guards.length > 0 ? 0 : 1).action(actions.join(', '))
+        			.transition(transition.target).guard(guards.join(' &amp;&amp; ')).timeout(timeout).action(actions.join(', '))
         	]
 
 	        val nestedNamespace = state.stateName
@@ -62,14 +75,16 @@ class Translator {
 						        .map[action | getAssignment(action, functions)]
 						        .filterNull
 	                		val nestedTransitions = transitions.getOrDefault(nested.stateName, newArrayList)
-	                    	nestedState(nested.stateName)
+	                    	nestedState(nested.stateName).committed(nested.committed)
                     		nestedTransitions.forEach[transition |
                     			val target = states.findFirst[stateName == transition.target]
                     			if (target !== null && target.namespace == nested.namespace) {
-                    				nestedState(nested.stateName).transition(transition.target).timeout(1).action(actions.join(', ')) // what about guards?
+                    				val guards = transition.guards
+                    				val timeout = transition.isTimer ? nested.timer : 0
+                    				nestedState(nested.stateName).transition(transition.target).guard(guards.join(' &amp;&amp; ')).timeout(timeout).action(actions.join(', '))
                     				return
                     			}
-                    			nestedState(nested.stateName).transition('''«nested.namespace»«transition.message»''').signal(transition.message)
+                    			nestedState(nested.stateName).transition('''«nested.namespace»«transition.message»''')
                     			nestedState('''«nested.namespace»«transition.message»''').committed
                     			stateMachine.state(nested.namespace).transition(transition.target).when(transition.message).action(actions.join(', '))
                     		]

@@ -20,6 +20,10 @@ public class TransitionDto {
     return this.event.startsWith("EvCbSuccess");
   }
 
+  public boolean isTimer() {
+    return this.event.startsWith("EvTimer");
+  }
+
   public String message() {
     String _lowerCase = this.event.toLowerCase();
     boolean _matched = false;

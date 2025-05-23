@@ -45,7 +45,7 @@
     "clientName": "ClBatteryManager",
     "function": "set_battery_level",
     "expression": "battery_level_",
-    "defaultValue": "level",
+    "defaultValue": "call to clamp",
     "type": "assignment"
   },
   {

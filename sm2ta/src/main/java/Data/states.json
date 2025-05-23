@@ -4,62 +4,89 @@
     "namespace": "Tbot",
     "initial": false,
     "nestedInitial": false,
-    "actions": ""
+    "actions": "",
+    "timer": 0,
+    "committed": false
   },
   {
     "stateName": "StStartup",
     "namespace": "Tbot",
     "initial": true,
     "nestedInitial": false,
-    "actions": ""
+    "actions": "",
+    "timer": 0,
+    "committed": true
   },
   {
     "stateName": "StQueue",
     "namespace": "Tbot",
     "initial": false,
     "nestedInitial": false,
-    "actions": ""
+    "actions": "",
+    "timer": 0,
+    "committed": false
   },
   {
     "stateName": "StNavigateToBase",
     "namespace": "Tbot",
     "initial": false,
     "nestedInitial": false,
-    "actions": ""
+    "actions": "",
+    "timer": 0,
+    "committed": true
+  },
+  {
+    "stateName": "StAtBase",
+    "namespace": "Tbot",
+    "initial": false,
+    "nestedInitial": false,
+    "actions": "",
+    "timer": 0,
+    "committed": false
   },
   {
     "stateName": "StRecharge",
     "namespace": "Tbot",
     "initial": false,
     "nestedInitial": false,
-    "actions": "recharge"
+    "actions": "recharge",
+    "timer": 10,
+    "committed": false
   },
   {
     "stateName": "StBatteryDepleted",
     "namespace": "Tbot",
     "initial": false,
     "nestedInitial": false,
-    "actions": ""
+    "actions": "",
+    "timer": 0,
+    "committed": false
   },
   {
     "stateName": "StiNavigateToCoffeeMachine<SsProcessOrder>",
     "namespace": "SsProcessOrder",
     "initial": false,
     "nestedInitial": true,
-    "actions": ""
+    "actions": "",
+    "timer": 0,
+    "committed": true
   },
   {
     "stateName": "StiWaitForOrder<SsProcessOrder>",
     "namespace": "SsProcessOrder",
     "initial": false,
     "nestedInitial": false,
-    "actions": ""
+    "actions": "",
+    "timer": 5,
+    "committed": false
   },
   {
     "stateName": "StiDeliverOrder<SsProcessOrder>",
     "namespace": "SsProcessOrder",
     "initial": false,
     "nestedInitial": false,
-    "actions": "deplete,get_next_order"
+    "actions": "deplete,get_next_order",
+    "timer": 0,
+    "committed": true
   }
 ]

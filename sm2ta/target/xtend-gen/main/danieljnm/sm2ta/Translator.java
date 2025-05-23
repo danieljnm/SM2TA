@@ -58,7 +58,7 @@ public class Translator {
     };
     final Iterable<StateDto> topLevelStates = IterableExtensions.<StateDto>filter(((Iterable<StateDto>)Conversions.doWrapArray(Translator.getStates())), _function);
     final Consumer<StateDto> _function_1 = (StateDto state) -> {
-      Translator.stateMachine.state(state.stateName);
+      Translator.stateMachine.state(state.stateName).committed(state.committed);
       final List<TransitionDto> stateTransitions = transitions.getOrDefault(state.stateName, CollectionLiterals.<TransitionDto>newArrayList());
       final Consumer<TransitionDto> _function_2 = (TransitionDto transition) -> {
         final Function1<String, CharSequence> _function_3 = (String action) -> {
@@ -66,16 +66,15 @@ public class Translator {
         };
         final Iterable<CharSequence> actions = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(state.actions.split(","))), _function_3));
         final Iterable<CharSequence> guards = Translator.getGuards(transition);
-        State _guard = Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; "));
         int _xifexpression = (int) 0;
-        int _length = ((Object[])Conversions.unwrapArray(guards, Object.class)).length;
-        boolean _greaterThan = (_length > 0);
-        if (_greaterThan) {
-          _xifexpression = 0;
+        boolean _isTimer = transition.isTimer();
+        if (_isTimer) {
+          _xifexpression = state.timer;
         } else {
-          _xifexpression = 1;
+          _xifexpression = 0;
         }
-        _guard.timeout(_xifexpression).action(IterableExtensions.join(actions, ", "));
+        final int timeout = _xifexpression;
+        Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; ")).timeout(timeout).action(IterableExtensions.join(actions, ", "));
       };
       stateTransitions.forEach(_function_2);
       final String nestedNamespace = state.stateName;
@@ -96,14 +95,23 @@ public class Translator {
             };
             final Iterable<CharSequence> actions = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(nested.actions.split(","))), _function_7));
             final List<TransitionDto> nestedTransitions = transitions.getOrDefault(nested.stateName, CollectionLiterals.<TransitionDto>newArrayList());
-            it.nestedState(nested.stateName);
+            it.nestedState(nested.stateName).committed(nested.committed);
             final Consumer<TransitionDto> _function_8 = (TransitionDto transition) -> {
               final Function1<StateDto, Boolean> _function_9 = (StateDto it_1) -> {
                 return Boolean.valueOf(Objects.equals(it_1.stateName, transition.target));
               };
               final StateDto target = IterableExtensions.<StateDto>findFirst(((Iterable<StateDto>)Conversions.doWrapArray(Translator.getStates())), _function_9);
               if (((target != null) && Objects.equals(target.namespace, nested.namespace))) {
-                it.nestedState(nested.stateName).transition(transition.target).timeout(1).action(IterableExtensions.join(actions, ", "));
+                final Iterable<CharSequence> guards = Translator.getGuards(transition);
+                int _xifexpression = (int) 0;
+                boolean _isTimer = transition.isTimer();
+                if (_isTimer) {
+                  _xifexpression = nested.timer;
+                } else {
+                  _xifexpression = 0;
+                }
+                final int timeout = _xifexpression;
+                it.nestedState(nested.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; ")).timeout(timeout).action(IterableExtensions.join(actions, ", "));
                 return;
               }
               State _nestedState = it.nestedState(nested.stateName);
@@ -111,7 +119,7 @@ public class Translator {
               _builder.append(nested.namespace);
               String _message = transition.message();
               _builder.append(_message);
-              _nestedState.transition(_builder.toString()).signal(transition.message());
+              _nestedState.transition(_builder.toString());
               StringConcatenation _builder_1 = new StringConcatenation();
               _builder_1.append(nested.namespace);
               String _message_1 = transition.message();

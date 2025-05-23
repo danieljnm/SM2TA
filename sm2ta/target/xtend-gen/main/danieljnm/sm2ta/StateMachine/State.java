@@ -204,6 +204,15 @@ public class State {
     return _xblockexpression;
   }
 
+  public State committed(final boolean value) {
+    State _xblockexpression = null;
+    {
+      this.isCommitted = value;
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+
   @Override
   public String toString() {
     StringConcatenation _builder = new StringConcatenation();

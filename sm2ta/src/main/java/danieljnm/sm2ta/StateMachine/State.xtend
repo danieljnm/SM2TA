@@ -126,6 +126,11 @@ class State {
 		this
 	}
 	
+	def committed(boolean value) {
+		isCommitted = value
+		this
+	}
+	
 	override toString() {
 		'''
 		State: «name»

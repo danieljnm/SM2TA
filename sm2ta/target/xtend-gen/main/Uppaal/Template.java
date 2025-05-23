@@ -56,6 +56,8 @@ public class Template {
         boolean _xblockexpression_1 = false;
         {
           final Transition transitionToInitial = new Transition(state.name, "gen_init");
+          Label _label = new Label("synchronisation", "Success!");
+          transitionToInitial.labels.add(_label);
           _xblockexpression_1 = this.transitions.add(transitionToInitial);
         }
         _xifexpression = _xblockexpression_1;

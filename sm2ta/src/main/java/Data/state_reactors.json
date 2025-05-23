@@ -1,13 +1,18 @@
 [
   {
-    "name": "SrReadyToCharge",
+    "name": "SrReadyToTakeOrders",
     "stateName": "StQueue",
-    "event": "EvCbSuccess<CbRechargeRequired, OrBatteryManager>"
+    "event": "EvCbFailure<CbRechargeRequired, OrBatteryManager>"
   },
   {
-    "name": "SrReadyToCharge",
+    "name": "SrReadyToTakeOrders",
     "stateName": "StQueue",
-    "event": "EvCbSuccess<CbIsAtBase, OrNavigation>"
+    "event": "EvCbFailure<CbHasNextOrder, OrOrderManager>"
+  },
+  {
+    "name": "SrReadyToProcessOrder",
+    "stateName": "StQueue",
+    "event": "EvCbSuccess<CbHasNextOrder, OrOrderManager>"
   },
   {
     "name": "SrReadyToProcessOrder",
@@ -15,8 +20,13 @@
     "event": "EvCbFailure<CbRechargeRequired, OrBatteryManager>"
   },
   {
-    "name": "SrReadyToProcessOrder",
-    "stateName": "StQueue",
+    "name": "SrReadyToProcess",
+    "stateName": "StAtBase",
     "event": "EvCbSuccess<CbHasNextOrder, OrOrderManager>"
+  },
+  {
+    "name": "SrReadyToProcess",
+    "stateName": "StAtBase",
+    "event": "EvCbFailure<CbRechargeRequired, OrBatteryManager>"
   }
 ]
