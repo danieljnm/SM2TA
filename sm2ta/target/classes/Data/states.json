@@ -87,6 +87,6 @@
     "nestedInitial": false,
     "actions": "deplete,get_next_order",
     "timer": 0,
-    "committed": false
+    "committed": true
   }
 ]

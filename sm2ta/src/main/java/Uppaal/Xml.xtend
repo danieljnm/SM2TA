@@ -8,6 +8,7 @@ class Xml {
 	public Declaration declaration
 	public List<Template> templates = newArrayList
 	public System system
+	public Query queries
 	GridLayout layout = new GridLayout
 	int index = 0
 	
@@ -16,6 +17,7 @@ class Xml {
 		declaration = new Declaration(stateMachine)
 		templates = setTemplates(stateMachine)
 		system = new System(templates)
+		queries = new Query(stateMachine)
 	}
 	
 	def setTemplates(StateMachine stateMachine) {
@@ -91,6 +93,7 @@ class Xml {
 			«template»
 			«ENDFOR»
 			«system»
+			«queries»
 		</nta>
 		'''
 	}

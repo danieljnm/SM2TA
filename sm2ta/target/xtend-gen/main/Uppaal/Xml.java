@@ -20,6 +20,8 @@ public class Xml {
 
   public Uppaal.System system;
 
+  public Query queries;
+
   private GridLayout layout = new GridLayout();
 
   private int index = 0;
@@ -31,6 +33,8 @@ public class Xml {
     this.templates = this.setTemplates(stateMachine);
     Uppaal.System _system = new Uppaal.System(this.templates);
     this.system = _system;
+    Query _query = new Query(stateMachine);
+    this.queries = _query;
   }
 
   public ArrayList<Template> setTemplates(final StateMachine stateMachine) {
@@ -178,6 +182,9 @@ public class Xml {
     }
     _builder.append("\t");
     _builder.append(this.system, "\t");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append(this.queries, "\t");
     _builder.newLineIfNotEmpty();
     _builder.append("</nta>");
     _builder.newLine();
