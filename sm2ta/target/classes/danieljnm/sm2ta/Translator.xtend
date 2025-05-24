@@ -53,16 +53,17 @@ class Translator {
 		val functions = functions
 		val topLevelStates = states.filter[it.namespace == namespace]
     	topLevelStates.forEach[state |
-	        stateMachine.state(state.stateName).committed(state.committed)
+	        stateMachine.state(state.stateName)
 	        val stateTransitions = transitions.getOrDefault(state.stateName, newArrayList)
         	stateTransitions.forEach[transition |
-        		val actions = state.actions.split(",")
-				        .map[action | getAssignment(action, functions)]
+        		val updates = state.updates.split(",")
+				        .map[update | getAssignment(update, functions)]
 				        .filterNull
 				val guards = transition.guards
 				val timeout = transition.isTimer ? state.timer : 0
+				val when = !state.action.nullOrEmpty && transition.event.contains(state.action) ? state.action : null
         		stateMachine.state(state.stateName)
-        			.transition(transition.target).guard(guards.join(' &amp;&amp; ')).timeout(timeout).action(actions.join(', '))
+        			.transition(transition.target).guard(guards.join(' &amp;&amp; ')).timeout(timeout).action(updates.join(', ')).when(when)
         	]
 
 	        val nestedNamespace = state.stateName
@@ -71,22 +72,24 @@ class Translator {
 	        	stateMachine.state(state.stateName)
 	            	.nesting[
 	                	childStates.forEach[nested |
-	                		val actions = nested.actions.split(",")
-						        .map[action | getAssignment(action, functions)]
+	                		val updates = nested.updates.split(",")
+						        .map[update | getAssignment(update, functions)]
 						        .filterNull
 	                		val nestedTransitions = transitions.getOrDefault(nested.stateName, newArrayList)
-	                    	nestedState(nested.stateName).committed(nested.committed)
+	                    	nestedState(nested.stateName)
                     		nestedTransitions.forEach[transition |
                     			val target = states.findFirst[stateName == transition.target]
                     			if (target !== null && target.namespace == nested.namespace) {
                     				val guards = transition.guards
                     				val timeout = transition.isTimer ? nested.timer : 0
-                    				nestedState(nested.stateName).transition(transition.target).guard(guards.join(' &amp;&amp; ')).timeout(timeout).action(actions.join(', '))
+                    				val when = !nested.action.nullOrEmpty && transition.event.contains(nested.action) ? nested.action : null
+                    				nestedState(nested.stateName).transition(transition.target).guard(guards.join(' &amp;&amp; ')).timeout(timeout).action(updates.join(', ')).when(when)
                     				return
                     			}
-                    			nestedState(nested.stateName).transition('''«nested.namespace»«transition.message»''')
+                    			val when = !nested.action.nullOrEmpty && transition.event.contains(nested.action) ? nested.action : null
+                    			nestedState(nested.stateName).transition('''«nested.namespace»«transition.message»''').when(when)
                     			nestedState('''«nested.namespace»«transition.message»''').committed
-                    			stateMachine.state(nested.namespace).transition(transition.target).when(transition.message).action(actions.join(', '))
+                    			stateMachine.state(nested.namespace).transition(transition.target).when(transition.message).action(updates.join(', '))
                     		]
 	            	]
 		    	]

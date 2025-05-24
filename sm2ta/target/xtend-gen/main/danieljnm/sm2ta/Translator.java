@@ -26,6 +26,7 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 import org.eclipse.xtext.xbase.lib.MapExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 
 @SuppressWarnings("all")
 public class Translator {
@@ -58,13 +59,13 @@ public class Translator {
     };
     final Iterable<StateDto> topLevelStates = IterableExtensions.<StateDto>filter(((Iterable<StateDto>)Conversions.doWrapArray(Translator.getStates())), _function);
     final Consumer<StateDto> _function_1 = (StateDto state) -> {
-      Translator.stateMachine.state(state.stateName).committed(state.committed);
+      Translator.stateMachine.state(state.stateName);
       final List<TransitionDto> stateTransitions = transitions.getOrDefault(state.stateName, CollectionLiterals.<TransitionDto>newArrayList());
       final Consumer<TransitionDto> _function_2 = (TransitionDto transition) -> {
-        final Function1<String, CharSequence> _function_3 = (String action) -> {
-          return Translator.getAssignment(action, ((List<FunctionDto>)Conversions.doWrapArray(functions)));
+        final Function1<String, CharSequence> _function_3 = (String update) -> {
+          return Translator.getAssignment(update, ((List<FunctionDto>)Conversions.doWrapArray(functions)));
         };
-        final Iterable<CharSequence> actions = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(state.actions.split(","))), _function_3));
+        final Iterable<CharSequence> updates = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(state.updates.split(","))), _function_3));
         final Iterable<CharSequence> guards = Translator.getGuards(transition);
         int _xifexpression = (int) 0;
         boolean _isTimer = transition.isTimer();
@@ -74,7 +75,14 @@ public class Translator {
           _xifexpression = 0;
         }
         final int timeout = _xifexpression;
-        Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; ")).timeout(timeout).action(IterableExtensions.join(actions, ", "));
+        String _xifexpression_1 = null;
+        if (((!StringExtensions.isNullOrEmpty(state.action)) && transition.event.contains(state.action))) {
+          _xifexpression_1 = state.action;
+        } else {
+          _xifexpression_1 = null;
+        }
+        final String when = _xifexpression_1;
+        Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; ")).timeout(timeout).action(IterableExtensions.join(updates, ", ")).when(when);
       };
       stateTransitions.forEach(_function_2);
       final String nestedNamespace = state.stateName;
@@ -90,12 +98,12 @@ public class Translator {
       if (_not) {
         final Procedure1<State> _function_5 = (State it) -> {
           final Consumer<StateDto> _function_6 = (StateDto nested) -> {
-            final Function1<String, CharSequence> _function_7 = (String action) -> {
-              return Translator.getAssignment(action, ((List<FunctionDto>)Conversions.doWrapArray(functions)));
+            final Function1<String, CharSequence> _function_7 = (String update) -> {
+              return Translator.getAssignment(update, ((List<FunctionDto>)Conversions.doWrapArray(functions)));
             };
-            final Iterable<CharSequence> actions = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(nested.actions.split(","))), _function_7));
+            final Iterable<CharSequence> updates = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(nested.updates.split(","))), _function_7));
             final List<TransitionDto> nestedTransitions = transitions.getOrDefault(nested.stateName, CollectionLiterals.<TransitionDto>newArrayList());
-            it.nestedState(nested.stateName).committed(nested.committed);
+            it.nestedState(nested.stateName);
             final Consumer<TransitionDto> _function_8 = (TransitionDto transition) -> {
               final Function1<StateDto, Boolean> _function_9 = (StateDto it_1) -> {
                 return Boolean.valueOf(Objects.equals(it_1.stateName, transition.target));
@@ -111,21 +119,35 @@ public class Translator {
                   _xifexpression = 0;
                 }
                 final int timeout = _xifexpression;
-                it.nestedState(nested.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; ")).timeout(timeout).action(IterableExtensions.join(actions, ", "));
+                String _xifexpression_1 = null;
+                if (((!StringExtensions.isNullOrEmpty(nested.action)) && transition.event.contains(nested.action))) {
+                  _xifexpression_1 = nested.action;
+                } else {
+                  _xifexpression_1 = null;
+                }
+                final String when = _xifexpression_1;
+                it.nestedState(nested.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; ")).timeout(timeout).action(IterableExtensions.join(updates, ", ")).when(when);
                 return;
               }
+              String _xifexpression_2 = null;
+              if (((!StringExtensions.isNullOrEmpty(nested.action)) && transition.event.contains(nested.action))) {
+                _xifexpression_2 = nested.action;
+              } else {
+                _xifexpression_2 = null;
+              }
+              final String when_1 = _xifexpression_2;
               State _nestedState = it.nestedState(nested.stateName);
               StringConcatenation _builder = new StringConcatenation();
               _builder.append(nested.namespace);
               String _message = transition.message();
               _builder.append(_message);
-              _nestedState.transition(_builder.toString());
+              _nestedState.transition(_builder.toString()).when(when_1);
               StringConcatenation _builder_1 = new StringConcatenation();
               _builder_1.append(nested.namespace);
               String _message_1 = transition.message();
               _builder_1.append(_message_1);
               it.nestedState(_builder_1.toString()).committed();
-              Translator.stateMachine.state(nested.namespace).transition(transition.target).when(transition.message()).action(IterableExtensions.join(actions, ", "));
+              Translator.stateMachine.state(nested.namespace).transition(transition.target).when(transition.message()).action(IterableExtensions.join(updates, ", "));
             };
             nestedTransitions.forEach(_function_8);
           };

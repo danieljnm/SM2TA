@@ -10,11 +10,11 @@ public class StateDto {
 
   public boolean nestedInitial;
 
-  public String actions;
+  public String updates;
 
   public int timer;
 
-  public boolean committed;
+  public String action;
 
   public String convert(final String value) {
     String _xblockexpression = null;

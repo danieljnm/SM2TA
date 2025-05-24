@@ -4,89 +4,89 @@
     "namespace": "Tbot",
     "initial": false,
     "nestedInitial": false,
-    "actions": "",
+    "updates": "",
     "timer": 0,
-    "committed": false
+    "actions": ""
   },
   {
     "stateName": "StStartup",
     "namespace": "Tbot",
     "initial": true,
     "nestedInitial": false,
-    "actions": "",
+    "updates": "",
     "timer": 0,
-    "committed": true
+    "actions": "CbWaitPose"
   },
   {
     "stateName": "StQueue",
     "namespace": "Tbot",
     "initial": false,
     "nestedInitial": false,
-    "actions": "",
+    "updates": "",
     "timer": 0,
-    "committed": false
+    "actions": ""
   },
   {
     "stateName": "StNavigateToBase",
     "namespace": "Tbot",
     "initial": false,
     "nestedInitial": false,
-    "actions": "",
+    "updates": "",
     "timer": 0,
-    "committed": true
+    "actions": "CbNavigateGlobalPosition"
   },
   {
     "stateName": "StAtBase",
     "namespace": "Tbot",
     "initial": false,
     "nestedInitial": false,
-    "actions": "",
+    "updates": "",
     "timer": 0,
-    "committed": false
+    "actions": ""
   },
   {
     "stateName": "StRecharge",
     "namespace": "Tbot",
     "initial": false,
     "nestedInitial": false,
-    "actions": "recharge",
+    "updates": "recharge",
     "timer": 10,
-    "committed": false
+    "actions": ""
   },
   {
     "stateName": "StBatteryDepleted",
     "namespace": "Tbot",
     "initial": false,
     "nestedInitial": false,
-    "actions": "",
+    "updates": "",
     "timer": 0,
-    "committed": false
+    "actions": ""
   },
   {
     "stateName": "StiNavigateToCoffeeMachine<SsProcessOrder>",
     "namespace": "SsProcessOrder",
     "initial": false,
     "nestedInitial": true,
-    "actions": "",
+    "updates": "",
     "timer": 0,
-    "committed": true
+    "actions": "CbNavigateGlobalPosition"
   },
   {
     "stateName": "StiWaitForOrder<SsProcessOrder>",
     "namespace": "SsProcessOrder",
     "initial": false,
     "nestedInitial": false,
-    "actions": "",
+    "updates": "",
     "timer": 5,
-    "committed": false
+    "actions": ""
   },
   {
     "stateName": "StiDeliverOrder<SsProcessOrder>",
     "namespace": "SsProcessOrder",
     "initial": false,
     "nestedInitial": false,
-    "actions": "deplete,get_next_order",
+    "updates": "deplete,get_next_order",
     "timer": 0,
-    "committed": true
+    "actions": "CbNavigateGlobalPosition"
   }
 ]
