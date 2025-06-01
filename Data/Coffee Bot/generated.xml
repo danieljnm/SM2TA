@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>
+		int battery_level_ = 15;
+		int orders_ = 10;
+		clock gen_clock;
+		chan CbNavigateGlobalPosition, CbWaitPose, Success, gen_SsProcessOrder_inner_start;
+	</declaration>
+	<template>
+		<name>Tbot</name>
+		<location id="id0" x="569" y="0">
+			<name x="554" y="15">StStartup</name>
+		</location>
+		<location id="id1" x="1198" y="-178">
+			<name x="1183" y="-163">gen_pre_SsProcessOrder</name>
+			<committed/>
+		</location>
+		<location id="id2" x="799" y="-178">
+			<name x="784" y="-163">SsProcessOrder</name>
+		</location>
+		<location id="id3" x="1200" y="0">
+			<name x="1185" y="15">StQueue</name>
+		</location>
+		<location id="id4" x="637" y="93">
+			<name x="622" y="108">StBatteryDepleted</name>
+		</location>
+		<location id="id5" x="400" y="300">
+			<name x="385" y="315">StNavigateToBase</name>
+		</location>
+		<location id="id6" x="800" y="300">
+			<name x="785" y="315">StAtBase</name>
+		</location>
+		<location id="id7" x="1200" y="300">
+			<name x="1185" y="315">StRecharge</name>
+			<label kind="invariant" x="1185" y="330">gen_clock &lt;= 10</label>
+		</location>
+		<init ref="id0"/>
+		<transition id="id8">
+			<source ref="id0"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="833" y="-34">CbWaitPose?</label>
+		</transition>
+		<transition id="id9">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="875" y="-204">gen_SsProcessOrder_inner_start!</label>
+		</transition>
+		<transition id="id10">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="892" y="-102">Success?</label>
+			<label kind="assignment" x="654" y="-76">battery_level_ := battery_level_ - 10, orders_ := orders_ - 1</label>
+		</transition>
+		<transition id="id11">
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="680" y="34">battery_level_ &lt;= 0</label>
+		</transition>
+		<transition id="id12">
+			<source ref="id3"/>
+			<target ref="id5"/>
+			<label kind="guard" x="603" y="221">battery_level_ &lt;= 20</label>
+			<nail x="739" y="246"/>
+		</transition>
+		<transition id="id13">
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="guard" x="1071" y="-119">!orders_ == 0 &amp;&amp; !(battery_level_ &lt;= 20)</label>
+		</transition>
+		<transition id="id14">
+			<source ref="id3"/>
+			<target ref="id5"/>
+			<label kind="guard" x="280" y="153">!(battery_level_ &lt;= 20) &amp;&amp; !(!orders_ == 0)</label>
+			<nail x="569" y="187"/>
+		</transition>
+		<transition id="id15">
+			<source ref="id5"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="535" y="314">CbNavigateGlobalPosition?</label>
+		</transition>
+		<transition id="id16">
+			<source ref="id6"/>
+			<target ref="id3"/>
+			<label kind="guard" x="816" y="204">!orders_ == 0 &amp;&amp; !(battery_level_ &lt;= 20)</label>
+		</transition>
+		<transition id="id17">
+			<source ref="id6"/>
+			<target ref="id7"/>
+			<label kind="guard" x="950" y="315">battery_level_ &lt;= 20</label>
+			<label kind="assignment" x="950" y="330">gen_clock := 0</label>
+		</transition>
+		<transition id="id18">
+			<source ref="id7"/>
+			<target ref="id3"/>
+			<label kind="guard" x="1207" y="170">gen_clock &gt;= 10</label>
+			<label kind="assignment" x="1207" y="187">battery_level_ := 100</label>
+		</transition>
+	</template>
+	<template>
+		<name>SsProcessOrder_inner</name>
+		<location id="id19" x="0" y="0">
+			<name x="-15" y="15">gen_init</name>
+		</location>
+		<location id="id20" x="400" y="0">
+			<name x="385" y="15">StiNavigateToCoffeeMachine</name>
+		</location>
+		<location id="id21" x="800" y="0">
+			<name x="785" y="15">StiWaitForOrder</name>
+			<label kind="invariant" x="785" y="30">gen_clock &lt;= 5</label>
+		</location>
+		<location id="id22" x="1200" y="0">
+			<name x="1185" y="15">StiDeliverOrder</name>
+		</location>
+		<location id="id23" x="0" y="300">
+			<name x="-15" y="315">SsProcessOrderSuccess</name>
+			<committed/>
+		</location>
+		<init ref="id19"/>
+		<transition id="id24">
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="85" y="8">gen_SsProcessOrder_inner_start?</label>
+		</transition>
+		<transition id="id25">
+			<source ref="id20"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="518" y="-25">CbNavigateGlobalPosition?</label>
+			<label kind="assignment" x="550" y="30">gen_clock := 0</label>
+		</transition>
+		<transition id="id26">
+			<source ref="id21"/>
+			<target ref="id22"/>
+			<label kind="guard" x="950" y="15">gen_clock &gt;= 5</label>
+		</transition>
+		<transition id="id27">
+			<source ref="id22"/>
+			<target ref="id23"/>
+			<label kind="synchronisation" x="550" y="165">CbNavigateGlobalPosition?</label>
+		</transition>
+		<transition id="id28">
+			<source ref="id23"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="-50" y="165">Success!</label>
+		</transition>
+	</template>
+	<template>
+		<name>gen_sync_CbWaitPose</name>
+		<location id="id29" x="0" y="0">
+			<name x="-15" y="15">initSync</name>
+		</location>
+		<init ref="id29"/>
+		<transition id="id30">
+			<source ref="id29"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="-15" y="-55">CbWaitPose!</label>
+			<nail x="-30" y="-30"/>
+			<nail x="30" y="-30"/>
+		</transition>
+	</template>
+	<template>
+		<name>gen_sync_CbNavigateGlobalPosition</name>
+		<location id="id31" x="0" y="0">
+			<name x="-15" y="15">initSync</name>
+		</location>
+		<init ref="id31"/>
+		<transition id="id32">
+			<source ref="id31"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="-15" y="-55">CbNavigateGlobalPosition!</label>
+			<nail x="-30" y="-30"/>
+			<nail x="30" y="-30"/>
+		</transition>
+	</template>
+	<system>
+		system Tbot, SsProcessOrder_inner, gen_sync_CbWaitPose, gen_sync_CbNavigateGlobalPosition;
+	</system>
+	<queries>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-05-24 13:56:38 +0200">
+			</result>
+		</query>
+		<query>
+			<formula>A[] not Tbot.StBatteryDepleted</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-05-24 13:56:38 +0200">
+			</result>
+		</query>
+		<query>
+			<formula>A[] (Tbot.StQueue and not (battery_level_ &lt;= 0) imply (Tbot.StQueue))</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-05-24 13:56:38 +0200">
+			</result>
+		</query>
+		<query>
+			<formula>A[] (Tbot.StQueue and not (battery_level_ &lt;= 20) imply (Tbot.StQueue))</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-05-24 13:56:38 +0200">
+			</result>
+		</query>
+		<query>
+			<formula>A[] (Tbot.StQueue and not (!orders_ == 0 &amp;&amp; !(battery_level_ &lt;= 20)) imply (Tbot.StQueue))</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-05-24 13:56:38 +0200">
+			</result>
+		</query>
+		<query>
+			<formula>A[] (Tbot.StQueue and not (!(battery_level_ &lt;= 20) &amp;&amp; !(!orders_ == 0)) imply (Tbot.StQueue))</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-05-24 13:56:38 +0200">
+			</result>
+		</query>
+		<query>
+			<formula>A[] (Tbot.StAtBase and not (!orders_ == 0 &amp;&amp; !(battery_level_ &lt;= 20)) imply (Tbot.StAtBase))</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-05-24 13:56:38 +0200">
+			</result>
+		</query>
+		<query>
+			<formula>A[] (Tbot.StAtBase and not (battery_level_ &lt;= 20) imply (Tbot.StAtBase))</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-05-24 13:56:38 +0200">
+			</result>
+		</query>
+	</queries>
+</nta>

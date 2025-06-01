@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<nta>
+	<declaration>
+		int image_height = 0;
+		int image_width = 0;
+		double focal_length = 0;
+		double sensor_height = 0;
+		double sensor_width = 0;
+		double curr_distance = 0;
+		double current_distance_lidar = 10;
+		double vertical_safety = 10;
+		double hub_offset = 1;
+		double overlap_procentage = 20;
+		double first_blade_rotation = 0;
+		int first_blade = 1;
+		int hub_center_px_y = 0;
+		int hub_center_px_x = 0;
+		double blade_distance_target = 0;
+		double blade_length = 0;
+		int current_mission_index = 0;
+		double _gimbal_threshold_deg = 1;
+		double _pos_threshold_m = 1;
+		double lidar_distance = 0;
+		bool _enable = 0;
+		bool force_shutdown = 0;
+		bool _ready = 0;
+	</declaration>
+	<template>
+		<name>Navigator</name>
+		<location id="IdleState" x="0" y="0">
+			<name x="-15" y="15">IdleState</name>
+		</location>
+		<location id="PosAquisitionState" x="400" y="0">
+			<name x="385" y="15">PosAquisitionState</name>
+		</location>
+		<location id="GlobalPlanningState" x="800" y="0">
+			<name x="785" y="15">GlobalPlanningState</name>
+		</location>
+		<location id="StiNextPosState" x="1200" y="0">
+			<name x="1185" y="15">StiNextPosState</name>
+		</location>
+		<location id="MissionCompletedState" x="0" y="300">
+			<name x="-15" y="315">MissionCompletedState</name>
+		</location>
+		<location id="StiCaptureState" x="400" y="300">
+			<name x="385" y="315">StiCaptureState</name>
+		</location>
+		<location id="StiValidateState" x="800" y="300">
+			<name x="785" y="315">StiValidateState</name>
+		</location>
+		<init ref="IdleState"/>
+		<transition>
+			<source ref="IdleState"/>
+			<target ref="PosAquisitionState"/>
+		</transition>
+		<transition>
+			<source ref="PosAquisitionState"/>
+			<target ref="IdleState"/>
+		</transition>
+		<transition>
+			<source ref="PosAquisitionState"/>
+			<target ref="IdleState"/>
+		</transition>
+		<transition>
+			<source ref="PosAquisitionState"/>
+			<target ref="IdleState"/>
+		</transition>
+		<transition>
+			<source ref="PosAquisitionState"/>
+			<target ref="IdleState"/>
+		</transition>
+		<transition>
+			<source ref="PosAquisitionState"/>
+			<target ref="GlobalPlanningState"/>
+		</transition>
+		<transition>
+			<source ref="GlobalPlanningState"/>
+			<target ref="IdleState"/>
+		</transition>
+		<transition>
+			<source ref="GlobalPlanningState"/>
+			<target ref="StiNextPosState"/>
+			<label kind="guard" x="950" y="15">!(current_mission_index)</label>
+		</transition>
+		<transition>
+			<source ref="GlobalPlanningState"/>
+			<target ref="IdleState"/>
+		</transition>
+		<transition>
+			<source ref="StiNextPosState"/>
+			<target ref="MissionCompletedState"/>
+		</transition>
+		<transition>
+			<source ref="StiNextPosState"/>
+			<target ref="IdleState"/>
+		</transition>
+		<transition>
+			<source ref="StiNextPosState"/>
+			<target ref="StiCaptureState"/>
+		</transition>
+		<transition>
+			<source ref="MissionCompletedState"/>
+			<target ref="IdleState"/>
+		</transition>
+		<transition>
+			<source ref="MissionCompletedState"/>
+			<target ref="IdleState"/>
+		</transition>
+		<transition>
+			<source ref="MissionCompletedState"/>
+			<target ref="IdleState"/>
+		</transition>
+		<transition>
+			<source ref="StiCaptureState"/>
+			<target ref="StiValidateState"/>
+			<label kind="guard" x="550" y="315">current_mission_index</label>
+		</transition>
+		<transition>
+			<source ref="StiCaptureState"/>
+			<target ref="IdleState"/>
+		</transition>
+		<transition>
+			<source ref="StiValidateState"/>
+			<target ref="StiNextPosState"/>
+			<label kind="guard" x="950" y="165">!(current_mission_index) &amp;&amp; !(current_mission_index)</label>
+		</transition>
+		<transition>
+			<source ref="StiValidateState"/>
+			<target ref="IdleState"/>
+		</transition>
+	</template>
+	<system>
+		system Navigator;
+	</system>
+	<queries>
+	<query>
+				    	<formula>A[] not deadlock</formula>
+				    </query>
+	<query>
+				    	<formula>A[] (Navigator.GlobalPlanningState and not (!(current_mission_index)) imply (Navigator.GlobalPlanningState))</formula>
+				    </query>
+	<query>
+				    	<formula>A[] (Navigator.StiCaptureState and not (current_mission_index) imply (Navigator.StiCaptureState))</formula>
+				    </query>
+	<query>
+				    	<formula>A[] (Navigator.StiValidateState and not (!(current_mission_index) &amp;&amp; !(current_mission_index)) imply (Navigator.StiValidateState))</formula>
+				    </query>
+	</queries>
+</nta>
+
