@@ -1,0 +1,52 @@
+[2025-05-23 21:16:43] This is codeql database trace-command --working-dir=. fod4wind_db -- colcon build --packages-select navigator
+[2025-05-23 21:16:43] Log file was started late.
+[2025-05-23 21:16:43] [PROGRESS] database trace-command> Running command in /home/daniel/workspace/thesis: [colcon, build, --packages-select, navigator]
+[2025-05-23 21:16:43] [build-stdout] Starting >>> navigator
+[2025-05-23 21:20:24] [build-stdout] [Processing: navigator]
+[2025-05-23 21:20:24] [build-stderr] --- stderr: navigator
+[2025-05-23 21:20:24] [build-stdout] [Processing: navigator]
+[2025-05-23 21:20:24] [build-stderr] In file included from /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/navigator.hpp:42,
+[2025-05-23 21:20:24] [build-stdout] [Processing: navigator]
+[2025-05-23 21:20:24] [build-stderr]                  from /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/src/navigator/navigator_node.cpp:16:
+[2025-05-23 21:20:24] [build-stdout] [Processing: navigator]
+[2025-05-23 21:20:24] [build-stdout] [Processing: navigator]
+[2025-05-23 21:20:24] [build-stdout] [Processing: navigator]
+[2025-05-23 21:20:24] [build-stderr] /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/clients/cl_drone_interface/client_behaviours/cb_target_pos_checker.hpp: In member function ‘void navigator::cl_drone_interface::CbTargetPosChecker::checkDistanceToTarget()’:
+[2025-05-23 21:20:24] [build-stdout] [Processing: navigator]
+[2025-05-23 21:20:24] [build-stdout] Finished <<< navigator [3min 41s]
+[2025-05-23 21:20:24] [build-stderr] /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/clients/cl_drone_interface/client_behaviours/cb_target_pos_checker.hpp:60:25: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<inspection_interfaces::msg::PlannerPoint_<std::allocator<void> >, std::allocator<inspection_interfaces::msg::PlannerPoint_<std::allocator<void> > > >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+[2025-05-23 21:20:24] [build-stderr]    60 |       if (_missionIndex >= _missionPlan.plan.size()) {
+[2025-05-23 21:20:24] [build-stderr]       |           ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+[2025-05-23 21:20:24] [build-stderr] In file included from /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/navigator.hpp:45,
+[2025-05-23 21:20:24] [build-stderr]                  from /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/src/navigator/navigator_node.cpp:16:
+[2025-05-23 21:20:24] [build-stderr] /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/clients/cl_drone_interface/client_behaviours/cb_send_target_pos.hpp: In member function ‘virtual void navigator::cl_drone_interface::CbSendTargetPos::onEntry()’:
+[2025-05-23 21:20:24] [build-stderr] /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/clients/cl_drone_interface/client_behaviours/cb_send_target_pos.hpp:57:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<inspection_interfaces::msg::PlannerPoint_<std::allocator<void> >, std::allocator<inspection_interfaces::msg::PlannerPoint_<std::allocator<void> > > >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+[2025-05-23 21:20:24] [build-stderr]    57 |         if (_index >= _plan.plan.size()) {
+[2025-05-23 21:20:24] [build-stderr]       |             ~~~~~~~^~~~~~~~~~~~~~~~~~~~
+[2025-05-23 21:20:24] [build-stderr] In file included from /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/navigator.hpp:45,
+[2025-05-23 21:20:24] [build-stderr]                  from /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/src/navigator/navigator_node.cpp:16:
+[2025-05-23 21:20:24] [build-stderr] /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/clients/cl_drone_interface/client_behaviours/cb_send_target_pos.hpp:105:37: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<inspection_interfaces::msg::PlannerPoint_<std::allocator<void> >, std::allocator<inspection_interfaces::msg::PlannerPoint_<std::allocator<void> > > >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+[2025-05-23 21:20:24] [build-stderr]   105 |             for (auto i = _index; i < _plan.plan.size(); i++)
+[2025-05-23 21:20:24] [build-stderr]       |                                   ~~^~~~~~~~~~~~~~~~~~~
+[2025-05-23 21:20:24] [build-stderr] /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/clients/cl_drone_interface/client_behaviours/cb_send_target_pos.hpp:100:18: warning: unused variable ‘reached_transition’ [-Wunused-variable]
+[2025-05-23 21:20:24] [build-stderr]   100 |             bool reached_transition = false;
+[2025-05-23 21:20:24] [build-stderr]       |                  ^~~~~~~~~~~~~~~~~~
+[2025-05-23 21:20:24] [build-stderr] In file included from /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/navigator.hpp:62,
+[2025-05-23 21:20:24] [build-stderr]                  from /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/src/navigator/navigator_node.cpp:16:
+[2025-05-23 21:20:24] [build-stderr] /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/clients/cl_local_planner/client_behaviours/cb_get_local_plan_corrections.hpp: In member function ‘void navigator::cl_local_planner::CbGetLocalPlanCorrections::onMessageReceived(inspection_interfaces::msg::Trajectory_<std::allocator<void> >::SharedPtr)’:
+[2025-05-23 21:20:24] [build-stderr] /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/clients/cl_local_planner/client_behaviours/cb_get_local_plan_corrections.hpp:81:39: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<inspection_interfaces::msg::PlannerPoint_<std::allocator<void> >, std::allocator<inspection_interfaces::msg::PlannerPoint_<std::allocator<void> > > >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+[2025-05-23 21:20:24] [build-stderr]    81 |         for (int i = _missionIndex; i < _missionPlan.plan.size(); i++)
+[2025-05-23 21:20:24] [build-stderr]       |                                     ~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+[2025-05-23 21:20:24] [build-stderr] /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/clients/cl_local_planner/client_behaviours/cb_get_local_plan_corrections.hpp:93:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<inspection_interfaces::msg::PlannerPoint_<std::allocator<void> >, std::allocator<inspection_interfaces::msg::PlannerPoint_<std::allocator<void> > > >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+[2025-05-23 21:20:24] [build-stderr]    93 |             if (t_idx >= msg->points.size())
+[2025-05-23 21:20:24] [build-stderr]       |                 ~~~~~~^~~~~~~~~~~~~~~~~~~~~
+[2025-05-23 21:20:24] [build-stderr] In file included from /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/navigator.hpp:150,
+[2025-05-23 21:20:24] [build-stderr]                  from /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/src/navigator/navigator_node.cpp:16:
+[2025-05-23 21:20:24] [build-stderr] /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/states/sti_next_pos.hpp: In member function ‘void navigator::StiNextPosState::onEntry()’:
+[2025-05-23 21:20:24] [build-stderr] /home/daniel/workspace/thesis/src/fod4wind_sdu-develop-sw-sdu-navigator/sw/sdu/navigator/include/navigator/states/sti_next_pos.hpp:58:25: warning: comparison of integer expressions of different signedness: ‘int’ and ‘long unsigned int’ [-Wsign-compare]
+[2025-05-23 21:20:24] [build-stderr]    58 |       if (_currentIndex >= _totalWaypoints) {
+[2025-05-23 21:20:24] [build-stderr]       |           ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+[2025-05-23 21:20:24] [build-stderr] ---
+[2025-05-23 21:20:24] [build-stdout] Summary: 1 package finished [3min 42s]
+[2025-05-23 21:20:24] [build-stdout]   1 package had stderr output: navigator
+[2025-05-23 21:20:25] Terminating normally.

@@ -1,0 +1,62 @@
+[
+  {
+    "stateName": "StStartup",
+    "event": "EvCbSuccess<CbWaitPose, OrNavigation>",
+    "target": "StQueue"
+  },
+  {
+    "stateName": "StQueue",
+    "event": "EvCbFailure<CbCanOperate, OrBatteryManager>",
+    "target": "StBatteryDepleted"
+  },
+  {
+    "stateName": "StQueue",
+    "event": "EvCbSuccess<CbRechargeRequired, OrBatteryManager>",
+    "target": "StNavigateToBase"
+  },
+  {
+    "stateName": "StQueue",
+    "event": "EvAllGo<SrAllEventsGo, SrReadyToProcessOrder>",
+    "target": "SsProcessOrder"
+  },
+  {
+    "stateName": "StQueue",
+    "event": "EvAllGo<SrAllEventsGo, SrReadyToTakeOrders>",
+    "target": "StNavigateToBase"
+  },
+  {
+    "stateName": "StNavigateToBase",
+    "event": "EvCbSuccess<CbNavigateGlobalPosition, OrNavigation>",
+    "target": "StAtBase"
+  },
+  {
+    "stateName": "StAtBase",
+    "event": "EvAllGo<SrAllEventsGo, SrReadyToProcess>",
+    "target": "StQueue"
+  },
+  {
+    "stateName": "StAtBase",
+    "event": "EvCbSuccess<CbRechargeRequired, OrBatteryManager>",
+    "target": "StRecharge"
+  },
+  {
+    "stateName": "StRecharge",
+    "event": "EvTimer<CbTimerCountdownOnce, OrTimer>",
+    "target": "StQueue"
+  },
+  {
+    "stateName": "StiNavigateToCoffeeMachine<SsProcessOrder>",
+    "event": "EvCbSuccess<CbNavigateGlobalPosition, OrNavigation>",
+    "target": "StiWaitForOrder"
+  },
+  {
+    "stateName": "StiWaitForOrder<SsProcessOrder>",
+    "event": "EvTimer<CbTimerCountdownOnce, OrTimer>",
+    "target": "StiDeliverOrder"
+  },
+  {
+    "stateName": "StiDeliverOrder<SsProcessOrder>",
+    "event": "EvCbSuccess<CbNavigateGlobalPosition, OrNavigation>",
+    "target": "StQueue"
+  }
+]

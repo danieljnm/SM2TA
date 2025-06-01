@@ -1,0 +1,16 @@
+[
+  {
+    "namespace": "tbot::cl_order_manager",
+    "clientName": "ClOrderManager",
+    "variable": "orders_",
+    "type": "queue<Point_<allocator<void>>, deque<Point_<allocator<void>>, allocator<Point_<allocator<void>>>>>",
+    "value": ""
+  },
+  {
+    "namespace": "tbot::cl_battery_manager",
+    "clientName": "ClBatteryManager",
+    "variable": "battery_level_",
+    "type": "int",
+    "value": 15
+  }
+]

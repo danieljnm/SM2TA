@@ -17,30 +17,7 @@ class Translator {
 	static StateMachine stateMachine = new StateMachine()
 	
 	def static void main(String[] args) {
-		//stateMachine = regular
-		/*stateMachine.name("CoffeeBot")
-    .state("Startup").transition("Queue").when("Ready")
-	.state("Queue").transition("Recharge").when("Needs_recharge")
-    .state("Recharge").transition("Queue").timeout(10)*/
-    /*stateMachine.name("Coffee_Bot")
-	  .variables[
-	    variable("battery_level_").type("int").value("100")
-	    variable("orders_").type("int").value("10")
-	  ]
-	  .state("Startup").initial
-	    .transition("Queue").guard("battery_level_ <= 20")
-	  .state("Queue")
-	    .transition("Recharge").guard("battery_level_ <= 20 && !(orders_ == 0)")
-	    .transition("AtBase").guard("orders_ == 0 && !(battery_level_ <= 20)")
-	    .transition("BatteryDepleted").guard("battery_level_ <= 0")
-	  .state("Recharge")
-	    .transition("Queue").timeout(10).action("battery_level_ := 100")
-	  .state("AtBase")
-	    .transition("Queue").guard("orders_ > 0")
-	  .state("BatteryDepleted")*/
 		translate()
-		//reset()
-		//withBasicNesting()
 		println(stateMachine.toXml)
 	}
 	

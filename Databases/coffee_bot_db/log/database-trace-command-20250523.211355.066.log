@@ -1,0 +1,10 @@
+[2025-05-23 21:13:55] This is codeql database trace-command --working-dir=. tbot_db -- colcon build --packages-select tbot
+[2025-05-23 21:13:55] Log file was started late.
+[2025-05-23 21:13:55] [PROGRESS] database trace-command> Running command in /home/daniel/workspace/thesis: [colcon, build, --packages-select, tbot]
+[2025-05-23 21:13:55] [build-stdout] Starting >>> tbot
+[2025-05-23 21:15:50] [build-stdout] [Processing: tbot]
+[2025-05-23 21:15:50] [build-stdout] [Processing: tbot]
+[2025-05-23 21:15:50] [build-stdout] [Processing: tbot]
+[2025-05-23 21:15:50] [build-stdout] Finished <<< tbot [1min 55s]
+[2025-05-23 21:15:50] [build-stdout] Summary: 1 package finished [1min 55s]
+[2025-05-23 21:15:50] Terminating normally.

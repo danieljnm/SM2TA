@@ -1,0 +1,100 @@
+[
+  {
+    "clientName": "CbAskDirections",
+    "function": "onMessageReceived",
+    "expression": "x",
+    "defaultValue": "x",
+    "type": "assignment"
+  },
+  {
+    "clientName": "ClBatteryManager",
+    "function": "publish_battery_level",
+    "expression": "data",
+    "defaultValue": "battery_level_",
+    "type": "assignment"
+  },
+  {
+    "clientName": "ClBatteryManager",
+    "function": "is_critical",
+    "expression": "battery_level_ <= 0",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "ClBatteryManager",
+    "function": "recharge_required",
+    "expression": "battery_level_ <= 20",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "ClBatteryManager",
+    "function": "recharge",
+    "expression": "set_battery_level",
+    "defaultValue": 100,
+    "type": "function"
+  },
+  {
+    "clientName": "ClBatteryManager",
+    "function": "deplete",
+    "expression": "set_battery_level",
+    "defaultValue": "battery_level_ - 10",
+    "type": "function"
+  },
+  {
+    "clientName": "ClBatteryManager",
+    "function": "get_battery_level",
+    "expression": "battery_level_",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "ClOrderManager",
+    "function": "onInitialize",
+    "expression": "generate_random_orders",
+    "defaultValue": 10,
+    "type": "function"
+  },
+  {
+    "clientName": "ClOrderManager",
+    "function": "generate_random_orders",
+    "expression": "add_order",
+    "defaultValue": "point",
+    "type": "function"
+  },
+  {
+    "clientName": "ClOrderManager",
+    "function": "add_order",
+    "expression": "orders_",
+    "defaultValue": "orders_ + 1",
+    "type": "assignment"
+  },
+  {
+    "clientName": "ClOrderManager",
+    "function": "get_next_order",
+    "expression": "delivery_location",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "ClOrderManager",
+    "function": "get_next_order",
+    "expression": "orders_",
+    "defaultValue": "orders_ - 1",
+    "type": "assignment"
+  },
+  {
+    "clientName": "ClOrderManager",
+    "function": "has_next_order",
+    "expression": "!orders_.empty()",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "OrNavigation",
+    "function": "onInitialize",
+    "expression": "currentWaypoint_",
+    "defaultValue": 0,
+    "type": "assignment"
+  }
+]
