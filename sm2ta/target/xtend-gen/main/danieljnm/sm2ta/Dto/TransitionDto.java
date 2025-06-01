@@ -45,19 +45,31 @@ public class TransitionDto {
   public void convert() {
     this.convertStateName();
     this.convertTargetName();
-    int _indexOf = this.event.indexOf("<");
-    int _plus = (_indexOf + 1);
-    this.clientBehaviour = this.event.substring(_plus, this.event.indexOf(","));
-    String _xifexpression = null;
-    boolean _startsWith = this.event.startsWith("EvAll");
-    if (_startsWith) {
-      int _indexOf_1 = this.event.indexOf(",");
-      int _plus_1 = (_indexOf_1 + 2);
-      _xifexpression = this.event.substring(_plus_1, this.event.indexOf(">"));
-    } else {
-      _xifexpression = "";
+    boolean _contains = this.event.contains("<");
+    if (_contains) {
+      String _xifexpression = null;
+      boolean _startsWith = this.event.startsWith("EvLoopEnd");
+      if (_startsWith) {
+        int _indexOf = this.event.indexOf("<");
+        int _plus = (_indexOf + 1);
+        _xifexpression = this.event.substring(_plus);
+      } else {
+        int _indexOf_1 = this.event.indexOf("<");
+        int _plus_1 = (_indexOf_1 + 1);
+        _xifexpression = this.event.substring(_plus_1, this.event.indexOf(","));
+      }
+      this.clientBehaviour = _xifexpression;
     }
-    this.reactor = _xifexpression;
+    String _xifexpression_1 = null;
+    boolean _startsWith_1 = this.event.startsWith("EvAll");
+    if (_startsWith_1) {
+      int _indexOf_2 = this.event.indexOf(",");
+      int _plus_2 = (_indexOf_2 + 2);
+      _xifexpression_1 = this.event.substring(_plus_2, this.event.indexOf(">"));
+    } else {
+      _xifexpression_1 = "";
+    }
+    this.reactor = _xifexpression_1;
   }
 
   public void convertStateName() {

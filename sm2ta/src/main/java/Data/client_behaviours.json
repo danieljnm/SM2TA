@@ -1,43 +1,253 @@
 [
   {
-    "name": "CbRechargeRequired",
-    "methodName": "recharge_required",
-    "event": "postFailureEvent",
+    "name": "CbRequestInspectionTargets",
+    "methodName": "setTurbineInfo",
+    "event": "postSuccessEvent",
     "inIf": false,
     "isNegated": false
   },
   {
-    "name": "CbRechargeRequired",
-    "methodName": "recharge_required",
+    "name": "CbRequestInspectionTargets",
+    "methodName": "getTurbineInfo",
+    "event": "postSuccessEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbTargetPosChecker",
+    "methodName": "getGimbalThresholdDeg",
+    "event": "postEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbTargetPosChecker",
+    "methodName": "getPosThresholdM",
+    "event": "postEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbTargetPosChecker",
+    "methodName": "getGimbalPose",
+    "event": "postEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbTargetPosChecker",
+    "methodName": "calcDistanceCurrentLocalPosToPoint",
+    "event": "postEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbTargetPosChecker",
+    "methodName": "getCurrentMissionIndex",
+    "event": "postEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbTargetPosChecker",
+    "methodName": "getCurrentMissionPlan",
+    "event": "postEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbTargetPosChecker",
+    "methodName": "checkDistanceToTarget",
+    "event": "postEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbGetTurbinePose",
+    "methodName": "setTurbineInfo",
+    "event": "postSuccessEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbGetTurbinePose",
+    "methodName": "getTurbineInfo",
+    "event": "postSuccessEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbValidateImage",
+    "methodName": "setCurrentMissionIndex",
+    "event": "postSuccessEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbValidateImage",
+    "methodName": "getCurrentMissionIndex",
+    "event": "postSuccessEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbGetGlobalPlan",
+    "methodName": "setCurrentMissionIndex",
+    "event": "postSuccessEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbGetGlobalPlan",
+    "methodName": "setCurrentMissionPlan",
+    "event": "postSuccessEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbGetGlobalPlan",
+    "methodName": "getLidarInfo",
+    "event": "postSuccessEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbGetGlobalPlan",
+    "methodName": "getTurbineInfo",
+    "event": "postSuccessEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbGetGlobalPlan",
+    "methodName": "getDronePoseLocal",
+    "event": "postSuccessEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbGetGlobalPlan",
+    "methodName": "getDronePos",
+    "event": "postSuccessEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbTakePicture",
+    "methodName": "getGimbalPose",
     "event": "postSuccessEvent",
     "inIf": true,
     "isNegated": false
   },
   {
-    "name": "CbCanOperate",
-    "methodName": "is_critical",
-    "event": "postFailureEvent",
+    "name": "CbTakePicture",
+    "methodName": "getCurrentMissionIndex",
+    "event": "postSuccessEvent",
     "inIf": true,
     "isNegated": false
   },
   {
-    "name": "CbCanOperate",
-    "methodName": "is_critical",
+    "name": "CbTakePicture",
+    "methodName": "getCurrentMissionPlan",
     "event": "postSuccessEvent",
-    "inIf": false,
+    "inIf": true,
     "isNegated": false
   },
   {
-    "name": "CbHasNextOrder",
-    "methodName": "has_next_order",
+    "name": "CbTakePicture",
+    "methodName": "getLidarInfo",
+    "event": "postSuccessEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbTakePicture",
+    "methodName": "getTurbineInfo",
+    "event": "postSuccessEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbTakePicture",
+    "methodName": "getDronePoseLocal",
+    "event": "postSuccessEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbTakePicture",
+    "methodName": "getDronePos",
+    "event": "postSuccessEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbTakePicture",
+    "methodName": "captureImage",
+    "event": "postSuccessEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "CbTakeStartPositionPicture",
+    "methodName": "getGimbalPose",
     "event": "postFailureEvent",
     "inIf": false,
     "isNegated": false
   },
   {
-    "name": "CbHasNextOrder",
-    "methodName": "has_next_order",
-    "event": "postSuccessEvent",
+    "name": "CbTakeStartPositionPicture",
+    "methodName": "getCurrentMissionPlan",
+    "event": "postFailureEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbTakeStartPositionPicture",
+    "methodName": "getLidarInfo",
+    "event": "postFailureEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbTakeStartPositionPicture",
+    "methodName": "getTurbineInfo",
+    "event": "postFailureEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbTakeStartPositionPicture",
+    "methodName": "getDronePoseLocal",
+    "event": "postFailureEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbTakeStartPositionPicture",
+    "methodName": "getDronePos",
+    "event": "postFailureEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "CbTakeStartPositionPicture",
+    "methodName": "captureImage",
+    "event": "postFailureEvent",
+    "inIf": false,
+    "isNegated": false
+  },
+  {
+    "name": "StiNextPosState",
+    "methodName": "getCurrentMissionIndex",
+    "event": "postEvent",
+    "inIf": true,
+    "isNegated": false
+  },
+  {
+    "name": "StiNextPosState",
+    "methodName": "getCurrentMissionPlan",
+    "event": "postEvent",
     "inIf": true,
     "isNegated": false
   }

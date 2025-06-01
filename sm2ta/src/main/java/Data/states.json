@@ -1,25 +1,16 @@
 [
   {
-    "stateName": "SsProcessOrder",
-    "namespace": "Tbot",
-    "initial": false,
-    "nestedInitial": false,
-    "updates": "",
-    "timer": 0,
-    "action": ""
-  },
-  {
-    "stateName": "StStartup",
-    "namespace": "Tbot",
+    "stateName": "IdleState",
+    "namespace": "Navigator",
     "initial": true,
     "nestedInitial": false,
     "updates": "",
     "timer": 0,
-    "action": "CbWaitPose"
+    "action": ""
   },
   {
-    "stateName": "StQueue",
-    "namespace": "Tbot",
+    "stateName": "PosAquisitionState",
+    "namespace": "Navigator",
     "initial": false,
     "nestedInitial": false,
     "updates": "",
@@ -27,17 +18,8 @@
     "action": ""
   },
   {
-    "stateName": "StNavigateToBase",
-    "namespace": "Tbot",
-    "initial": false,
-    "nestedInitial": false,
-    "updates": "",
-    "timer": 0,
-    "action": "CbNavigateGlobalPosition"
-  },
-  {
-    "stateName": "StAtBase",
-    "namespace": "Tbot",
+    "stateName": "GlobalPlanningState",
+    "namespace": "Navigator",
     "initial": false,
     "nestedInitial": false,
     "updates": "",
@@ -45,17 +27,8 @@
     "action": ""
   },
   {
-    "stateName": "StRecharge",
-    "namespace": "Tbot",
-    "initial": false,
-    "nestedInitial": false,
-    "updates": "recharge",
-    "timer": 10,
-    "action": ""
-  },
-  {
-    "stateName": "StBatteryDepleted",
-    "namespace": "Tbot",
+    "stateName": "MissionCompletedState",
+    "namespace": "Navigator",
     "initial": false,
     "nestedInitial": false,
     "updates": "",
@@ -63,30 +36,30 @@
     "action": ""
   },
   {
-    "stateName": "StiNavigateToCoffeeMachine<SsProcessOrder>",
-    "namespace": "SsProcessOrder",
-    "initial": false,
-    "nestedInitial": true,
-    "updates": "",
-    "timer": 0,
-    "action": "CbNavigateGlobalPosition"
-  },
-  {
-    "stateName": "StiWaitForOrder<SsProcessOrder>",
-    "namespace": "SsProcessOrder",
+    "stateName": "StiNextPosState",
+    "namespace": "Navigator",
     "initial": false,
     "nestedInitial": false,
-    "updates": "",
-    "timer": 5,
+    "updates": "getCurrentMissionIndex,getCurrentMissionPlan,getGlobalSMData,getStateMachine,postEvent,size,what",
+    "timer": 0,
     "action": ""
   },
   {
-    "stateName": "StiDeliverOrder<SsProcessOrder>",
-    "namespace": "SsProcessOrder",
+    "stateName": "StiCaptureState",
+    "namespace": "Navigator",
     "initial": false,
     "nestedInitial": false,
-    "updates": "deplete,get_next_order",
+    "updates": "getCurrentMissionIndex,getGlobalSMData,getStateMachine",
     "timer": 0,
-    "action": "CbNavigateGlobalPosition"
+    "action": ""
+  },
+  {
+    "stateName": "StiValidateState",
+    "namespace": "Navigator",
+    "initial": false,
+    "nestedInitial": false,
+    "updates": "getCurrentMissionIndex,getGlobalSMData,getStateMachine",
+    "timer": 0,
+    "action": ""
   }
 ]

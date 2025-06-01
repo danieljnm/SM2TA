@@ -30,7 +30,9 @@ class TransitionDto {
 	def void convert() {
 		convertStateName()
 		convertTargetName()
-		clientBehaviour = event.substring(event.indexOf('<') + 1, event.indexOf(','))
+		if (event.contains("<")) {
+			clientBehaviour = event.startsWith("EvLoopEnd") ? event.substring(event.indexOf('<') + 1) : event.substring(event.indexOf('<') + 1, event.indexOf(','))
+		}
 		reactor = event.startsWith("EvAll") ? event.substring(event.indexOf(',') + 2, event.indexOf('>')) : ""
 	}
 	

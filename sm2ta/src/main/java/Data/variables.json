@@ -1,14 +1,170 @@
 [
   {
-    "clientName": "ClBatteryManager",
-    "variable": "battery_level_",
+    "namespace": "navigator",
+    "clientName": "CameraInfo",
+    "variable": "image_height",
     "type": "int",
-    "value": 15
+    "value": 0
   },
   {
-    "clientName": "ClOrderManager",
-    "variable": "orders_",
-    "type": "queue<Point_<allocator<void>>, deque<Point_<allocator<void>>, allocator<Point_<allocator<void>>>>>",
-    "value": ""
+    "namespace": "navigator",
+    "clientName": "CameraInfo",
+    "variable": "image_width",
+    "type": "int",
+    "value": 0
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "CameraInfo",
+    "variable": "focal_length",
+    "type": "double",
+    "value": 0
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "CameraInfo",
+    "variable": "sensor_height",
+    "type": "double",
+    "value": 0
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "CameraInfo",
+    "variable": "sensor_width",
+    "type": "double",
+    "value": 0
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "LidarInfo",
+    "variable": "curr_distance",
+    "type": "float",
+    "value": 0
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "TurbineInfo",
+    "variable": "current_distance_lidar",
+    "type": "float",
+    "value": 10
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "TurbineInfo",
+    "variable": "vertical_safety",
+    "type": "float",
+    "value": 10
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "TurbineInfo",
+    "variable": "hub_offset",
+    "type": "float",
+    "value": 1
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "TurbineInfo",
+    "variable": "overlap_procentage",
+    "type": "float",
+    "value": 20
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "TurbineInfo",
+    "variable": "first_blade_rotation",
+    "type": "float",
+    "value": 0
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "TurbineInfo",
+    "variable": "first_blade",
+    "type": "int",
+    "value": 1
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "TurbineInfo",
+    "variable": "hub_center_px_y",
+    "type": "int",
+    "value": 0
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "TurbineInfo",
+    "variable": "hub_center_px_x",
+    "type": "int",
+    "value": 0
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "TurbineInfo",
+    "variable": "blade_distance_target",
+    "type": "float",
+    "value": 0
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "TurbineInfo",
+    "variable": "blade_length",
+    "type": "float",
+    "value": 0
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "DataStore",
+    "variable": "current_mission_index",
+    "type": "int",
+    "value": 0
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "DataStore",
+    "variable": "_gimbal_threshold_deg",
+    "type": "double",
+    "value": 1
+  },
+  {
+    "namespace": "navigator",
+    "clientName": "DataStore",
+    "variable": "_pos_threshold_m",
+    "type": "double",
+    "value": 1
+  },
+  {
+    "namespace": "navigator::cl_image_analyzer",
+    "clientName": "CbEstimateStartPosition",
+    "variable": "lidar_distance",
+    "type": "double",
+    "value": 0
+  },
+  {
+    "namespace": "navigator::cl_local_planner",
+    "clientName": "CbToggleLocalPlanCorrections",
+    "variable": "_enable",
+    "type": "bool",
+    "value": 0
+  },
+  {
+    "namespace": "navigator::cl_drone_interface",
+    "clientName": "CbStartOffboard",
+    "variable": "force_shutdown",
+    "type": "bool",
+    "value": 0
+  },
+  {
+    "namespace": "navigator::cl_drone_interface",
+    "clientName": "CbStartLoiter",
+    "variable": "force_shutdown",
+    "type": "bool",
+    "value": 0
+  },
+  {
+    "namespace": "navigator::cl_drone_interface",
+    "clientName": "CbSendTargetPos",
+    "variable": "_ready",
+    "type": "bool",
+    "value": 0
   }
 ]

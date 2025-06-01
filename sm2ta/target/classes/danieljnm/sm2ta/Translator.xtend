@@ -18,18 +18,26 @@ class Translator {
 	
 	def static void main(String[] args) {
 		//stateMachine = regular
-/*stateMachine.name("Turtlebot")
-	.variables[
-		variable("is_at_base_").type("bool").value("true")
-	]
-	.state("Idle").initial
-		.transition("Move").when("Ready").action("is_at_base_ := false")
-	.state("Move")
-		.nesting[
-			nestedState("NextPosition").transition("Arrived").guard("is_base_base_ == false").timeout(1)
-			nestedState("Arrived").committed()
-		]
-	.transition("Idle").when("Success")*/
+		/*stateMachine.name("CoffeeBot")
+    .state("Startup").transition("Queue").when("Ready")
+	.state("Queue").transition("Recharge").when("Needs_recharge")
+    .state("Recharge").transition("Queue").timeout(10)*/
+    /*stateMachine.name("Coffee_Bot")
+	  .variables[
+	    variable("battery_level_").type("int").value("100")
+	    variable("orders_").type("int").value("10")
+	  ]
+	  .state("Startup").initial
+	    .transition("Queue").guard("battery_level_ <= 20")
+	  .state("Queue")
+	    .transition("Recharge").guard("battery_level_ <= 20 && !(orders_ == 0)")
+	    .transition("AtBase").guard("orders_ == 0 && !(battery_level_ <= 20)")
+	    .transition("BatteryDepleted").guard("battery_level_ <= 0")
+	  .state("Recharge")
+	    .transition("Queue").timeout(10).action("battery_level_ := 100")
+	  .state("AtBase")
+	    .transition("Queue").guard("orders_ > 0")
+	  .state("BatteryDepleted")*/
 		translate()
 		//reset()
 		//withBasicNesting()
@@ -59,11 +67,19 @@ class Translator {
         		val updates = state.updates.split(",")
 				        .map[update | getAssignment(update, functions)]
 				        .filterNull
-				val guards = transition.guards
+				val client = behaviours.getOrDefault(transition.clientBehaviour, newArrayList)
+				val transitionUpdates = newArrayList
+				client.forEach[it |
+					val assignment = getAssignment(it.methodName, functions)
+					if (assignment !== null) {
+						transitionUpdates.add(assignment)
+					}
+				]
+				val guards = transition.guards.filterNull.filter[guard | variables.exists[variable | guard.toString.contains(variable.variable)]]
 				val timeout = transition.isTimer ? state.timer : 0
 				val when = !state.action.nullOrEmpty && transition.event.contains(state.action) ? state.action : null
         		stateMachine.state(state.stateName)
-        			.transition(transition.target).guard(guards.join(' &amp;&amp; ')).timeout(timeout).action(updates.join(', ')).when(when)
+        			.transition(transition.target).guard(guards.join(' &amp;&amp; ')).timeout(timeout).action((updates + transitionUpdates).join(', ')).when(when)
         	]
 
 	        val nestedNamespace = state.stateName
@@ -145,11 +161,12 @@ class Translator {
 	        current = functions.findFirst[f | f.function == currentExpr]
 	    }
 	    
-	    current === null ? null : '''«current.expression» := «defaultVal ?: current.defaultValue»'''
+	    val value = defaultVal ?: current?.defaultValue
+	    current === null || !((value instanceof Integer) && variables.exists[variable | value.toString.contains(variable.variable)]) ? null : '''«current.expression» := «defaultVal ?: current.defaultValue»'''
 	}
 	
 	def static getVariables() {
-		new Gson().fromJson(getJson("variables"), typeof(VariableDto[]))
+		new Gson().fromJson(getJson("variables"), typeof(VariableDto[])).groupBy[variable].values.map[head].toList
 	}
 	
 	def static setVariables(List<VariableDto> variables) {

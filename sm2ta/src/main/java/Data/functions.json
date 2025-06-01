@@ -1,107 +1,226 @@
 [
   {
-    "clientName": "ClRosTimer",
-    "function": "onOrthogonalAllocation",
-    "expression": "postTimerEvent_",
-    "defaultValue": "[...](...){...}",
+    "clientName": "DataStore",
+    "function": "setCamInfo",
+    "expression": "_camInfo",
+    "defaultValue": "camInfo",
     "type": "assignment"
   },
   {
-    "clientName": "ClBatteryManager",
-    "function": "publish_battery_level",
+    "clientName": "DataStore",
+    "function": "getCamInfo",
+    "expression": "_camInfo",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "setGimbalThresholdDeg",
+    "expression": "_gimbal_threshold_deg",
+    "defaultValue": "gimbalThresholdDeg",
+    "type": "assignment"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "getGimbalThresholdDeg",
+    "expression": "_gimbal_threshold_deg",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "setPosThresholdM",
+    "expression": "_pos_threshold_m",
+    "defaultValue": "posThresholdM",
+    "type": "assignment"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "getPosThresholdM",
+    "expression": "_pos_threshold_m",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "setGimbalPose",
+    "expression": "_gimbalPose",
+    "defaultValue": "gimbalPose",
+    "type": "assignment"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "getGimbalPose",
+    "expression": "_gimbalPose",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "calcDistanceCurrentLocalPosToPoint",
+    "expression": "_dist",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "setCurrentMissionIndex",
+    "expression": "current_mission_index",
+    "defaultValue": "currentMissionIndex",
+    "type": "assignment"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "getCurrentMissionIndex",
+    "expression": "current_mission_index",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "getCurrentMissionPlan",
+    "expression": "current_mission_plan",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "getLidarInfo",
+    "expression": "_lidarInfo",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "getTurbineInfo",
+    "expression": "_turbineInfo",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "setDronePoseLocal",
+    "expression": "_dronePosLocal",
+    "defaultValue": "dronePosLocal",
+    "type": "assignment"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "getDronePoseLocal",
+    "expression": "_dronePosLocal",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "setDronePos",
+    "expression": "_dronePos",
+    "defaultValue": "dronePos",
+    "type": "assignment"
+  },
+  {
+    "clientName": "DataStore",
+    "function": "getDronePos",
+    "expression": "_dronePos",
+    "defaultValue": "",
+    "type": "return"
+  },
+  {
+    "clientName": "CbRequestInspectionTargets",
+    "function": "onMessageReceived",
+    "expression": "overlap_procentage",
+    "defaultValue": "overlap_procentage",
+    "type": "assignment"
+  },
+  {
+    "clientName": "CbStartOffboard",
+    "function": "onEntry",
     "expression": "data",
-    "defaultValue": "battery_level_",
+    "defaultValue": 1,
     "type": "assignment"
   },
   {
-    "clientName": "ClBatteryManager",
-    "function": "is_critical",
-    "expression": "battery_level_ <= 0",
-    "defaultValue": "",
-    "type": "return"
-  },
-  {
-    "clientName": "ClBatteryManager",
-    "function": "recharge_required",
-    "expression": "battery_level_ <= 20",
-    "defaultValue": "",
-    "type": "return"
-  },
-  {
-    "clientName": "ClBatteryManager",
-    "function": "recharge",
-    "expression": "set_battery_level",
-    "defaultValue": 100,
-    "type": "function"
-  },
-  {
-    "clientName": "ClBatteryManager",
-    "function": "deplete",
-    "expression": "set_battery_level",
-    "defaultValue": "battery_level_ - 10",
-    "type": "function"
-  },
-  {
-    "clientName": "ClBatteryManager",
-    "function": "set_battery_level",
-    "expression": "battery_level_",
-    "defaultValue": "call to clamp",
+    "clientName": "CbStartOffboard",
+    "function": "onMessageState",
+    "expression": "force_shutdown",
+    "defaultValue": 1,
     "type": "assignment"
   },
   {
-    "clientName": "ClBatteryManager",
-    "function": "get_battery_level",
-    "expression": "battery_level_",
-    "defaultValue": "",
-    "type": "return"
+    "clientName": "CbSendTargetPos",
+    "function": "onEntry",
+    "expression": "position",
+    "defaultValue": "position",
+    "type": "assignment"
   },
   {
-    "clientName": "ClOrderManager",
-    "function": "onInitialize",
-    "expression": "generate_random_orders",
-    "defaultValue": 10,
-    "type": "function"
+    "clientName": "CbUpdateDroneData",
+    "function": "onMessageShortestLidar",
+    "expression": "curr_distance",
+    "defaultValue": "data",
+    "type": "assignment"
   },
   {
-    "clientName": "ClOrderManager",
-    "function": "generate_random_orders",
+    "clientName": "CbUpdateDroneData",
+    "function": "onMessageLocalPosition",
     "expression": "x",
-    "defaultValue": "call to operator()",
+    "defaultValue": "x",
     "type": "assignment"
   },
   {
-    "clientName": "ClOrderManager",
-    "function": "generate_random_orders",
-    "expression": "add_order",
-    "defaultValue": "point",
-    "type": "function"
-  },
-  {
-    "clientName": "ClOrderManager",
-    "function": "add_order",
-    "expression": "orders_",
-    "defaultValue": "orders_ + 1",
+    "clientName": "CbUpdateDroneData",
+    "function": "onMessageGlobalPosition",
+    "expression": "lat",
+    "defaultValue": "lat",
     "type": "assignment"
   },
   {
-    "clientName": "ClOrderManager",
-    "function": "get_next_order",
-    "expression": "delivery_location",
-    "defaultValue": "",
-    "type": "return"
-  },
-  {
-    "clientName": "ClOrderManager",
-    "function": "get_next_order",
-    "expression": "orders_",
-    "defaultValue": "orders_ - 1",
+    "clientName": "CbGetTurbinePose",
+    "function": "onMessageReceived",
+    "expression": "first_blade_rotation",
+    "defaultValue": "first_blade_rotation",
     "type": "assignment"
   },
   {
-    "clientName": "ClOrderManager",
-    "function": "has_next_order",
-    "expression": "!orders_.empty()",
-    "defaultValue": "",
-    "type": "return"
+    "clientName": "CbEstimateStartPosition",
+    "function": "onMessageReceived",
+    "expression": "lidar_distance",
+    "defaultValue": "current_lidar_distance",
+    "type": "assignment"
+  },
+  {
+    "clientName": "CbEstimateStartPosition",
+    "function": "waitingForFile",
+    "expression": "target_width",
+    "defaultValue": "image_width",
+    "type": "assignment"
+  },
+  {
+    "clientName": "CbEstimateStartPosition",
+    "function": "responseReceivedFromVision",
+    "expression": "pixel_center_x",
+    "defaultValue": "center_px_x",
+    "type": "assignment"
+  },
+  {
+    "clientName": "CbGetGlobalPlan",
+    "function": "onEntry",
+    "expression": "blade_length",
+    "defaultValue": "blade_length",
+    "type": "assignment"
+  },
+  {
+    "clientName": "CbGetLocalPlanCorrections",
+    "function": "onMessageReceived",
+    "expression": "position",
+    "defaultValue": "position",
+    "type": "assignment"
+  },
+  {
+    "clientName": "CbToggleLocalPlanCorrections",
+    "function": "onEntry",
+    "expression": "data",
+    "defaultValue": "_enable",
+    "type": "assignment"
   }
 ]

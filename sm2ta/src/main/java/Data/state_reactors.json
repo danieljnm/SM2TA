@@ -1,32 +1,22 @@
 [
   {
-    "name": "SrReadyToTakeOrders",
-    "stateName": "StQueue",
-    "event": "EvCbFailure<CbRechargeRequired, OrBatteryManager>"
+    "name": "SrInspectionReady",
+    "stateName": "PosAquisitionState",
+    "event": "EvCbSuccess<CbRequestInspectionTargets, OrPilotInterface>"
   },
   {
-    "name": "SrReadyToTakeOrders",
-    "stateName": "StQueue",
-    "event": "EvCbFailure<CbHasNextOrder, OrOrderManager>"
+    "name": "SrInspectionReady",
+    "stateName": "PosAquisitionState",
+    "event": "EvCbSuccess<CbGetTurbinePose, OrImageAnalyzer>"
   },
   {
-    "name": "SrReadyToProcessOrder",
-    "stateName": "StQueue",
-    "event": "EvCbSuccess<CbHasNextOrder, OrOrderManager>"
+    "name": "SrGlobalPlanReady",
+    "stateName": "GlobalPlanningState",
+    "event": "EvCbSuccess<CbGetGlobalPlan, OrGlobalPlanner>"
   },
   {
-    "name": "SrReadyToProcessOrder",
-    "stateName": "StQueue",
-    "event": "EvCbFailure<CbRechargeRequired, OrBatteryManager>"
-  },
-  {
-    "name": "SrReadyToProcess",
-    "stateName": "StAtBase",
-    "event": "EvCbSuccess<CbHasNextOrder, OrOrderManager>"
-  },
-  {
-    "name": "SrReadyToProcess",
-    "stateName": "StAtBase",
-    "event": "EvCbFailure<CbRechargeRequired, OrBatteryManager>"
+    "name": "SrGlobalPlanReady",
+    "stateName": "GlobalPlanningState",
+    "event": "EvCbSuccess<CbStartOffboard, OrDroneInterface>"
   }
 ]

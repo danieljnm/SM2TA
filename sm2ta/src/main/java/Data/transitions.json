@@ -1,62 +1,97 @@
 [
   {
-    "stateName": "StStartup",
-    "event": "EvCbSuccess<CbWaitPose, OrNavigation>",
-    "target": "StQueue"
+    "stateName": "IdleState",
+    "event": "EvCbSuccess<CbCheckControl, OrHasControl>",
+    "target": "PosAquisitionState"
   },
   {
-    "stateName": "StQueue",
-    "event": "EvCbFailure<CbCanOperate, OrBatteryManager>",
-    "target": "StBatteryDepleted"
+    "stateName": "PosAquisitionState",
+    "event": "EvGlobalError",
+    "target": "IdleState"
   },
   {
-    "stateName": "StQueue",
-    "event": "EvCbSuccess<CbRechargeRequired, OrBatteryManager>",
-    "target": "StNavigateToBase"
+    "stateName": "PosAquisitionState",
+    "event": "EvCbFailure<CbCheckControl, OrHasControl>",
+    "target": "IdleState"
   },
   {
-    "stateName": "StQueue",
-    "event": "EvAllGo<SrAllEventsGo, SrReadyToProcessOrder>",
-    "target": "SsProcessOrder"
+    "stateName": "PosAquisitionState",
+    "event": "EvCbFailure<CbEstimateStartPosition, OrImageAnalyzer>",
+    "target": "IdleState"
   },
   {
-    "stateName": "StQueue",
-    "event": "EvAllGo<SrAllEventsGo, SrReadyToTakeOrders>",
-    "target": "StNavigateToBase"
+    "stateName": "PosAquisitionState",
+    "event": "EvCbFailure<CbTakeStartPositionPicture, OrCameraInterface>",
+    "target": "IdleState"
   },
   {
-    "stateName": "StNavigateToBase",
-    "event": "EvCbSuccess<CbNavigateGlobalPosition, OrNavigation>",
-    "target": "StAtBase"
+    "stateName": "PosAquisitionState",
+    "event": "EvAllGo<SrAllEventsGo, SrInspectionReady>",
+    "target": "GlobalPlanningState"
   },
   {
-    "stateName": "StAtBase",
-    "event": "EvAllGo<SrAllEventsGo, SrReadyToProcess>",
-    "target": "StQueue"
+    "stateName": "GlobalPlanningState",
+    "event": "EvGlobalError",
+    "target": "IdleState"
   },
   {
-    "stateName": "StAtBase",
-    "event": "EvCbSuccess<CbRechargeRequired, OrBatteryManager>",
-    "target": "StRecharge"
+    "stateName": "GlobalPlanningState",
+    "event": "EvAllGo<SrAllEventsGo, SrGlobalPlanReady>",
+    "target": "StiNextPosState"
   },
   {
-    "stateName": "StRecharge",
-    "event": "EvTimer<CbTimerCountdownOnce, OrTimer>",
-    "target": "StQueue"
+    "stateName": "GlobalPlanningState",
+    "event": "EvCbFailure<CbCheckControl, OrHasControl>",
+    "target": "IdleState"
   },
   {
-    "stateName": "StiNavigateToCoffeeMachine<SsProcessOrder>",
-    "event": "EvCbSuccess<CbNavigateGlobalPosition, OrNavigation>",
-    "target": "StiWaitForOrder"
+    "stateName": "MissionCompletedState",
+    "event": "EvGlobalError",
+    "target": "IdleState"
   },
   {
-    "stateName": "StiWaitForOrder<SsProcessOrder>",
-    "event": "EvTimer<CbTimerCountdownOnce, OrTimer>",
-    "target": "StiDeliverOrder"
+    "stateName": "MissionCompletedState",
+    "event": "EvCbSuccess<CbPostMissionNotice, OrPilotInterface>",
+    "target": "IdleState"
   },
   {
-    "stateName": "StiDeliverOrder<SsProcessOrder>",
-    "event": "EvCbSuccess<CbNavigateGlobalPosition, OrNavigation>",
-    "target": "StQueue"
+    "stateName": "MissionCompletedState",
+    "event": "EvCbFailure<CbCheckControl, OrHasControl>",
+    "target": "IdleState"
+  },
+  {
+    "stateName": "StiNextPosState",
+    "event": "EvLoopEnd<StiNextPosState>",
+    "target": "MissionCompletedState"
+  },
+  {
+    "stateName": "StiNextPosState",
+    "event": "EvCbFailure<CbCheckControl, OrHasControl>",
+    "target": "IdleState"
+  },
+  {
+    "stateName": "StiNextPosState",
+    "event": "EvCbSuccess<CbTargetPosChecker, OrDroneInterface>",
+    "target": "StiCaptureState"
+  },
+  {
+    "stateName": "StiCaptureState",
+    "event": "EvCbSuccess<CbTakePicture, OrCameraInterface>",
+    "target": "StiValidateState"
+  },
+  {
+    "stateName": "StiCaptureState",
+    "event": "EvCbFailure<CbCheckControl, OrHasControl>",
+    "target": "IdleState"
+  },
+  {
+    "stateName": "StiValidateState",
+    "event": "EvCbSuccess<CbValidateImage, OrImageAnalyzer>",
+    "target": "StiNextPosState"
+  },
+  {
+    "stateName": "StiValidateState",
+    "event": "EvCbFailure<CbCheckControl, OrHasControl>",
+    "target": "IdleState"
   }
 ]

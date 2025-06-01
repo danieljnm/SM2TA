@@ -12,25 +12,11 @@ class Query {
 		stateMachine.errorStates.forEach[queries.add(it)]
 		
 		stateMachine.states.values.forEach [ state |
-	    state.transitions.filter[!guard.nullOrEmpty].forEach [ t |
-	        val negatedGuard = "not (" + t.guard + ")"
-	        queries.add('''A[] («stateMachine.name».«state.name» and «negatedGuard.format» imply («stateMachine.name».«state.name»))''')
-	    ]
-]
-	    /*val incomingTransitionsByTarget = stateMachine.states.values
-	        .flatMap[it.transitions]
-	        .groupBy[target]
-	
-	    incomingTransitionsByTarget.entrySet.forEach [ entry |
-	        val targetState = entry.key
-	        val incomingGuarded = entry.value.filter[!guard.nullOrEmpty]
-	        if (!incomingGuarded.empty) {
-	            val combinedGuard = incomingGuarded
-	                .map[transition | "(" + transition.guard.format + ")"]
-	                .join(" or ")
-	            queries.add('''A[] not («stateMachine.name».«targetState.name» and not («combinedGuard»))''')
-	        }
-	    ]*/
+		    state.transitions.filter[!guard.nullOrEmpty].forEach [ t |
+		        val negatedGuard = "not (" + t.guard + ")"
+		        queries.add('''A[] («stateMachine.name».«state.name» and «negatedGuard.format» imply («stateMachine.name».«state.name»))''')
+		    ]
+		]
 	}
 	
 	def errorStates(StateMachine stateMachine) {

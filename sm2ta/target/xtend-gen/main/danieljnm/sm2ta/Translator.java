@@ -1,5 +1,6 @@
 package danieljnm.sm2ta;
 
+import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import danieljnm.sm2ta.Dto.ClientBehaviourDto;
 import danieljnm.sm2ta.Dto.ConditionDto;
@@ -12,6 +13,7 @@ import danieljnm.sm2ta.StateMachine.State;
 import danieljnm.sm2ta.StateMachine.StateMachine;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -47,7 +49,7 @@ public class Translator {
     };
     final StateDto initial = IterableExtensions.<StateDto>findFirst(((Iterable<StateDto>)Conversions.doWrapArray(Translator.getStates())), _function);
     Translator.stateMachine.name(initial.namespace).state(initial.stateName).initial();
-    Translator.setVariables(((List<VariableDto>)Conversions.doWrapArray(Translator.getVariables())));
+    Translator.setVariables(Translator.getVariables());
     Translator.setStates(initial.namespace);
   }
 
@@ -66,7 +68,22 @@ public class Translator {
           return Translator.getAssignment(update, ((List<FunctionDto>)Conversions.doWrapArray(functions)));
         };
         final Iterable<CharSequence> updates = IterableExtensions.<CharSequence>filterNull(ListExtensions.<String, CharSequence>map(((List<String>)Conversions.doWrapArray(state.updates.split(","))), _function_3));
-        final Iterable<CharSequence> guards = Translator.getGuards(transition);
+        final List<ClientBehaviourDto> client = Translator.getBehaviours().getOrDefault(transition.clientBehaviour, CollectionLiterals.<ClientBehaviourDto>newArrayList());
+        final ArrayList<CharSequence> transitionUpdates = CollectionLiterals.<CharSequence>newArrayList();
+        final Consumer<ClientBehaviourDto> _function_4 = (ClientBehaviourDto it) -> {
+          final CharSequence assignment = Translator.getAssignment(it.methodName, ((List<FunctionDto>)Conversions.doWrapArray(functions)));
+          if ((assignment != null)) {
+            transitionUpdates.add(assignment);
+          }
+        };
+        client.forEach(_function_4);
+        final Function1<CharSequence, Boolean> _function_5 = (CharSequence guard) -> {
+          final Function1<VariableDto, Boolean> _function_6 = (VariableDto variable) -> {
+            return Boolean.valueOf(guard.toString().contains(variable.variable));
+          };
+          return Boolean.valueOf(IterableExtensions.<VariableDto>exists(Translator.getVariables(), _function_6));
+        };
+        final Iterable<CharSequence> guards = IterableExtensions.<CharSequence>filter(IterableExtensions.<CharSequence>filterNull(Translator.getGuards(transition)), _function_5);
         int _xifexpression = (int) 0;
         boolean _isTimer = transition.isTimer();
         if (_isTimer) {
@@ -82,7 +99,7 @@ public class Translator {
           _xifexpression_1 = null;
         }
         final String when = _xifexpression_1;
-        Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; ")).timeout(timeout).action(IterableExtensions.join(updates, ", ")).when(when);
+        Translator.stateMachine.state(state.stateName).transition(transition.target).guard(IterableExtensions.join(guards, " &amp;&amp; ")).timeout(timeout).action(IterableExtensions.join(Iterables.<CharSequence>concat(updates, transitionUpdates), ", ")).when(when);
       };
       stateTransitions.forEach(_function_2);
       final String nestedNamespace = state.stateName;
@@ -247,20 +264,33 @@ public class Translator {
           current = IterableExtensions.<FunctionDto>findFirst(functions, _function_1);
         }
       }
+      Object _elvis = null;
+      if (defaultVal != null) {
+        _elvis = defaultVal;
+      } else {
+        String _defaultValue = null;
+        if (current!=null) {
+          _defaultValue=current.defaultValue;
+        }
+        _elvis = _defaultValue;
+      }
+      final Object value = _elvis;
       CharSequence _xifexpression = null;
-      if ((current == null)) {
+      if (((current == null) || (!((value instanceof Integer) && IterableExtensions.<VariableDto>exists(Translator.getVariables(), ((Function1<VariableDto, Boolean>) (VariableDto variable) -> {
+        return Boolean.valueOf(value.toString().contains(variable.variable));
+      })))))) {
         _xifexpression = null;
       } else {
         StringConcatenation _builder = new StringConcatenation();
         _builder.append(current.expression);
         _builder.append(" := ");
-        Object _elvis = null;
+        Object _elvis_1 = null;
         if (defaultVal != null) {
-          _elvis = defaultVal;
+          _elvis_1 = defaultVal;
         } else {
-          _elvis = current.defaultValue;
+          _elvis_1 = current.defaultValue;
         }
-        _builder.append(_elvis);
+        _builder.append(_elvis_1);
         _xifexpression = _builder;
       }
       _xblockexpression = _xifexpression;
@@ -268,8 +298,14 @@ public class Translator {
     return _xblockexpression;
   }
 
-  public static VariableDto[] getVariables() {
-    return new Gson().<VariableDto[]>fromJson(Translator.getJson("variables"), VariableDto[].class);
+  public static List<VariableDto> getVariables() {
+    final Function1<VariableDto, String> _function = (VariableDto it) -> {
+      return it.variable;
+    };
+    final Function1<List<VariableDto>, VariableDto> _function_1 = (List<VariableDto> it) -> {
+      return IterableExtensions.<VariableDto>head(it);
+    };
+    return IterableExtensions.<VariableDto>toList(IterableExtensions.<List<VariableDto>, VariableDto>map(IterableExtensions.<String, VariableDto>groupBy(((Iterable<? extends VariableDto>)Conversions.doWrapArray(new Gson().<VariableDto[]>fromJson(Translator.getJson("variables"), VariableDto[].class))), _function).values(), _function_1));
   }
 
   public static void setVariables(final List<VariableDto> variables) {
